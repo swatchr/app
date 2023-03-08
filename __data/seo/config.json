@@ -1,0 +1,27 @@
+{
+  "title": "Swatchr",
+  "url": "https://swatchr.app",
+  "description": "This is the description for this #bada55 project.",
+  "keywords": "Doing all the dope things of course",
+  "twitterHandle": "@",
+  "locale": "en_US",
+  "images": [
+    {
+      "url": "https://cdn.jsdelivr.net/gh/gaurangrshah/_shots@master/swatchr/swatchr-md.png",
+      "width": 738,
+      "height": 800,
+      "alt": "Swatchr Logo",
+      "type": "image/png"
+    }
+  ],
+  "additionalLinkTags": [
+    {
+      "rel": "icon",
+      "href": "https://cdn.jsdelivr.net/gh/gaurangrshah/_shots@master/swatchr/swatchr-md.png"
+    },
+    {
+      "rel": "canonical",
+      "href": "https://swatchr.app"
+    }
+  ]
+}

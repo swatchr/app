@@ -1,0 +1,161 @@
+[
+  {
+    "name": "Chakra-UI",
+    "description": "Create accessible React apps with speed",
+    "links": [
+      { "documentation": "https://chakra-ui.com/docs/components" },
+      { "temaplates": "https://chakra-templates.dev/" },
+      { "chocui": "https://choc-ui.vercel.app" }
+    ]
+  },
+  {
+    "name": "Framer Motion",
+    "description": "A production-ready motion library for React.",
+    "links": [{ "documentation": "https://www.framer.com/docs/" }]
+  },
+  {
+    "name": "NextJS",
+    "description": "The React framework for production",
+    "links": [{ "documentation": "https://nextjs.org/" }]
+  },
+  {
+    "name": "Vercel",
+    "description": "Vercel is the platform for frontend developers, providing the speed and reliability innovators need to create at the moment of inspiration.",
+    "links": [
+      { "documentation": "https://vercel.com/docs" },
+      { "dashboard": "https://vercel.com/gshah2020/t3-stack-7c8z" }
+    ]
+  },
+  {
+    "name": "LogAlert",
+    "description": "Alerts designed for Vercel logs",
+    "links": [
+      { "documentation": "https://logalert.app/docs" },
+      { "dashboard": "https://app.logalert.app/" }
+    ]
+  },
+  {
+    "name": "Mixpanel",
+    "description": "Powerful, self-serve product analytics to help you convert, engage, and retain more users.",
+    "links": [
+      { "documentation": "https://developer.mixpanel.com/docs" },
+      {
+        "dashboard": "https://mixpanel.com/project/2831697/view/3365657/app/dashboards"
+      }
+    ]
+  },
+  {
+    "name": "Crisp",
+    "description": "The all-in-one business messaging platform that gathers teams, conversations, data and knowledge, around one place",
+    "links": [
+      { "documentation": "https://docs.crisp.chat/" },
+      {
+        "dashboard": "https://app.crisp.chat/website/ac7d03bd-2065-4273-9884-8125f93a4858/inbox/"
+      }
+    ]
+  },
+  {
+    "name": "Next-SEO",
+    "description": "makes managing your SEO easier in Next.js project",
+    "links": [{ "git": "https://github.com/garmeeh/next-seo" }]
+  },
+  {
+    "name": "React Query",
+    "description": "Powerful asynchronous state management",
+    "links": [
+      { "documentation": "https://tanstack.com/query/v4/docs/overview" }
+    ]
+  },
+  {
+    "name": "React Hook Form",
+    "description": "Performant, flexible and extensible forms with easy-to-use validation.",
+    "links": [{ "documentation": "https://react-hook-form.com/api" }]
+  },
+  {
+    "name": "Analytics",
+    "description": "Analytics is a lightweight abstraction library for tracking page views, custom events, & identify visitors. It is pluggable & designed to work with any third-party analytics tool or your own backend.",
+    "links": [{ "documentation": "https://getanalytics.io/" }]
+  },
+  {
+    "name": "React Parallax",
+    "description": "React ready parallax components",
+    "links": [{ "git": "https://github.com/rrutsche/react-parallax" }]
+  },
+  {
+    "name": "Color2k",
+    "description": "React ready parallax components",
+    "links": [
+      { "git": "https://github.com/ricokahler/color2k" },
+      { "documentation": "https://color2k.com/#hsla" }
+    ]
+  },
+  {
+    "name": "Typescript",
+    "description": "Strongly typed programming language that builds on JavaScript, giving you better tooling at any scale",
+    "links": [
+      { "documentation": "https://www.typescriptlang.org/" },
+      { "playground": "https://www.typescriptlang.org/play" }
+    ]
+  },
+  {
+    "name": "Zod",
+    "description": " TypeScript-first schema declaration and validation library.",
+    "links": [{ "documentation": "https://zod.dev/?id=introduction" }]
+  },
+  {
+    "name": "Next-Auth",
+    "description": "Authentication for Next.js",
+    "links": [
+      { "documentation": "https://next-auth.js.org/" },
+      { "spotify": "https://developer.spotify.com/dashboard/applications" }
+    ]
+  },
+  {
+    "name": "tRPC",
+    "description": "End-to-end typesafe APIs made easy",
+    "links": [
+      { "documentation": "https://trpc.io/" },
+      {
+        "t3docs": "https://t3-stack-7c8z-74hmvwo34-gshah2020.vercel.app"
+      },
+      { "git": "https://github.com/t3-oss/create-t3-app#readme" },
+      { "tutorial": "https://www.nexxel.dev/blog/ct3a-guestbook" },
+      {
+        "discord": "https://discord.com/channels/966627436387266600/1020552951116333217"
+      }
+    ]
+  },
+  {
+    "name": "Prisma",
+    "description": "Build data-driven JavaScript & TypeScript apps in less time",
+    "links": [
+      { "documentation": "https://www.prisma.io/docs/" },
+      { "studio": "http://localhost:5555" }
+    ]
+  },
+  {
+    "name": "SuperJSON",
+    "description": " Safely serialize JavaScript expressions to a superset of JSON",
+    "links": [{ "git": "https://github.com/blitz-js/superjson" }]
+  },
+  {
+    "name": "PlanetScale",
+    "description": "Open source Firebase alternative.",
+    "links": [
+      { "documentation": "https://planetscale.com/docs" },
+      {
+        "dashboard": "https://app.planetscale.com/rupibeautystudio/rupis-dev"
+      }
+    ]
+  },
+  {
+    "name": "Google OAuth2",
+    "description": "User authentication for users with a google email.",
+    "links": [
+      { "documentation": "https://docs.crisp.chat/" },
+      {
+        "dashboard": "https://console.cloud.google.com/getting-started?pli=1"
+      }
+    ]
+  }
+]
