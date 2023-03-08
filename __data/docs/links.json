@@ -77,11 +77,6 @@
     "links": [{ "documentation": "https://getanalytics.io/" }]
   },
   {
-    "name": "React Parallax",
-    "description": "React ready parallax components",
-    "links": [{ "git": "https://github.com/rrutsche/react-parallax" }]
-  },
-  {
     "name": "Color2k",
     "description": "React ready parallax components",
     "links": [

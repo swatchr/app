@@ -3,7 +3,6 @@ import {
   Button,
   Center,
   chakra,
-  HStack,
   useDisclosure,
   VStack,
 } from '@chakra-ui/react';
