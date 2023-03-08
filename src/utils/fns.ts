@@ -452,3 +452,31 @@ export const randomConditional = (
   probability: number,
   { truthy, falsy }: { truthy: any; falsy: any }
 ): any => (Math.random() >= probability ? truthy : falsy);
+
+
+export function addDays(date: Date, days: number): Date {
+  // https://stackoverflow.com/questions/563406/how-to-add-days-to-date
+  const result = new Date(date);
+  result.setDate(result.getDate() + days);
+  return result;
+}
+
+export function dateToSeconds(datestamp: Date): number {
+  const dateSecondsAsFloat = new Date(datestamp).getTime() / 1000;
+  return Math.floor(dateSecondsAsFloat);
+}
+
+export function secondsToDate(seconds: number) {
+  return new Date(seconds * 1000);
+}
+
+
+export const composeUrl = (url: string, params: Record<string, any>) => {
+  const composedUrl = new URL(url);
+  return new URL(
+    `${composedUrl.origin}${composedUrl.pathname}?${new URLSearchParams([
+      ...Array.from(composedUrl.searchParams.entries()),
+      ...Object.entries(params),
+    ])}`
+  );
+};

@@ -21,6 +21,10 @@ export const isClient = !!(
   window.document.createElement
 );
 
+export const TEST_ENV = process.env.NEXT_PUBLIC_APP_ENV === 'test';
+
+export const IS_TEST = TEST_ENV || process.env.NODE_ENV === 'test';
+
 export const debug = isDev && false;
 
 export const NEXT_AUTH_SESSION_TOKEN_KEY = 'next-auth.session-token';
