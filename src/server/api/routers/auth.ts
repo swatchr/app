@@ -1,9 +1,10 @@
 import { z } from 'zod';
 
-import { hashPassword } from 'lib/next-auth/services';
+import { env } from '@/env.mjs';
 import { trpcPrismaErrorHandler } from '@/utils/error';
 import { TRPCError } from '@trpc/server';
-import { protectedProcedure, publicProcedure, createTRPCRouter } from '../trpc';
+import { hashPassword } from 'lib/next-auth/services';
+import { createTRPCRouter, protectedProcedure, publicProcedure } from '../trpc';
 
 export const userInputSchema = z.object({
   name: z.string(),
@@ -56,12 +57,12 @@ export const authRouter = createTRPCRouter({
         });
       }
 
-      const csrf = await fetch(`${process.env.NEXTAUTH_URL}/api/auth/csrf`, {
+      const csrf = await fetch(`${env.NEXTAUTH_URL}/api/auth/csrf`, {
         method: 'GET',
       });
 
       const response = await fetch(
-        `${process.env.NEXTAUTH_URL}/api/auth/signin/credentials`,
+        `${env.NEXTAUTH_URL}/api/auth/signin/credentials`,
         {
           method: 'POST',
           headers: {
@@ -93,16 +94,13 @@ export const authRouter = createTRPCRouter({
       }
 
       try {
-        const response = await fetch(
-          `${process.env.NEXTAUTH_URL}/api/auth/signout`,
-          {
-            method: 'POST',
-            headers: {
-              'content-type': 'application/json',
-            },
-            body: JSON.stringify({ email }),
-          }
-        );
+        const response = await fetch(`${env.NEXTAUTH_URL}/api/auth/signout`, {
+          method: 'POST',
+          headers: {
+            'content-type': 'application/json',
+          },
+          body: JSON.stringify({ email }),
+        });
         return {
           isSuccess: true,
         };

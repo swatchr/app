@@ -9,3 +9,4 @@ export * from './swatchr';
 export * from './react';
 export * from './form';
 export * from './events';
+export * from './email'
