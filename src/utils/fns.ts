@@ -1,3 +1,4 @@
+import { Obj } from '@/types';
 import {
   DASHES_REGEX,
   HEX_COLOR_REGEX,
@@ -480,3 +481,45 @@ export const composeUrl = (url: string, params: Record<string, any>) => {
     ])}`
   );
 };
+
+
+
+/**
+ *
+ *
+ * @export
+ * @param {string[]} paramKeys
+ * @param {string} asPath
+ * @return {*}  {Obj}
+ */
+export function getParams(paramKeys: string[], asPath: string): Obj {
+  const params = new URLSearchParams(`${asPath}`);
+  return paramKeys.reduce((obj, curr) => {
+    return Object.assign({ ...obj, [curr]: params.get(curr) });
+  }, {});
+}
+
+
+/**
+ * * @SEE: https://stackoverflow.com/a/20728864
+ *
+ * @export
+ * @param {number} [end=12]
+ * @return {*}
+ */
+export function generateRandomString(end = 12) {
+  return Math.random().toString(36).substring(3, end);
+}
+
+export const getSearchQuery = (searchParams: URLSearchParams) => {
+  const query: Record<string, string> = {};
+  const entries = searchParams.entries();
+  for (const [key, value] of entries) query[key] = value;
+  return query;
+};
+
+
+export function isEmpty(obj: any) {
+  if (!obj) return true;
+  return Object.keys(obj).length === 0 && obj.constructor === Object;
+}

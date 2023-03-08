@@ -21,4 +21,11 @@ export type NextComponentTypeWithAuth = NextComponentType & { auth?: boolean };
 export type Maybe = {
   string: string | null | undefined;
   number: string | null | undefined;
+  object: Record<string, any> | null | undefined;
 };
+
+export interface Obj {
+  [p: string]: {
+    [p: string]: string;
+  };
+}

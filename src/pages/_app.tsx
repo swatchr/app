@@ -9,11 +9,18 @@ import { type Session } from 'next-auth';
 import { api } from '@/utils/api';
 import { ErrorBoundary } from '@/utils';
 import { ChakraWrapper } from 'chakra.ui';
+import { NextComponentTypeWithAuth } from '@/types';
+import { AuthGate } from '@/components/v1/auth';
+import { AutoToast, getToastStatus } from '@/components/';
 
 const MyApp: AppType<{ session: Session | null }> = ({
   Component,
   pageProps: { session, ...pageProps },
+  router,
 }) => {
+  const { auth } = Component as NextComponentTypeWithAuth;
+  const { status, success, error } = getToastStatus(router.asPath);
+
   return (
     <>
       <Head>
@@ -27,8 +34,18 @@ const MyApp: AppType<{ session: Session | null }> = ({
       </SkipNavLink>
       <ErrorBoundary>
         <ChakraWrapper>
+          <AutoToast
+            status={status}
+            message={String(error) ?? String(success)}
+          />
           <SessionProvider session={session}>
-            <Component {...pageProps} />
+            {auth ? (
+              <AuthGate>
+                <Component {...pageProps} />
+              </AuthGate>
+            ) : (
+              <Component {...pageProps} />
+            )}
           </SessionProvider>
         </ChakraWrapper>
         <Analytics />
