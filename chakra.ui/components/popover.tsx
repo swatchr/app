@@ -1,0 +1,107 @@
+import {
+  Button,
+  ButtonProps,
+  ComponentWithAs,
+  IconButton,
+  IconButtonProps,
+  IconProps,
+  Popover as ChPopover,
+  PopoverArrow,
+  PopoverBody,
+  PopoverCloseButton,
+  PopoverContent,
+  PopoverContentProps,
+  PopoverFooter,
+  PopoverHeader,
+  PopoverProps,
+  PopoverTrigger,
+  useDisclosure,
+} from '@chakra-ui/react';
+
+import Color from 'lib/color';
+import Image from 'next/image';
+
+type CustomPopoverProps = {
+  open: boolean;
+  popoverProps?: PopoverProps;
+  content?: { header?: React.ReactNode; footer?: React.ReactNode };
+  icon?: {
+    Component: ComponentWithAs<'svg', IconProps>;
+    fillColor?: string;
+    instance?: Color;
+    props?: IconButtonProps;
+  };
+  customButton?: {
+    Component: ({ ...props }: ButtonProps) => JSX.Element;
+    props?: ButtonProps;
+  };
+  image?: {
+    src: string;
+    width: number;
+    height: number;
+    alt: string;
+    style: React.CSSProperties;
+  };
+  children?: React.ReactNode;
+} & PopoverContentProps;
+
+export const Popover: React.FC<CustomPopoverProps> = ({
+  open,
+  popoverProps,
+  content,
+  icon,
+  image,
+  customButton,
+  children,
+  ...props
+}) => {
+  const { isOpen, onOpen, onClose } = useDisclosure();
+
+  return (
+    <ChPopover
+      isOpen={open || isOpen}
+      onOpen={onOpen}
+      onClose={onClose}
+      placement="right-end"
+      flip={true}
+      autoFocus={true}
+      boundary="clippingParents"
+      closeOnEsc={true}
+      computePositionOnMount={true}
+      {...popoverProps}
+    >
+      <PopoverTrigger>
+        {icon ? (
+          <IconButton
+            onClick={(e) => {
+              e.stopPropagation();
+              onOpen();
+            }}
+            aria-label="Open"
+            icon={<icon.Component fill={icon.fillColor} />}
+            size="xs"
+            variant="unstyled"
+            {...icon.props}
+          />
+        ) : image ? (
+          <Image {...image} onClick={onOpen} />
+        ) : customButton ? (
+          <customButton.Component onClick={onOpen} {...customButton.props} />
+        ) : (
+          <Button onClick={onOpen}>Open</Button>
+        )}
+      </PopoverTrigger>
+      <PopoverContent maxW={96} my={3} {...props}>
+        <PopoverCloseButton />
+        {content?.header ? (
+          <PopoverHeader>{content.header}</PopoverHeader>
+        ) : null}
+        <PopoverArrow color="blue.300" />
+        <PopoverBody>{children}</PopoverBody>
+        {content?.footer ? (
+          <PopoverFooter>{content.footer}</PopoverFooter>
+        ) : null}
+      </PopoverContent>
+    </ChPopover>
+  );
+};
