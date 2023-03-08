@@ -10,8 +10,6 @@ import { api } from '@/utils/api';
 import { ErrorBoundary } from '@/utils';
 import { ChakraWrapper } from 'chakra.ui';
 
-import '@/styles/globals.css';
-
 const MyApp: AppType<{ session: Session | null }> = ({
   Component,
   pageProps: { session, ...pageProps },

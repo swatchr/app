@@ -1,4 +1,6 @@
-import { createTransport,Transporter } from 'nodemailer';
+import { createTransport, Transporter } from 'nodemailer';
+
+import { env } from '@/env.mjs';
 
 type EmailParams = {
   email: string;
@@ -13,8 +15,8 @@ export default class EmailService {
     this.transporter = createTransport({
       service: 'gmail',
       auth: {
-        user: process.env.SMTP_USER,
-        pass: process.env.SMTP_PASSWORD,
+        user: env.SMTP_USER,
+        pass: env.SMTP_PASSWORD,
       },
       secure: true,
     });
