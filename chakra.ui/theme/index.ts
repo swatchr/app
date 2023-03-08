@@ -26,4 +26,4 @@ export const theme: Partial<ChakraTheme> = extendTheme(
   })
 );
 
-console.log('chakra theme', theme, debug);
+// console.log('chakra theme', theme, debug);
