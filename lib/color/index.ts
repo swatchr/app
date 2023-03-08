@@ -593,6 +593,3 @@ class Color {
 }
 
 export default Color;
-
-const color = new Color('#fff');
-console.log('🚀 | file: index.ts:598 | color:', color);
