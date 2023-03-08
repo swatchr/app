@@ -10,6 +10,8 @@ import { type inferRouterInputs, type inferRouterOutputs } from '@trpc/server';
 import superjson from 'superjson';
 
 import { type AppRouter } from '@/server/api/root';
+import { DEFAULT_STALE_TIME, ONE_DAY_MS } from './constants';
+import { NextPageContext } from 'next';
 
 const getBaseUrl = () => {
   if (typeof window !== 'undefined') return ''; // browser should use relative url
@@ -19,7 +21,7 @@ const getBaseUrl = () => {
 
 /** A set of type-safe react-query hooks for your tRPC API. */
 export const api = createTRPCNext<AppRouter>({
-  config() {
+  config({ ctx }) {
     return {
       /**
        * Transformer used for data de-serialization from the server.
@@ -41,8 +43,16 @@ export const api = createTRPCNext<AppRouter>({
         }),
         httpBatchLink({
           url: `${getBaseUrl()}/api/trpc`,
+          fetch(url, options) {
+            return fetch(url, {
+              ...options,
+              credentials: 'include',
+            });
+          },
         }),
       ],
+      queryClientConfig,
+      headers: getHeaders(ctx),
     };
   },
   /**
@@ -66,3 +76,26 @@ export type RouterInputs = inferRouterInputs<AppRouter>;
  * @example type HelloOutput = RouterOutputs['example']['hello']
  */
 export type RouterOutputs = inferRouterOutputs<AppRouter>;
+
+const queryClientConfig = {
+  defaultOptions: { queries: { staleTime: DEFAULT_STALE_TIME } },
+};
+
+const cacheHeaders = {
+  // @WIP:  TEST
+  // @TODO:
+  'cache-control': `s-maxage=1, stale-while-revalidate=${ONE_DAY_MS}`,
+};
+
+const getHeaders = (ctx: NextPageContext | undefined) => {
+  if (ctx?.req) {
+    const headers = ctx?.req?.headers;
+    delete headers?.connection;
+    return {
+      ...headers,
+      ...cacheHeaders,
+      'x-ssr': '1',
+    };
+  }
+  return {};
+};
