@@ -10,7 +10,6 @@ import {
 } from '@chakra-ui/react';
 import { Reorder } from 'framer-motion';
 import { useCallback, useEffect, useState } from 'react';
-import { ExportPanel } from './panels/export-panel';
 
 import { LogoIcon, Swatch } from '@/components';
 import {
@@ -25,6 +24,7 @@ import { Drawer } from 'chakra.ui';
 import Color from 'lib/color';
 import { ColorBlindnessSimulator } from './color-blindness-simulator';
 import { HeaderIconStack } from './header-icon-stack';
+import { ExportPanel } from './panels/export-panel';
 
 export function Palette() {
   const { palette } = usePaletteState();

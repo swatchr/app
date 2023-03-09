@@ -21,7 +21,18 @@ export const BaseLayout: FC<BaseLayoutProps> = ({
   return (
     <>
       <NextSeo {...SEOConfig(title, description)} />
-      <Main>{children}</Main>
+      <chakra.main bg="bg">
+        <SkipNavContent />
+        <Box
+          position="relative"
+          w="full"
+          color={'text'}
+          minHeight="100vh"
+          overflowX="hidden"
+        >
+          {children}
+        </Box>
+      </chakra.main>
     </>
   );
 };

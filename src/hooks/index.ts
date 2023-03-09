@@ -4,4 +4,5 @@ export * from './use-debounce';
 export * from './use-event-listener';
 export * from './use-key-press';
 export * from './use-keyboard-shortcut';
+export * from './use-mounted';
 export * from './use-throttle';

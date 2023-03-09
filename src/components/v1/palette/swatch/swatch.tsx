@@ -1,4 +1,4 @@
-import { Box, Center, Flex, useDisclosure } from '@chakra-ui/react';
+import { Box, Center, Flex, SlideFade, useDisclosure } from '@chakra-ui/react';
 import { motion, useAnimation } from 'framer-motion';
 import { useCallback, useEffect, useState } from 'react';
 
@@ -7,6 +7,7 @@ import {
   useColorState,
   useDisclosureDispatch,
 } from '@/contexts';
+import { useMounted } from '@/hooks/use-mounted';
 import { ColorPickerWrapper, EditableHexInput, SwatchMenu } from '.';
 import { InfoPanel, InfoWindow } from '../panels';
 
@@ -20,7 +21,7 @@ export function Swatch({ index }: { index: number }) {
   const colorHandlers = useColorDispatch();
 
   const { isActive } = useDisclosureDispatch(); // used for info panel
-
+  const mounted = useMounted();
   const {
     isOpen: swatchMenuIsOpen,
     onOpen: swatchMenuOnOpen,
@@ -68,54 +69,56 @@ export function Swatch({ index }: { index: number }) {
         swatchMenuOnClose();
       }}
     >
-      <Center
-        className="swatch-wrapper"
-        boxSize={72}
-        position="relative"
-        zIndex={1}
-      >
-        {swatchMenuIsOpen ? (
-          <SwatchMenu
-            // the icon grid menu behind the swatch
-            colorState={colorState}
-            colorHandlers={colorHandlers}
-            reset={reset}
-          />
-        ) : null}
+      <SlideFade in={mounted} offsetX={-96} reverse unmountOnExit>
         <Center
-          as={motion.div}
-          className="picker-swatch"
-          role="button"
-          initial={{ boxShadow: '0px 0px 20px rgba(0,0,0, 0)' }}
-          animate={controls}
-          whileHover={{ boxShadow: '0px 0px 20px rgba(0,0,0, 0.1)' }}
-          whileTap={{ boxShadow: '0px 0px 20px rgba(0,0,0, 0.1)' }}
-          transition="0.55 easeInOut 0.3"
-          boxSize={52}
-          tabIndex={0}
-          zIndex={0}
-          rounded="xl"
-          onClick={switchToPickerView}
+          className="swatch-wrapper"
+          boxSize={72}
+          position="relative"
+          zIndex={1}
         >
-          {view === 'picker' ? (
-            <ColorPickerWrapper
-              color={colorState.color}
-              colorHandlers={colorHandlers}
-              view={view}
-              onClick={switchView}
-            />
-          ) : null}
-          {view == 'swatch' ? (
-            <EditableHexInput
+          {swatchMenuIsOpen ? (
+            <SwatchMenu
+              // the icon grid menu behind the swatch
               colorState={colorState}
-              handleChange={colorHandlers.history.handleChange}
+              colorHandlers={colorHandlers}
+              reset={reset}
             />
           ) : null}
+          <Center
+            as={motion.div}
+            className="picker-swatch"
+            role="button"
+            initial={{ boxShadow: '0px 0px 20px rgba(0,0,0, 0)' }}
+            animate={controls}
+            whileHover={{ boxShadow: '0px 0px 20px rgba(0,0,0, 0.1)' }}
+            whileTap={{ boxShadow: '0px 0px 20px rgba(0,0,0, 0.1)' }}
+            transition="0.55 easeInOut 0.3"
+            boxSize={52}
+            tabIndex={0}
+            zIndex={0}
+            rounded="xl"
+            onClick={switchToPickerView}
+          >
+            {view === 'picker' ? (
+              <ColorPickerWrapper
+                color={colorState.color}
+                colorHandlers={colorHandlers}
+                view={view}
+                onClick={switchView}
+              />
+            ) : null}
+            {view == 'swatch' ? (
+              <EditableHexInput
+                colorState={colorState}
+                handleChange={colorHandlers.history.handleChange}
+              />
+            ) : null}
+          </Center>
         </Center>
-      </Center>
 
-      <InfoPanel {...colorState} index={isActive('info') ? 0 : undefined} />
-      <InfoWindow />
+        <InfoPanel {...colorState} index={isActive('info') ? 0 : undefined} />
+        <InfoWindow />
+      </SlideFade>
     </Flex>
   );
 }

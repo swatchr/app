@@ -38,6 +38,10 @@ export function EditableHexInput({
     }
   };
 
+  // blackAlpha.400 is the button bg on active
+  // blackAlpha.300 is the button bg on hover
+  // blackAlpha.200 is the button bg default
+
   return (
     <Center
       className="hex-input"

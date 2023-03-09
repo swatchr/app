@@ -1,4 +1,3 @@
-import { chakra } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 
@@ -6,7 +5,7 @@ import { type NextPage } from 'next';
 
 import { BaseLayout, Palette } from '@/components';
 import { PaletteProvider } from '@/contexts';
-import { isClient, isDev, parsePalette } from '@/utils';
+import { isClient, parsePalette } from '@/utils';
 
 const Home: NextPage = () => {
   const router = useRouter();
