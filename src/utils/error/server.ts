@@ -1,4 +1,4 @@
-import { PrismaClientKnownRequestError } from '@prisma/client/runtime';
+import { PrismaClientKnownRequestError } from '@prisma/client/runtime/data-proxy';
 import * as trpc from '@trpc/server';
 
 export function trpcPrismaErrorHandler(error: any) {

@@ -1,4 +1,4 @@
-import type { Obj } from '@/types';
+import type { StringObj } from '@/types';
 
 import {
   DASHES_REGEX,
@@ -469,7 +469,13 @@ export function dateToSeconds(datestamp: Date): number {
 export function secondsToDate(seconds: number) {
   return new Date(seconds * 1000);
 }
-
+/**
+ *
+ *
+ * @param {string} url
+ * @param {Record<string, any>} params
+ * @return {*}
+ */
 export const composeUrl = (url: string, params: Record<string, any>) => {
   const composedUrl = new URL(url);
   return new URL(
@@ -488,7 +494,7 @@ export const composeUrl = (url: string, params: Record<string, any>) => {
  * @param {string} asPath
  * @return {*}  {Obj}
  */
-export function getParams(paramKeys: string[], asPath: string): Obj {
+export function getParams(paramKeys: string[], asPath: string): StringObj {
   const params = new URLSearchParams(`${asPath}`);
   return paramKeys.reduce((obj, curr) => {
     return Object.assign({ ...obj, [curr]: params.get(curr) });

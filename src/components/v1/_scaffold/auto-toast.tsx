@@ -1,7 +1,7 @@
 import { useToast } from '@chakra-ui/react';
 import { useEffect } from 'react';
 
-import type { Obj } from '@/types';
+import type { StringObj } from '@/types';
 import type { FC, ReactNode } from 'react';
 
 import { getParams, subscribe, unsubscribe } from '@/utils';
@@ -14,7 +14,7 @@ export type ToastStatusOptions =
   | 'loading'
   | undefined;
 
-const messageMap: Obj = {
+const messageMap: StringObj = {
   CredentialsSignin: {
     message: 'Please sign up or provide valid credentials',
   },

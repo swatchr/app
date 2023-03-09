@@ -24,7 +24,7 @@ export type Maybe = {
   object: Record<string, any> | null | undefined;
 };
 
-export interface Obj {
+export interface StringObj {
   [p: string]: {
     [p: string]: string;
   };

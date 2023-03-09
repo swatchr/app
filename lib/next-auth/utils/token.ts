@@ -3,7 +3,8 @@ import * as jwt from 'jsonwebtoken';
 import type { NextAuthOptions } from 'next-auth';
 import type { JWT } from 'next-auth/jwt';
 
-import { composeUrl } from '@/utils/fns';
+import { env } from '@/env.mjs';
+import { composeUrl, ONE_DAY_MS } from '@/utils';
 
 /** refreshToken is used to refresh google auth token
  * @SEE: https://tinyurl.com/2gnnzhky
@@ -11,8 +12,12 @@ import { composeUrl } from '@/utils/fns';
 export const refreshAccessToken = async (token: JWT) => {
   try {
     const url = composeUrl('https://oauth2.googleapis.com/token?', {
-      client_id: process.env.GOOGLE_CLIENT_ID ?? '',
-      client_secret: process.env.GOOGLE_CLIENT_SECRET ?? '',
+      client_id:
+        process.env.GOOGLE_CLIENT_ID ??
+        '681384252351-1nspra5u28snv8om0vg9ost0tpgovlvq.apps.googleusercontent.com',
+      client_secret:
+        process.env.GOOGLE_CLIENT_SECRET ??
+        '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',
       grant_type: 'refresh_token',
       refresh_token: token.refreshToken,
     }).toString();
@@ -42,13 +47,10 @@ export const refreshAccessToken = async (token: JWT) => {
 
 export const jwtHandlers: NextAuthOptions['jwt'] = {
   async encode({ token }) {
-    return jwt.sign(token as JWT, String(process.env.NEXTAUTH_SECRET));
+    return jwt.sign(token as JWT, String(env.NEXTAUTH_SECRET));
   },
   async decode({ token }) {
-    return jwt.verify(
-      String(token),
-      String(process.env.NEXTAUTH_SECRET)
-    ) as JWT;
+    return jwt.verify(String(token), String(env.NEXTAUTH_SECRET)) as JWT;
   },
 };
 
@@ -61,8 +63,8 @@ export const jwtHandlers: NextAuthOptions['jwt'] = {
  * @return {*}  {string}
  */
 export function generateToken(tokenToSign: JWT): string {
-  const token = jwt.sign(tokenToSign, String(process.env.NEXTAUTH_SECRET), {
-    expiresIn: process.env.JWT_EXPIRED_TIME,
+  const token = jwt.sign(tokenToSign, String(env.NEXTAUTH_SECRET), {
+    expiresIn: process.env.JWT_EXPIRED_TIME ?? ONE_DAY_MS,
   });
   return token;
 }

@@ -23,4 +23,18 @@ export const session: CallbacksOptions['session'] = ({
   return session;
 };
 
-export const callbacks = { jwt, session };
+export const signIn: CallbacksOptions['signIn'] = ({
+  user,
+  account,
+  profile,
+  email,
+  credentials,
+}) => {
+  // must specify a validation check for each provider
+  if (account?.provider === 'google' && profile?.email) {
+    return profile?.email.endsWith('@gmail.com');
+  }
+  return true;
+};
+
+export const callbacks = { signIn, jwt, session };

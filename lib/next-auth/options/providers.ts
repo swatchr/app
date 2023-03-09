@@ -5,7 +5,6 @@ import GoogleProvider from 'next-auth/providers/google';
 import { prisma } from '@/server/db';
 import { type NextAuthOptions } from 'next-auth';
 
-env;
 // import EmailProvider from 'next-auth/providers/email';
 // import { ONE_DAY } from '@/utils';
 import { env } from '@/env.mjs';
@@ -15,6 +14,13 @@ import { comparePasswords } from '../services';
 const google = GoogleProvider({
   clientId: env.GOOGLE_CLIENT_ID,
   clientSecret: env.GOOGLE_CLIENT_SECRET,
+  // authorization: {
+  //   params: {
+  //     prompt: 'consent',
+  //     access_type: 'offline',
+  //     response_type: 'code',
+  //   },
+  // },
 });
 
 // /**
@@ -73,5 +79,5 @@ const credentials = CredentialsProvider({
   },
 });
 
-export const providers: NextAuthOptions['providers'] = [credentials, google];
+export const providers: NextAuthOptions['providers'] = [google];
 // TEST_ENV ? providers.push(credentials) : providers.push(google);
