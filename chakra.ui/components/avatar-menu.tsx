@@ -4,6 +4,7 @@ import {
   Avatar,
   Box,
   chakra,
+  Link as ChLink,
   Menu,
   MenuButton,
   MenuItem,
@@ -14,9 +15,14 @@ import {
 import Link from 'next/link';
 import { useEffect } from 'react';
 
+import { Button } from '@chakra-ui/react';
+import { signIn, signOut, useSession } from 'next-auth/react';
 import type { FC } from 'react';
 
-const defaultLinks = [{ label: 'home', href: '/' }];
+const defaultLinks = [
+  { label: 'home', href: '/' },
+  { label: 'admin', href: '/admin' },
+];
 
 const ChNextLink = chakra(Link);
 
@@ -28,18 +34,24 @@ type AvatarMenuProps = {
 };
 
 export const AvatarMenu: React.FC<AvatarMenuProps> = ({ user }) => {
+  const { data: session, status } = useSession();
+
   return (
-    <Box pos="fixed" top={6} right={6} zIndex="dropdown">
-      <Menu placement="bottom-end" boundary="scrollParent" closeOnSelect>
+    <Box pos="fixed" top={9} right={6} zIndex="dropdown">
+      <Menu
+        placement="bottom-end"
+        boundary="scrollParent"
+        size="xs"
+        closeOnSelect
+      >
         {status !== 'loading' ? (
           <MenuButton
             as={Avatar}
-            name={String(user?.email ?? '')}
-            src={user?.image ?? ''}
+            name={String(session?.user?.email ?? '')}
+            src={session?.user?.image ?? ''}
             _hover={{ cursor: 'pointer', border: 'lg' }}
             loading="lazy"
-            outline="2px solid"
-            outlineColor="brand.400"
+            shadow="md"
           />
         ) : (
           <Spinner />
@@ -49,12 +61,39 @@ export const AvatarMenu: React.FC<AvatarMenuProps> = ({ user }) => {
           <>
             {defaultLinks?.length
               ? defaultLinks?.map((link) => (
-                  <MenuItem key={link.href}>
-                    <ChNextLink href={link.href}>{link.label}</ChNextLink>
+                  <MenuItem key={link.href} w="full" fontSize="sm">
+                    <ChNextLink w="full" href={link.href} color="gray.200">
+                      {link.label}
+                    </ChNextLink>
                   </MenuItem>
                 ))
               : null}
           </>
+          <hr />
+          <MenuItem
+            as={Button}
+            variant="unstyled"
+            size="sm"
+            onClick={onPromise(() => signIn('google'))}
+            justifyContent="flex-start"
+            rounded="none"
+            my={1}
+          >
+            sign in
+          </MenuItem>
+          <MenuItem
+            as={Button}
+            variant="unstyled"
+            size="sm"
+            onClick={onPromise(() => signOut())}
+            justifyContent="flex-start"
+            _focusVisible={{ outline: 'none' }}
+            _focus={{ outline: 'none' }}
+            rounded="none"
+            my={1}
+          >
+            sign out
+          </MenuItem>
         </MenuList>
       </Menu>
     </Box>

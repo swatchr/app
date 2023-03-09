@@ -52,7 +52,7 @@ export function HeaderIconStack({
       className="header-icons"
       position="fixed"
       top={10}
-      right={12}
+      right={24}
       zIndex={10}
       colorScheme={contrast}
       color={fillColor}

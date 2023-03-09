@@ -33,12 +33,12 @@ const MyApp: AppType<{ session: Session | null }> = ({
         Skip to content
       </SkipNavLink>
       <ErrorBoundary>
-        <ChakraWrapper>
-          <AutoToast
-            status={status}
-            message={String(error) ?? String(success)}
-          />
-          <SessionProvider session={session}>
+        <SessionProvider session={session}>
+          <ChakraWrapper>
+            <AutoToast
+              status={status}
+              message={String(error) ?? String(success)}
+            />
             {auth ? (
               <AuthGate>
                 <Component {...pageProps} />
@@ -46,8 +46,8 @@ const MyApp: AppType<{ session: Session | null }> = ({
             ) : (
               <Component {...pageProps} />
             )}
-          </SessionProvider>
-        </ChakraWrapper>
+          </ChakraWrapper>
+        </SessionProvider>
         <Analytics />
       </ErrorBoundary>
     </>

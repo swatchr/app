@@ -15,6 +15,7 @@ import '@fontsource/recursive/900.css';
 import type { GetServerSidePropsContext } from 'next';
 
 import { CookieConsent } from '@/components';
+import { AvatarMenu } from 'chakra.ui/components';
 import { theme } from '../theme';
 
 type ChakraProps = {
@@ -35,8 +36,9 @@ export const ChakraWrapper: React.FC<ChakraProps> = ({ cookies, children }) => {
       theme={theme}
       // colorModeManager={colorModeManager} //
     >
-      <CookieConsent />
+      <AvatarMenu />
       {children}
+      <CookieConsent />
     </ChakraProvider>
   );
 };
