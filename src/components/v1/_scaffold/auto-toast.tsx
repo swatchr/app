@@ -22,11 +22,8 @@ const messageMap: StringObj = {
 
 export function getToastStatus(asPath: string) {
   const { success, error } = getParams(['error', 'success'], asPath);
-  const status = success
-    ? 'success'
-    : error
-    ? 'error'
-    : ('' as ToastStatusOptions);
+  console.log('🚀 | file: auto-toast.tsx:25 | status:', success ?? error);
+  const status = success ? 'success' : error ? 'error' : undefined;
 
   return { status, success, error };
 }
