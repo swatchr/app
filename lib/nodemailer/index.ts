@@ -34,12 +34,9 @@ export default class EmailService {
   }
 
   async sendAdminEmail(params: Omit<EmailParams, 'email'>) {
-    // replace the to address with your own admin email address
-    const adminEmail = 'swatchr.dev@gmail.com';
-
     await this.transporter.sendMail({
       from: 'Swatchr App <support@swatchr.app>',
-      to: adminEmail,
+      to: env.ADMIN_EMAIL,
       subject: params.subject,
       html: params.html,
     });
