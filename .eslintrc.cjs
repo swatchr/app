@@ -11,23 +11,20 @@ const config = {
   //     },
   //   },
   // ],
-  // parser: '@typescript-eslint/parser',
-  // parserOptions: {
-  //   project: './tsconfig.json',
-  // },
-  // plugins: ['@typescript-eslint', 'prettier'],
-  plugins: ['prettier'],
+  parser: '@typescript-eslint/parser',
+  parserOptions: {
+    project: './tsconfig.json',
+  },
+  plugins: ['@typescript-eslint', 'prettier'],
   extends: ['next/core-web-vitals'],
   rules: {
-    // '@typescript-eslint/consistent-type-imports': [
-    //   'warn',
-    //   {
-    //     prefer: 'type-imports',
-    //     fixStyle: 'separate-type-imports',
-    //   },
-    // ],
-    '@typescript-eslint/no-unsafe-assignment': 'off',
-    '@typescript-eslint/no-unsafe-call': 'off',
+    '@typescript-eslint/consistent-type-imports': [
+      'warn',
+      {
+        prefer: 'type-imports',
+        fixStyle: 'separate-type-imports',
+      },
+    ],
     quotes: ['error', 'single'],
     semi: ['error', 'always'],
     'prettier/prettier': ['error', { endOfLine: 'auto' }],
