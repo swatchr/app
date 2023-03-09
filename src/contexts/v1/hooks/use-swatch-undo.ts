@@ -1,8 +1,9 @@
 import { useKeyboardShortcut } from '@/hooks/use-keyboard-shortcut';
 import { useToast } from '@chakra-ui/react';
-import { useCallback, useEffect, useRef } from 'react';
+import { useCallback, useEffect, useMemo, useRef } from 'react';
 
 import { useDebounce } from '@/hooks';
+
 export const useSwatchUndo = (
   initialColor: string,
   updateSwatch: (color: string) => void
@@ -20,13 +21,13 @@ export const useSwatchUndo = (
       updateSwatch(colorHistoryRef.current[historyIndexRef.current]!);
     } else {
       toast({
-        title: 'Cannot Undo',
+        title: 'Cannot Undo - Limit Reached',
         status: 'error',
         duration: 600,
         isClosable: true,
       });
     }
-  }, [canUndo, toast, updateSwatch]);
+  }, [canUndo, updateSwatch, toast]);
 
   const redo = useCallback(() => {
     if (canRedo) {
@@ -34,13 +35,13 @@ export const useSwatchUndo = (
       updateSwatch(colorHistoryRef.current[historyIndexRef.current]!);
     } else {
       toast({
-        title: 'Cannot Redo',
+        title: 'Cannot Redo - Limit Reached',
         status: 'error',
         duration: 600,
         isClosable: true,
       });
     }
-  }, [canRedo, toast, updateSwatch]);
+  }, [canRedo, updateSwatch, toast]);
 
   const handleChange = useDebounce(
     useCallback(
@@ -77,18 +78,25 @@ export const useSwatchUndo = (
     ignoreInputFields: true,
     repeatOnHold: false,
   });
-  useKeyboardShortcut(['Shift', 'Meta', 'z'], redo, {
+  useKeyboardShortcut(['Shift', 'z'], redo, {
     overrideSystem: true,
     ignoreInputFields: true,
     repeatOnHold: false,
   });
 
+  const actions = useMemo(() => ({ undo, redo }), [redo, undo]);
+  const state = useMemo(
+    () => ({ canUndo, canRedo, color: colorHistoryRef.current }),
+    [canRedo, canUndo, colorHistoryRef]
+  );
+
   return {
     color: colorHistoryRef.current[historyIndexRef.current],
     undo,
     redo,
-    handleChange,
     canUndo,
     canRedo,
+    handleChange,
   };
+  // return { ...actions, ...state, handleChange };
 };
