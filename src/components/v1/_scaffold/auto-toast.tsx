@@ -1,5 +1,5 @@
 import { useToast } from '@chakra-ui/react';
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 
 import type { StringObj } from '@/types';
 import type { FC, ReactNode } from 'react';
@@ -22,7 +22,6 @@ const messageMap: StringObj = {
 
 export function getToastStatus(asPath: string) {
   const { success, error } = getParams(['error', 'success'], asPath);
-  console.log('🚀 | file: auto-toast.tsx:25 | status:', success ?? error);
   const status: ToastStatusOptions = success
     ? 'success'
     : error
@@ -42,17 +41,25 @@ export const AutoToast: FC<{
   // falsy values get stringified so we have to check for an actual message
   const falsyStrings = ['null', 'false', 'undefined', ''];
   const hasMessage = falsyStrings.every((str) => str !== props.message);
+  const toastIdRef = useRef(null);
 
   useEffect(() => {
     subscribe('show-toast', ({ detail }: any) => {
-      toast({
-        status: detail?.status,
-        title: detail?.title || '',
-        description: detail?.description || '',
-        duration: 6000,
-        isClosable: true,
-        position: 'top-right',
-      });
+      if (toastIdRef === detail?.id) return;
+      if (!toastIdRef.current) {
+        toastIdRef.current = detail?.id;
+        toast({
+          status: detail?.status || 'info',
+          title: detail?.title || 'Notification',
+          description: detail?.description || '',
+          duration: 6000,
+          isClosable: true,
+          position: 'top-right',
+        });
+      }
+      return () => {
+        toastIdRef.current = null;
+      };
     });
 
     return () => {
