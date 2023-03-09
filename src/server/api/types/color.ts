@@ -1,4 +1,5 @@
-import Color from 'lib/color';
+import type Color from 'lib/color';
+
 import { z } from 'zod';
 
 /* -------------------------------------------------------------------------- */

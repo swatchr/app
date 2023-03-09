@@ -1,4 +1,5 @@
-import { Obj } from '@/types';
+import type { Obj } from '@/types';
+
 import {
   DASHES_REGEX,
   HEX_COLOR_REGEX,

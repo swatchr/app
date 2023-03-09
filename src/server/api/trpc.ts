@@ -63,8 +63,10 @@ export const createTRPCContext = async (opts: CreateNextContextOptions) => {
  *
  * This is where the tRPC API is initialized, connecting the context and transformer.
  */
-import { inferAsyncReturnType, initTRPC, TRPCError } from '@trpc/server';
+import { initTRPC, TRPCError } from '@trpc/server';
 import superjson from 'superjson';
+
+import type { inferAsyncReturnType } from '@trpc/server';
 
 const t = initTRPC.context<typeof createTRPCContext>().create({
   transformer: superjson,
