@@ -1,7 +1,10 @@
 import { useState } from 'react';
 
 // A custom hook to throttle a function
-export function useThrottle<T extends (...args: any[]) => any>(fn: T, delay: number) {
+export function useThrottle<T extends (...args: any[]) => any>(
+  fn: T,
+  delay: number
+) {
   const [ready, setReady] = useState(true);
 
   function throttledFn(...args: Parameters<T>) {

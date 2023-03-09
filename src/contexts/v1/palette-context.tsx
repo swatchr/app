@@ -7,13 +7,13 @@ import {
   useReducer,
 } from 'react';
 
-import Color from 'lib/color';
 import {
   insertAtIndex,
   removeFromArrayAtIndex,
   stringifyPalette,
   updateArrayAtIndex,
 } from '@/utils';
+import Color from 'lib/color';
 
 import { useKeyboardShortcut } from '@/hooks';
 
@@ -115,7 +115,7 @@ export const PaletteProvider: React.FC<PaletteProviderProps> = ({
     setState({
       palettes: [...palettes, ['#BADA55']],
     });
-  }, [setState]);
+  }, [palettes]);
 
   const savePalettes = useCallback(() => {
     const serializedPalettes = JSON.stringify(
@@ -127,7 +127,7 @@ export const PaletteProvider: React.FC<PaletteProviderProps> = ({
   const savePalette = useCallback(() => {
     const serializedPalette = stringifyPalette(palette);
     localStorage.setItem('palette', serializedPalette);
-  }, [palettes]);
+  }, [palette]);
 
   const addSwatch = useCallback(
     (swatchIndex: number) => {
@@ -163,15 +163,15 @@ export const PaletteProvider: React.FC<PaletteProviderProps> = ({
     (newPalette: Palette) => {
       setState({ palette: newPalette });
     },
-    [setState, palette]
+    [setState]
   );
 
   const addNewSwatch = useCallback(() => {
     addSwatch(activeSwatchIndex + 1);
-  }, [addSwatch]);
+  }, [activeSwatchIndex, addSwatch]);
   const removeCurrentSwatch = useCallback(() => {
     removeSwatch(activeSwatchIndex);
-  }, [addSwatch]);
+  }, [activeSwatchIndex, removeSwatch]);
 
   useKeyboardShortcut(['Shift', 'Control', '+'], addNewSwatch, {
     repeatOnHold: true,
@@ -210,10 +210,12 @@ export const PaletteProvider: React.FC<PaletteProviderProps> = ({
             activatePalette,
             activateSwatch,
             addPalette,
+            savePalette,
             savePalettes,
             addSwatch,
             updateSwatch,
             removeSwatch,
+            updatePalette,
           ]
         )}
       >

@@ -47,7 +47,13 @@ export const Banner: FC<BannerProps> = ({
 
   return !hide ? (
     <>
-      <Box position="absolute" zIndex={20} inset={0} bg={overlayBg} overflow="hidden" />
+      <Box
+        position="absolute"
+        zIndex={20}
+        inset={0}
+        bg={overlayBg}
+        overflow="hidden"
+      />
       <Box
         as="section"
         position="fixed"

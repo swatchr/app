@@ -178,11 +178,12 @@ export const useKeyboardShortcut = (
       return false;
     },
     [
-      shortcutKeysId,
-      callback,
-      options.overrideSystem,
-      options.ignoreInputFields,
       shortcutArray,
+      options.ignoreInputFields,
+      options.repeatOnHold,
+      options.overrideSystem,
+      callback,
+      shortcutKeys,
     ]
   );
 

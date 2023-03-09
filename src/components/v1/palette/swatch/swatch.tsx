@@ -33,7 +33,7 @@ export function Swatch({ index }: { index: number }) {
       backgroundColor: colorState.color,
       transition: BG_TRANSITION,
     });
-  }, [colorState.color]);
+  }, [colorState.color, controls]);
 
   const switchView = useCallback(() => {
     setView((prev) => (prev === 'swatch' ? 'picker' : 'swatch'));

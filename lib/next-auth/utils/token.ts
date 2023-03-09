@@ -10,7 +10,7 @@ import { composeUrl } from '@/utils/fns';
  */
 export const refreshAccessToken = async (token: JWT) => {
   try {
-    const url = composeUrl(`https://oauth2.googleapis.com/token?`, {
+    const url = composeUrl('https://oauth2.googleapis.com/token?', {
       client_id: process.env.GOOGLE_CLIENT_ID ?? '',
       client_secret: process.env.GOOGLE_CLIENT_SECRET ?? '',
       grant_type: 'refresh_token',

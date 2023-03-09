@@ -37,7 +37,7 @@ export const ContentProvider: React.FC<{
       setType(type);
       !isOpen && onOpen();
     },
-    [setType, onOpen]
+    [isOpen, onOpen]
   );
 
   return (

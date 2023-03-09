@@ -11,9 +11,9 @@ import {
 } from '@chakra-ui/react';
 import { signIn } from 'next-auth/react';
 
+import { userInputSchema } from '@/server';
 import { convertFormToObject } from '@/utils';
 import { PasswordField } from 'chakra.ui';
-import { userInputSchema } from '@/server';
 
 export function Signin({ csrf }: { csrf: string }) {
   async function handleSubmit(e: React.FormEvent) {

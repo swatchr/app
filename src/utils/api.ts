@@ -10,8 +10,8 @@ import { type inferRouterInputs, type inferRouterOutputs } from '@trpc/server';
 import superjson from 'superjson';
 
 import { type AppRouter } from '@/server/api/root';
-import { DEFAULT_STALE_TIME, ONE_DAY_MS } from './constants';
 import { NextPageContext } from 'next';
+import { DEFAULT_STALE_TIME, ONE_DAY_MS } from './constants';
 
 const getBaseUrl = () => {
   if (typeof window !== 'undefined') return ''; // browser should use relative url

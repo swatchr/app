@@ -1,7 +1,7 @@
 import { Prisma } from '@prisma/client';
 
-import { hashPassword } from '../../next-auth';
 import { addDays } from '../../../src/utils';
+import { hashPassword } from '../../next-auth';
 
 type TestUser = Prisma.UserCreateArgs['data'];
 

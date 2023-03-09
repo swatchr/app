@@ -32,7 +32,7 @@ const Home: NextPage = () => {
         setColorParams(palette);
       }
     }
-  }, []);
+  }, [router.query?.colors]);
   return (
     <BaseLayout title="Swatchr" description="Color Palette Manager">
       <PaletteProvider colorParams={colorParams}>

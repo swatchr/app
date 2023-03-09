@@ -33,7 +33,7 @@ export function ContextMenu({
       isLazy
       matchWidth
     >
-      <MenuButton as={Button} variant="unstyled" minW={0} >
+      <MenuButton as={Button} variant="unstyled" minW={0}>
         {children}
       </MenuButton>
       <MenuList zIndex={100}>

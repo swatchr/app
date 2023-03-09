@@ -24,9 +24,9 @@ import {
 } from '@/contexts';
 import { Scales } from '@/contexts/v1/hooks/use-tinycolor';
 import { useClipboard } from '@/hooks';
-import Color from 'lib/color';
 import { capitalize } from '@/utils';
 import { MotionBox } from 'chakra.ui';
+import Color from 'lib/color';
 import {
   AAAIcon,
   AAIcon,
@@ -116,7 +116,7 @@ export function ColorScales({
 
   const scales = useMemo(() => {
     return colorHandlers?.tinycolor.generateScale(mode);
-  }, [mode, color]);
+  }, [colorHandlers?.tinycolor, mode]);
 
   return (
     <Box
@@ -287,7 +287,7 @@ export function ColorCombos({
 
   const combos = useMemo(() => {
     return colorHandlers?.tinycolor.colorCombinations(instance)[mode];
-  }, [color, mode]);
+  }, [colorHandlers?.tinycolor, instance, mode]);
 
   return (
     <Box
@@ -508,6 +508,7 @@ export function MonochromeScale({
         zIndex={0}
       >
         {scales.map((_c) => {
+          // eslint-disable-next-line react-hooks/rules-of-hooks
           const { isCopied, copy } = useClipboard({
             text: _c,
             onCopy: () => {

@@ -20,7 +20,6 @@ import { useState } from 'react';
 //   };
 // };
 
-
 // import { useCallback, useContext } from 'react';
 // import { PaletteContext } from '../palette-context3';
 // import { reorderArray } from '@/utils';

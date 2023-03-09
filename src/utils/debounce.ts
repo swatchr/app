@@ -1,7 +1,6 @@
 // @link: https://tinyurl.com/24l3omee
 
 interface FunctionWithArguments {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   (...args: any): any;
 }
 
@@ -28,7 +27,6 @@ export function debounce<F extends FunctionWithArguments>(
       }
 
       timer = setTimeout(() => {
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
         resolve(fn(...(args as unknown[])));
       }, ms);
     });

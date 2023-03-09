@@ -14,7 +14,6 @@ export function SaveIcon({ ...props }: IconProps) {
       viewBox="0 0 504 504"
       {...props}
     >
-
       <chakra.path
         fillRule="nonzero"
         d="M266.868 46.478h59.059a2.494 2.494 0 0 1 2.492 2.492v102.29a2.494 2.494 0 0 1-2.492 2.492h-59.06a2.49 2.49 0 0 1-2.487-2.492V48.96v.004a2.49 2.49 0 0 1 2.488-2.492v.006Z"

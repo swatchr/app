@@ -4,10 +4,10 @@ export * as CHTools from '@chakra-ui/theme-tools';
 export * as EmotionReact from '@emotion/react';
 export * as EmotionStyled from '@emotion/styled';
 export * from './components';
+export * from './framer';
 export * from './hooks';
 export * from './icons';
 export * from './layouts';
 export * from './theme';
 export * as theme from './theme';
 export * from './utils';
-export * from "./framer"

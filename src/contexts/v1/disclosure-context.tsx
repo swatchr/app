@@ -1,11 +1,6 @@
 // create a react typescript disclosure context
 
-import {
-  createContext,
-  useCallback,
-  useContext,
-  useState,
-} from 'react';
+import { createContext, useCallback, useContext, useState } from 'react';
 import { removeAtIndex } from '../../utils/fns';
 
 type DisclosureContextValue = {
@@ -26,16 +21,13 @@ export const DisclosureProvider = ({
 
   // @NOTE: this hook will cause a re-render on each render. because isActive is re-evaluated everytime
   const isActive = useCallback((id: string) => active.includes(id), [active]);
-  const toggleActive = useCallback(
-    (id: string) => {
-      setActive((prevActive) =>
-        prevActive.includes(id)
-          ? removeAtIndex(prevActive, prevActive.indexOf(id))
-          : [...prevActive, id]
-      );
-    },
-    [active, isActive]
-  );
+  const toggleActive = useCallback((id: string) => {
+    setActive((prevActive) =>
+      prevActive.includes(id)
+        ? removeAtIndex(prevActive, prevActive.indexOf(id))
+        : [...prevActive, id]
+    );
+  }, []);
 
   return (
     <DisclosureContext.Provider value={{ isActive, toggleActive }}>

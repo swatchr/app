@@ -10,7 +10,6 @@ export function appendScriptOnPage(
   }).length;
 }
 
-
 // usage:
 /**
  *

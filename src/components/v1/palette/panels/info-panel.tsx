@@ -11,14 +11,14 @@ import {
 } from '@chakra-ui/react';
 import { useState } from 'react';
 
-import type Color from 'lib/color';
 import type { ColorApiClientInfo, ColorApiScheme } from '@/server/api/types';
+import type Color from 'lib/color';
 
 import { CopyIcon, InfoIcon } from '@/components';
 import { useClipboard } from '@/hooks';
 import { createColorInfo } from '@/server/api/types';
-import { AccordionBox } from 'chakra.ui';
 import { api } from '@/utils/api';
+import { AccordionBox } from 'chakra.ui';
 
 export function InfoPanel({
   color,

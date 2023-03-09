@@ -1,5 +1,5 @@
-import { z } from 'zod';
 import { renderToStaticMarkup } from 'react-dom/server';
+import { z } from 'zod';
 
 import { createTRPCRouter, publicProcedure } from '@/server/api/trpc';
 import EmailService from 'lib/nodemailer';

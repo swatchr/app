@@ -15,6 +15,5 @@ export function convertToShortString(val: number): string {
   }
 
   // appending the letter to precised val.
-  // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
   return `${sVal}${s.length ? s[sNum] : ''}`;
 }

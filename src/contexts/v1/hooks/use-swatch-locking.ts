@@ -1,4 +1,4 @@
-import { useCallback,useState } from 'react';
+import { useCallback, useState } from 'react';
 
 interface Swatch {
   id: string;
@@ -34,7 +34,6 @@ export const useSwatchLocking = (
     toggleLock,
   };
 };
-
 
 export const useSwatchLocking2 = (initialLockedIndexes: number[] = []) => {
   const [lockedIndexes, setLockedIndexes] =

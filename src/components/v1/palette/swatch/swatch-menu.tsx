@@ -54,7 +54,7 @@ export const SwatchMenu: React.FC<{
         isClosable: true,
       });
     }
-  }, [view]);
+  }, [toast, view]);
 
   // @NOTE: this overrides the default browser find shortcut
   useKeyboardShortcut(['Meta', 'f'], toggleVIew, {
@@ -78,7 +78,9 @@ export const SwatchMenu: React.FC<{
         boxShadow="sm"
         gridTemplateColumns="1fr 6fr 1fr"
         gridTemplateRows="1fr 7fr 1fr"
-        gridTemplateAreas={` "stack1 stack1 stack1" "stack2 stack3 stack4" "stack5 stack5 stack5" `}
+        gridTemplateAreas={
+          ' "stack1 stack1 stack1" "stack2 stack3 stack4" "stack5 stack5 stack5" '
+        }
       >
         {view === 'default' ? (
           <Controls

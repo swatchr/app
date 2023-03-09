@@ -174,10 +174,11 @@ export const useNodeKeyPress = ({
     if (node.current) {
       node.current.addEventListener('keydown', handleKeyPress);
     }
+    const current = node.current;
 
     return () => {
-      if (node.current) {
-        node.current.removeEventListener('keydown', handleKeyPress);
+      if (current) {
+        current.removeEventListener('keydown', handleKeyPress);
       }
     };
   }, [keys, node]);

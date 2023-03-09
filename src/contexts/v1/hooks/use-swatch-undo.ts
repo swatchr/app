@@ -26,7 +26,7 @@ export const useSwatchUndo = (
         isClosable: true,
       });
     }
-  }, [canUndo, colorHistoryRef.current, updateSwatch]);
+  }, [canUndo, toast, updateSwatch]);
 
   const redo = useCallback(() => {
     if (canRedo) {
@@ -40,7 +40,7 @@ export const useSwatchUndo = (
         isClosable: true,
       });
     }
-  }, [canRedo, colorHistoryRef.current, updateSwatch]);
+  }, [canRedo, toast, updateSwatch]);
 
   const handleChange = useDebounce(
     useCallback(
@@ -55,7 +55,7 @@ export const useSwatchUndo = (
           updateSwatch(newColor);
         }
       },
-      [colorHistoryRef.current, historyIndexRef.current, updateSwatch]
+      [updateSwatch]
     ),
     200
   );
@@ -67,12 +67,7 @@ export const useSwatchUndo = (
       historyIndexRef.current = 0;
       updateSwatch(initialColor);
     }
-  }, [
-    initialColor,
-    updateSwatch,
-    colorHistoryRef.current,
-    historyIndexRef.current,
-  ]);
+  }, [initialColor, updateSwatch]);
 
   /* -------------------------------------------------------------------------- */
   /*                             KEYBOARD SHORTCUTS                             */

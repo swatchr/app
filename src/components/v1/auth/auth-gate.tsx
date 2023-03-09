@@ -1,6 +1,6 @@
+import { FullScreenLoader } from 'chakra.ui';
 import { useSession } from 'next-auth/react';
 import React from 'react';
-import { FullScreenLoader } from 'chakra.ui';
 
 type AuthGateProps = {
   // session: Session| null;

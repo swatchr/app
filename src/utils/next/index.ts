@@ -1,1 +1,1 @@
-export * from './append-script'
+export * from './append-script';

@@ -18,7 +18,7 @@ export function useTinyColor(
   updateColor: (colorHex: string) => void,
   palette: string[]
 ) {
-  const instance = new Color(color);
+  const instance = useMemo(() => new Color(color), [color]);
 
   /* -------------------------------------------------------------------------- */
   /*                                COLOR HELPERS                               */
@@ -37,7 +37,7 @@ export function useTinyColor(
 
       return instance.generateColorScales(mode, SCALE_STEPS);
     },
-    [instance, SCALE_STEPS]
+    [instance]
   );
 
   const colorCombinations = useCallback(
@@ -70,19 +70,14 @@ export function useTinyColor(
         instance.generateColorScales('triad'),
       ]);
     },
-    [instance, SCALE_STEPS]
+    [palette]
   );
 
   /* -------------------------------------------------------------------------- */
   /*                                   EXPORTS                                  */
   /* -------------------------------------------------------------------------- */
 
-  const state = useMemo(
-    () => ({
-      instance,
-    }),
-    [instance]
-  );
+  const state = { instance };
   const dispatch = useMemo(
     () => ({
       generateRandomColor,

@@ -36,13 +36,12 @@ export function flattenArrayOfObjects<T, U>(arr: T[], key = 'label') {
   if (!arr?.length) throw new Error(`cannot flatten ${JSON.stringify(arr)}`);
   const object = arr?.reduce(
     // @ts-expect-error: item[key] - @TODO: implicit any -must be properly typed
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     (obj, item) => Object.assign(obj, { [item[key]]: item.value }),
     {}
   );
   return object as U;
 }
-``;
+
 /**
  * chunk a flat array into groups based in the provided value for n
  *
@@ -454,7 +453,6 @@ export const randomConditional = (
   { truthy, falsy }: { truthy: any; falsy: any }
 ): any => (Math.random() >= probability ? truthy : falsy);
 
-
 export function addDays(date: Date, days: number): Date {
   // https://stackoverflow.com/questions/563406/how-to-add-days-to-date
   const result = new Date(date);
@@ -471,7 +469,6 @@ export function secondsToDate(seconds: number) {
   return new Date(seconds * 1000);
 }
 
-
 export const composeUrl = (url: string, params: Record<string, any>) => {
   const composedUrl = new URL(url);
   return new URL(
@@ -481,8 +478,6 @@ export const composeUrl = (url: string, params: Record<string, any>) => {
     ])}`
   );
 };
-
-
 
 /**
  *
@@ -498,7 +493,6 @@ export function getParams(paramKeys: string[], asPath: string): Obj {
     return Object.assign({ ...obj, [curr]: params.get(curr) });
   }, {});
 }
-
 
 /**
  * * @SEE: https://stackoverflow.com/a/20728864
@@ -517,7 +511,6 @@ export const getSearchQuery = (searchParams: URLSearchParams) => {
   for (const [key, value] of entries) query[key] = value;
   return query;
 };
-
 
 export function isEmpty(obj: any) {
   if (!obj) return true;

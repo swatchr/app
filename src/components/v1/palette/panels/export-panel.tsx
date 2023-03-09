@@ -90,6 +90,7 @@ export function ExportPanel({
           {Object.keys(exportItems).map((key) => {
             const item = exportItems[key as keyof typeof exportItems];
             const contrast = colorMode === 'light' ? 'gray.200' : 'gray.800';
+            // eslint-disable-next-line react-hooks/rules-of-hooks
             const { isCopied, copy } = useClipboard({
               text: item.stringify(palette),
               onCopy: () => {

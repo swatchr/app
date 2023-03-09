@@ -53,7 +53,8 @@ export function Palette() {
   useEffect(() => {
     if (JSON.stringify(currentPalette) === JSON.stringify(palette)) return;
     updatePalette(currentPalette);
-  }, [currentPalette]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentPalette]); // @FIXME: @WIP:
 
   return (
     <>

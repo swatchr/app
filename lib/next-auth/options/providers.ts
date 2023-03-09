@@ -2,15 +2,15 @@
 import CredentialsProvider from 'next-auth/providers/credentials';
 import GoogleProvider from 'next-auth/providers/google';
 
+import { prisma } from '@/server/db';
 import { type NextAuthOptions } from 'next-auth';
 
 env;
-import { prisma } from '@/server/db';
 // import EmailProvider from 'next-auth/providers/email';
 // import { ONE_DAY } from '@/utils';
+import { env } from '@/env.mjs';
 import { TEST_ENV } from '@/utils';
 import { comparePasswords } from '../services';
-import { env } from '@/env.mjs';
 
 const google = GoogleProvider({
   clientId: env.GOOGLE_CLIENT_ID,

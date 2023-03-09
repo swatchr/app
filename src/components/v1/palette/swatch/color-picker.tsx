@@ -32,7 +32,7 @@ export function ColorPickerWrapper({
   const closePicker = useCallback(() => {
     if (view !== 'picker') return;
     onClick();
-  }, []);
+  }, [onClick, view]);
 
   useOutsideClick({ ref: popover, handler: closePicker });
 

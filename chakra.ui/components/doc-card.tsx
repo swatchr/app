@@ -19,7 +19,11 @@ type DocCardProps = {
   links?: DocLink[];
 };
 
-export const DocCard: React.FC<DocCardProps> = ({ name, description, links }) => {
+export const DocCard: React.FC<DocCardProps> = ({
+  name,
+  description,
+  links,
+}) => {
   return (
     <Flex
       as={Link}

@@ -5,8 +5,8 @@ import { chakra } from '@chakra-ui/react';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 
-import { getConsent } from 'lib/analytics';
 import { isBrowser } from '@/utils';
+import { getConsent } from 'lib/analytics';
 import { Banner } from './banner';
 
 const ChNextLink = chakra(Link);

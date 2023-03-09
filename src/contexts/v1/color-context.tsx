@@ -58,7 +58,7 @@ export const ColorProvider: React.FC<ColorProviderProps> = ({
       // if (!newColor || newColor === color) return;
       paletteHandlers.updateSwatch(index, newColor);
     },
-    [index, paletteHandlers.updateSwatch]
+    [index, paletteHandlers]
   );
 
   const history = useSwatchUndo(color, updateColor);
@@ -94,7 +94,7 @@ export const ColorProvider: React.FC<ColorProviderProps> = ({
     );
     console.log(color, instance.complement, text);
     console.groupEnd();
-  }, [color]);
+  }, [color, instance.complement, instance.contrast]);
 
   /* -------------------------------------------------------------------------- */
   /*                                   EXPORTS                                  */
@@ -109,7 +109,14 @@ export const ColorProvider: React.FC<ColorProviderProps> = ({
       activeSwatchIndex: paletteState.activeSwatchIndex,
       palette: paletteState.palette,
     }),
-    [color, index, paletteState.activeSwatchIndex, paletteState.palette]
+    [
+      color,
+      index,
+      instance,
+      isActive,
+      paletteState.activeSwatchIndex,
+      paletteState.palette,
+    ]
   );
 
   const colorDispatchValue: ColorDispatchValue = useMemo(

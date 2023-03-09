@@ -1,1 +1,1 @@
-export * from "./proprietary"
+export * from './proprietary';

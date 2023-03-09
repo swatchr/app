@@ -1,5 +1,5 @@
-import Color from 'lib/color';
 import { Box, Button, Flex, HStack, VStack } from '@chakra-ui/react';
+import Color from 'lib/color';
 import { useState } from 'react';
 
 export function ColorBlindnessSimulator({
