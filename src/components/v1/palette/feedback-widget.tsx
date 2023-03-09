@@ -1,6 +1,5 @@
 import {
   Button,
-  ButtonProps,
   chakra,
   Checkbox,
   FormControl,
@@ -12,7 +11,8 @@ import {
 } from '@chakra-ui/react';
 import { useReducer } from 'react';
 
-// import { useFeedback } from '@/queries';
+import type { ButtonProps } from '@chakra-ui/react';
+
 import { EMAIL_REGEX } from '@/utils';
 import { api } from '@/utils/api';
 import { Popover } from 'chakra.ui';

@@ -6,14 +6,11 @@ import {
   useMemo,
 } from 'react';
 
-import {
-  Palette,
-  Swatch,
-  usePaletteDispatch,
-  usePaletteState,
-} from '@/contexts';
+import type { Palette, Swatch } from '@/contexts';
+import type Color from 'lib/color';
+
+import { usePaletteDispatch, usePaletteState } from '@/contexts';
 import { useKeyboardShortcut } from '@/hooks';
-import Color from 'lib/color';
 import { useSwatchUndo } from './hooks/use-swatch-undo';
 import { useTinyColor } from './hooks/use-tinycolor';
 

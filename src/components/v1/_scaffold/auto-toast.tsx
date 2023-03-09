@@ -1,7 +1,10 @@
-import { Obj } from '@/types';
-import { getParams, subscribe, unsubscribe } from '@/utils';
 import { useToast } from '@chakra-ui/react';
-import { FC, ReactNode, useEffect } from 'react';
+import { useEffect } from 'react';
+
+import type { Obj } from '@/types';
+import type { FC, ReactNode } from 'react';
+
+import { getParams, subscribe, unsubscribe } from '@/utils';
 
 export type ToastStatusOptions =
   | 'info'

@@ -7,14 +7,11 @@ import {
   VisuallyHidden,
   VStack,
 } from '@chakra-ui/react';
-
-import {
-  useColorDispatch,
-  useColorState,
-  useContentDispatch,
-  useDisclosureDispatch,
-} from '@/contexts';
 import { useCallback } from 'react';
+
+import type { useColorDispatch, useColorState } from '@/contexts';
+
+import { useContentDispatch, useDisclosureDispatch } from '@/contexts';
 import {
   AAAIcon,
   DiceIcon,

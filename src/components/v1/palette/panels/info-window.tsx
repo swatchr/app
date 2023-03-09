@@ -15,14 +15,15 @@ import {
 } from '@chakra-ui/react';
 import { useMemo, useState } from 'react';
 
+import type { ColorDispatchValue } from '@/contexts';
+import type { Scales } from '@/contexts/v1/hooks/use-tinycolor';
+
 import {
-  ColorDispatchValue,
   useColorDispatch,
   useColorState,
   useContentDispatch,
   useContentState,
 } from '@/contexts';
-import { Scales } from '@/contexts/v1/hooks/use-tinycolor';
 import { useClipboard } from '@/hooks';
 import { capitalize } from '@/utils';
 import { MotionBox } from 'chakra.ui';

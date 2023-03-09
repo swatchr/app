@@ -1,4 +1,4 @@
-import tinycolor, { Instance } from 'tinycolor2';
+import tinycolor, { type Instance } from 'tinycolor2';
 
 export type ColorHarmonyMode =
   | 'complement'

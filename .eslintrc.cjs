@@ -16,7 +16,7 @@ const config = {
     project: './tsconfig.json',
   },
   plugins: ['@typescript-eslint', 'prettier'],
-  extends: ['next/core-web-vitals'],
+  extends: ['next/core-web-vitals', 'prettier'],
   rules: {
     '@typescript-eslint/consistent-type-imports': [
       'warn',

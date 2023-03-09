@@ -2,12 +2,12 @@ import {
   Slider,
   SliderFilledTrack,
   SliderMark,
-  SliderMarkProps,
-  SliderProps,
   SliderThumb,
   SliderTrack,
 } from '@chakra-ui/react';
-import { HslColor } from 'react-colorful';
+
+import type { SliderMarkProps, SliderProps } from '@chakra-ui/react';
+import type { HslColor } from 'react-colorful';
 
 type SliderMarkVal = {
   label?: string;

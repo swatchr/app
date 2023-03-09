@@ -1,6 +1,5 @@
 import {
   Box,
-  BoxProps,
   Button,
   ButtonGroup,
   Center,
@@ -8,6 +7,8 @@ import {
   Tooltip,
   VStack,
 } from '@chakra-ui/react';
+
+import type { BoxProps } from '@chakra-ui/react';
 
 import { motion } from 'framer-motion';
 

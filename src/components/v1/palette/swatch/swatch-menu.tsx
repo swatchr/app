@@ -2,7 +2,8 @@ import { SimpleGrid, useToast } from '@chakra-ui/react';
 import { AnimatePresence } from 'framer-motion';
 import { useCallback, useEffect, useState } from 'react';
 
-import { useColorDispatch, useColorState } from '@/contexts';
+import type { useColorDispatch, useColorState } from '@/contexts';
+
 import { useKeyboardShortcut } from '@/hooks/use-keyboard-shortcut';
 import { Controls, FilterControls } from '../controls';
 

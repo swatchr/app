@@ -10,10 +10,10 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import tinycolor from 'tinycolor2';
 
 import type { ColorDispatchValue } from '@/contexts';
+import type Color from 'lib/color';
 
 import { useDebounce } from '@/hooks';
 import { SmallCloseIcon } from '@chakra-ui/icons';
-import Color from 'lib/color';
 import { BrightnessIcon, HueIcon, SaturationIcon } from '../../icons';
 import { ControlWrapper } from './control-wrapper';
 import { SimpleSlider } from './simple-slider';

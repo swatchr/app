@@ -1,4 +1,4 @@
-import { Prisma } from '@prisma/client';
+import type { Prisma } from '@prisma/client';
 
 import { addDays } from '../../../src/utils';
 import { hashPassword } from '../../next-auth';
