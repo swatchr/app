@@ -40,7 +40,10 @@ export function Controls({
   const { openAndUpdate } = useContentDispatch(); // used to toggle scales / combos panel
 
   const { toggleActive } = useDisclosureDispatch(); // used to toggle info panel
-  const toggleInfoActive = useCallback(() => toggleActive('info'), []);
+  const toggleInfoActive = useCallback(
+    () => toggleActive('info'),
+    [toggleActive]
+  );
 
   return (
     <>

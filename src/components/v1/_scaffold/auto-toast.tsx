@@ -54,7 +54,7 @@ export const AutoToast: FC<{
     return () => {
       unsubscribe('show-toast', () => {});
     };
-  }, []);
+  }, [toast]);
 
   useEffect(() => {
     if (!hasMessage) return;
@@ -67,7 +67,7 @@ export const AutoToast: FC<{
       position: 'top-right',
     });
     () => null;
-  }, [hasMessage]);
+  }, [hasMessage, props.message, props.status, toast]);
 
   return null;
 };

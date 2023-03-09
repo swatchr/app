@@ -23,5 +23,4 @@ export const session: CallbacksOptions['session'] = ({
   return session;
 };
 
-
-export const callbacks = {jwt, session}
+export const callbacks = { jwt, session };

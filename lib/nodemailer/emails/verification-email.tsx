@@ -12,17 +12,12 @@ export function verificationEmail({
 }) {
   return (
     <EmailWrapper subject={subject}>
-      <Box
-        p={4}
-        borderWidth={1}
-        borderRadius={4}
-        bg="#000"
-      >
+      <Box p={4} borderWidth={1} borderRadius={4} bg="#000">
         <Heading as="h1" size="xl" mb={4}>
           Hey!👋 Thanks for joining the Swatchr Beta!
         </Heading>
         <Heading as="h2" size="lg" mb={4}>
-          Let's get you started.
+          Let&aposs get you started.
         </Heading>
         <Text mb={4}>
           An account is pending for the following email:{' '}

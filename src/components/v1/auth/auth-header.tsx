@@ -22,7 +22,7 @@ export function AuthPageHeader({ type = 'signin' }: AuthPageHeaderProps) {
               Log in to your account
             </Heading>
             <HStack spacing="1" justify="center">
-              <Text>Don't have an account?</Text>
+              <Text>Don&apost have an account?</Text>
               <ChLink color="link" href="/auth/register">
                 Sign up
               </ChLink>

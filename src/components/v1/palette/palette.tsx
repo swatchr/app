@@ -20,9 +20,9 @@ import {
   usePaletteDispatch,
   usePaletteState,
 } from '@/contexts';
-import Color from 'lib/color';
 import { isDev } from '@/utils';
 import { Drawer } from 'chakra.ui';
+import Color from 'lib/color';
 import { ColorBlindnessSimulator } from './color-blindness-simulator';
 import { HeaderIconStack } from './header-icon-stack';
 
@@ -152,7 +152,7 @@ export function LogoCredits() {
                   href={'https://www.joshbeckman.org/'}
                   isExternal
                 >
-                  Josh Beckman's
+                  Josh Beckman&aposs
                 </Link>
                 free color api project allows us to query the closest matching
                 names of each color.

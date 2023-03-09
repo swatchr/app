@@ -9,6 +9,7 @@ export function EmailWrapper({
 }) {
   return (
     <html>
+      {/* eslint-disable-next-line @next/next/no-head-element */}
       <head>
         <meta charSet="utf-8" />
         <title>{subject || 'Swatchr App'}</title>

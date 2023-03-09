@@ -3,8 +3,8 @@ import { NextResponse } from 'next/server';
 
 import type { NextRequest } from 'next/server';
 
-import { isDev } from './utils';
 import { env } from './env.mjs';
+import { isDev } from './utils';
 
 // @SEE: https://supabase.com/docs/guides/auth/auth-helpers/nextjs#auth-with-nextjs-middleware
 export async function middleware(req: NextRequest) {

@@ -20,7 +20,7 @@ export const ComingSoon: FC = () => {
           width="500"
           height="430"
           objectFit="contain"
-          src={`/uploads/assets/brand/rupi-new-logo-optimized.webp`}
+          src={'/uploads/assets/brand/rupi-new-logo-optimized.webp'}
           alt=""
           priority
         />

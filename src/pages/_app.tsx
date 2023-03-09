@@ -1,17 +1,17 @@
 import { SkipNavLink } from '@chakra-ui/skip-nav';
 import { Analytics } from '@vercel/analytics/react';
-import Head from 'next/head';
 import { SessionProvider } from 'next-auth/react';
+import Head from 'next/head';
 
-import { type AppType } from 'next/app';
 import { type Session } from 'next-auth';
+import { type AppType } from 'next/app';
 
-import { api } from '@/utils/api';
-import { ErrorBoundary } from '@/utils';
-import { ChakraWrapper } from 'chakra.ui';
-import { NextComponentTypeWithAuth } from '@/types';
-import { AuthGate } from '@/components/v1/auth';
 import { AutoToast, getToastStatus } from '@/components/';
+import { AuthGate } from '@/components/v1/auth';
+import { NextComponentTypeWithAuth } from '@/types';
+import { ErrorBoundary } from '@/utils';
+import { api } from '@/utils/api';
+import { ChakraWrapper } from 'chakra.ui';
 
 const MyApp: AppType<{ session: Session | null }> = ({
   Component,

@@ -14,9 +14,9 @@ import { useReducer } from 'react';
 
 // import { useFeedback } from '@/queries';
 import { EMAIL_REGEX } from '@/utils';
+import { api } from '@/utils/api';
 import { Popover } from 'chakra.ui';
 import { FeedbackIcon } from '../icons';
-import { api } from '@/utils/api';
 
 type FeedbackState = {
   feedback: string | undefined;
@@ -135,7 +135,7 @@ export function FeedbackWidget({
       {mutation.status === 'error' ? (
         <WidgetStatesUi>
           <chakra.p fontSize="xs">
-            ❌ We're sorry, there was an error, try again.
+            ❌ We&aposre sorry, there was an error, try again.
           </chakra.p>
         </WidgetStatesUi>
       ) : mutation.status === 'success' ? (

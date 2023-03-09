@@ -12,8 +12,8 @@ import tinycolor from 'tinycolor2';
 import type { ColorDispatchValue } from '@/contexts';
 
 import { useDebounce } from '@/hooks';
-import Color from 'lib/color';
 import { SmallCloseIcon } from '@chakra-ui/icons';
+import Color from 'lib/color';
 import { BrightnessIcon, HueIcon, SaturationIcon } from '../../icons';
 import { ControlWrapper } from './control-wrapper';
 import { SimpleSlider } from './simple-slider';
@@ -40,10 +40,11 @@ export function FilterControls({
     if (hex !== color) {
       updateColor(hex);
     }
-  }, [hex, color]);
+  }, [hex, color, updateColor]);
 
   const handleColorChange = useCallback(
     (prop: keyof typeof hsl) =>
+      // eslint-disable-next-line react-hooks/rules-of-hooks
       useDebounce((val: number) => {
         setHsl((prevState) => ({ ...prevState, [prop]: Number(val) }));
       }, 300),
