@@ -8,15 +8,13 @@ import {
   Link,
   useDisclosure,
 } from '@chakra-ui/react';
-import { Reorder } from 'framer-motion';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useState } from 'react';
 
 import { LogoIcon, Swatch } from '@/components';
 import {
   ColorProvider,
   ContentProvider,
   DisclosureProvider,
-  usePaletteDispatch,
   usePaletteState,
 } from '@/contexts';
 import { isDev } from '@/utils';
@@ -28,8 +26,6 @@ import { ExportPanel } from './panels/export-panel';
 
 export function Palette() {
   const { palette } = usePaletteState();
-  const { updatePalette } = usePaletteDispatch();
-  const [currentPalette, setCurrentPalette] = useState(palette);
 
   const [showCB, setShowCB] = useState(false);
   const showColorBlindness = useCallback(
@@ -40,77 +36,34 @@ export function Palette() {
   const contrast =
     new Color(palette[0]!).contrast == 'dark' ? 'whiteAlpha' : 'blackAlpha';
 
-  const { isOpen, onOpen, onClose } = useDisclosure(); // for export modal
-  const openModal = useCallback(() => {
-    if (isOpen) return;
-    onOpen();
-  }, [isOpen, onOpen]);
-  const closeModal = useCallback(() => {
-    if (!isOpen) return;
-    onClose();
-  }, [isOpen, onClose]);
-
-  useEffect(() => {
-    if (JSON.stringify(currentPalette) === JSON.stringify(palette)) return;
-    updatePalette(currentPalette);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [currentPalette]); // @FIXME: @WIP:
+  const { isOpen, onOpen, onClose } = useDisclosure(); // export modal
 
   return (
     <>
       <HeaderIconStack
         palette={palette}
-        openModal={openModal}
+        openModal={onOpen}
         showColorBlindness={showColorBlindness}
         showCB={showCB}
       />
-      <ExportPanel isOpen={isOpen} onClose={closeModal} />
+      <ExportPanel isOpen={isOpen} onClose={onClose} />
       {showCB ? (
         <ColorBlindnessSimulator contrast={contrast} palette={palette} />
       ) : null}
-
-      {false ? ( // WIP drag and drop reorder swatches
-        <Flex
-          m={0}
-          p={0}
-          gap={0}
-          w="full"
-          as={Reorder.Group}
-          axis="x"
-          values={currentPalette}
-          onReorder={setCurrentPalette}
-          className="swatches"
-        >
-          {currentPalette && currentPalette.length
-            ? currentPalette.map((swatch, index) => (
-                <Box key={index} w="full" as={Reorder.Item} value={swatch}>
-                  <ColorProvider color={swatch} index={index}>
-                    <ContentProvider>
-                      <DisclosureProvider>
-                        <Swatch index={index} />
-                      </DisclosureProvider>
-                    </ContentProvider>
-                  </ColorProvider>
-                </Box>
-              ))
-            : null}
-        </Flex>
-      ) : (
-        <Flex className="swatches" m={0} p={0} gap={0}>
-          {palette && palette.length
-            ? palette.map((swatch, index) => (
-                <ColorProvider key={index} color={swatch} index={index}>
-                  <ContentProvider>
-                    <DisclosureProvider>
-                      <Swatch index={index} />
-                    </DisclosureProvider>
-                  </ContentProvider>
-                </ColorProvider>
-              ))
-            : null}
-        </Flex>
-      )}
-
+      (
+      <Flex className="swatches" m={0} p={0} gap={0}>
+        {palette && palette.length
+          ? palette.map((swatch, index) => (
+              <ColorProvider key={index} color={swatch} index={index}>
+                <ContentProvider>
+                  <DisclosureProvider>
+                    <Swatch index={index} />
+                  </DisclosureProvider>
+                </ContentProvider>
+              </ColorProvider>
+            ))
+          : null}
+      </Flex>
       <LogoCredits />
     </>
   );
@@ -138,7 +91,6 @@ export function LogoCredits() {
           minH="20vh"
           p={4}
           my={4}
-          // bg="gray.700"
           rounded="md"
         >
           <chakra.h3 fontFamily="mono">Credits</chakra.h3>
@@ -153,7 +105,8 @@ export function LogoCredits() {
                   href={'https://www.joshbeckman.org/'}
                   isExternal
                 >
-                  Josh Beckman&aposs
+                  {/* eslint-disable-next-line react/no-unescaped-entities */}
+                  Josh Beckman's
                 </Link>
                 free color api project allows us to query the closest matching
                 names of each color.

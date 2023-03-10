@@ -30,20 +30,11 @@ export function InfoPanel({
   index: number | undefined;
 }) {
   const [info, setInfo] = useState<ColorApiClientInfo>();
-  // const { status } = useColorScheme({
-  //   hex: color.replace('#', ''),
-  //   mode: 'analogic-complement',
-  //   count: 5,
-  //   options: {
-  //     onSuccess: (data: ColorApiScheme) => {
-  //       setInfo(createColorInfo(data?.seed, instance));
-  //     },
-  //   },
-  // });
 
   const { status, isLoading, isError } = api.color.scheme.useQuery(
     { hex: color.replace('#', '') },
     {
+      enabled: !!color,
       onSuccess: (data: ColorApiScheme) => {
         setInfo(createColorInfo(data?.seed, instance));
       },
