@@ -70,7 +70,6 @@ export function InfoWindow() {
           ) : null}
           {type === 'match' ? (
             <ColorScales
-              color={color}
               instance={instance}
               onClose={onClose}
               colorHandlers={colorHandlers}
@@ -78,7 +77,6 @@ export function InfoWindow() {
           ) : null}
           {type === 'combos' ? (
             <ColorCombos
-              color={color}
               instance={instance}
               onClose={onClose}
               colorHandlers={colorHandlers}
@@ -91,12 +89,10 @@ export function InfoWindow() {
 }
 
 export function ColorScales({
-  color,
   instance,
   onClose,
   colorHandlers,
 }: {
-  color: string;
   instance: Color;
   onClose: () => void;
   colorHandlers: ColorDispatchValue;
