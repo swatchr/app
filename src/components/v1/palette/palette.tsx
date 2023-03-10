@@ -20,6 +20,7 @@ import {
 import { isDev } from '@/utils';
 import { Drawer } from 'chakra.ui';
 import Color from 'lib/color';
+import { LogoIconNew } from '../icons/swatchr/logo-icon-new';
 import { ColorBlindnessSimulator } from './color-blindness-simulator';
 import { HeaderIconStack } from './header-icon-stack';
 import { ExportPanel } from './panels/export-panel';
@@ -74,9 +75,9 @@ export function LogoCredits() {
   return (
     <Box position="absolute" bottom={12} right={12} cursor="pointer">
       <Icon
-        as={LogoIcon}
-        boxSize={10}
-        filter="drop-shadow(0.1rem 0.1rem 0.1rem #000)"
+        as={LogoIconNew}
+        boxSize={14}
+        filter="drop-shadow(0.1rem 0.1rem 0.1rem #333)"
         onClick={() => setShowCredits(true)}
       />
       <Drawer
