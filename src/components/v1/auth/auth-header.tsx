@@ -22,7 +22,8 @@ export function AuthPageHeader({ type = 'signin' }: AuthPageHeaderProps) {
               Log in to your account
             </Heading>
             <HStack spacing="1" justify="center">
-              <Text>Don&apost have an account?</Text>
+              {/* eslint-disable-next-line react/no-unescaped-entities */}
+              <Text>Don't have an account?</Text>
               <ChLink color="link" href="/auth/register">
                 Sign up
               </ChLink>
