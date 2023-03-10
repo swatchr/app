@@ -65,6 +65,7 @@ export const Popover: React.FC<CustomPopoverProps> = ({
       isOpen={open || isOpen}
       onOpen={onOpen}
       onClose={onClose}
+      autoFocus={true}
       {...popoverProps}
     >
       <PopoverTrigger>
@@ -89,7 +90,7 @@ export const Popover: React.FC<CustomPopoverProps> = ({
           <Button onClick={onOpen}>Open</Button>
         )}
       </PopoverTrigger>
-      <PopoverContent maxW={96} my={3} {...props}>
+      <PopoverContent {...props}>
         <PopoverCloseButton />
         {content?.header ? (
           <PopoverHeader>{content.header}</PopoverHeader>
