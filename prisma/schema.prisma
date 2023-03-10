@@ -48,16 +48,17 @@ model Session {
 }
 
 model User {
-    id            String    @id @default(cuid())
+    id            String     @id @default(cuid())
     name          String?
-    email         String?   @unique
+    email         String?    @unique
     emailVerified DateTime?
     image         String?
     password      String?
     roleType      String?
-    roles         Role?     @relation(fields: [roleType], references: [type], onDelete: SetDefault)
+    roles         Role?      @relation(fields: [roleType], references: [type], onDelete: SetDefault)
     accounts      Account[]
     sessions      Session[]
+    Favorite      Favorite[]
 }
 
 model VerificationToken {
@@ -72,4 +73,56 @@ model Role {
     id   String @id @default(cuid())
     type String @unique
     user User[]
+}
+
+model Color {
+    id         String     @id @default(cuid())
+    hex        String     @unique
+    rgb        String     @unique
+    hsl        String     @unique
+    cmyk       String     @unique
+    hsv        String     @unique
+    name       String
+    contrast   String
+    complement String
+    text       String
+    Palette    Palette?   @relation(fields: [paletteId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+    paletteId  String?
+    tags       Tag[]
+    Favorite   Favorite[]
+}
+
+model Palette {
+    id        String     @id @default(cuid())
+    name      String
+    colors    Color[]
+    createdAt DateTime   @default(now())
+    updatedAt DateTime   @updatedAt
+    tags      Tag[]
+    Favorite  Favorite[]
+}
+
+model Tag {
+    id           String   @id @default(cuid())
+    name         String   @unique
+    createdAt    DateTime @default(now())
+    updatedAt    DateTime @updatedAt
+    Palette      Palette? @relation(fields: [paletteId], references: [id])
+    paletteId    String?
+    Color        Color?   @relation(fields: [colorId], references: [id])
+    colorId      String?
+    paletteCount Int?     @default(0)
+    colorCount   Int?     @default(0)
+}
+
+model Favorite {
+    id        String   @id @default(cuid())
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+    user      User     @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+    userId    String
+    palette   Palette? @relation(fields: [paletteId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+    paletteId String?
+    color     Color?   @relation(fields: [colorId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+    colorId   String?
 }
