@@ -6,11 +6,12 @@
  */
 import { httpBatchLink, loggerLink } from '@trpc/client';
 import { createTRPCNext } from '@trpc/next';
-import { type inferRouterInputs, type inferRouterOutputs } from '@trpc/server';
 import superjson from 'superjson';
 
-import { type AppRouter } from '@/server/api/root';
-import { NextPageContext } from 'next';
+import type { AppRouter } from '@/server/api/root';
+import type { inferRouterInputs, inferRouterOutputs } from '@trpc/server';
+import type { NextPageContext } from 'next';
+
 import { DEFAULT_STALE_TIME, ONE_DAY_MS } from './constants';
 
 const getBaseUrl = () => {
