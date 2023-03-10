@@ -1,4 +1,4 @@
-import { Box, Center, Flex, SlideFade, useDisclosure } from '@chakra-ui/react';
+import { Center, Flex, SlideFade, useDisclosure } from '@chakra-ui/react';
 import { motion, useAnimation } from 'framer-motion';
 import { useCallback, useEffect, useState } from 'react';
 
@@ -8,6 +8,7 @@ import {
   useDisclosureDispatch,
 } from '@/contexts';
 import { useMounted } from '@/hooks/use-mounted';
+import { useThemeColors } from 'chakra.ui';
 import { ColorPickerWrapper, EditableHexInput, SwatchMenu } from '.';
 import { InfoPanel, InfoWindow } from '../panels';
 
@@ -19,6 +20,9 @@ export function Swatch({ index }: { index: number }) {
   const [reset, setReset] = useState(false);
   const colorState = useColorState();
   const colorHandlers = useColorDispatch();
+
+  const { text: themeTexts } = useThemeColors();
+  const text = colorState.instance.getBestContrastColor(themeTexts);
 
   const { isActive } = useDisclosureDispatch(); // used for info panel
   const mounted = useMounted();
@@ -68,6 +72,7 @@ export function Swatch({ index }: { index: number }) {
         colorHandlers.paletteHandlers.activateSwatch(-1);
         swatchMenuOnClose();
       }}
+      color={text} // all of the icons and text inherit the text color
     >
       <SlideFade in={mounted} offsetX={-96} reverse unmountOnExit>
         <Center
@@ -115,7 +120,6 @@ export function Swatch({ index }: { index: number }) {
             ) : null}
           </Center>
         </Center>
-
         <InfoPanel {...colorState} index={isActive('info') ? 0 : undefined} />
         <InfoWindow />
       </SlideFade>

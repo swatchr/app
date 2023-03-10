@@ -1,7 +1,6 @@
 import {
   Box,
   Center,
-  chakra,
   HStack,
   Icon,
   VisuallyHidden,
@@ -32,8 +31,6 @@ export function Controls({
   colorHandlers: ReturnType<typeof useColorDispatch>;
   setFilterView: () => void;
 }) {
-  const fillColor = colorState.instance.getContrastColors()[1];
-
   const { openAndUpdate } = useContentDispatch(); // used to toggle scales / combos panel
 
   const { toggleActive } = useDisclosureDispatch(); // used to toggle info panel
@@ -51,7 +48,6 @@ export function Controls({
         gridArea="stack1"
         gridColumn="span 3"
         justify="space-between"
-        color={colorState.instance.getContrastColors()[1]}
       >
         <ControlWrapper
           label="HSL Filters"
@@ -61,9 +57,9 @@ export function Controls({
           <Icon
             as={FiltersIcon}
             aria-label="HSL Filters"
-            fill={fillColor}
-            stroke={fillColor}
-            color={fillColor}
+            fill={'currentColor'}
+            stroke={'currentColor'}
+            color={'currentColor'}
             tabIndex={0}
             boxSize="5"
           />
@@ -77,9 +73,9 @@ export function Controls({
             <Icon
               as={DiceIcon}
               aria-label="Random Color"
-              fill={fillColor}
-              stroke={fillColor}
-              color={fillColor}
+              fill={'currentColor'}
+              stroke={'currentColor'}
+              color={'currentColor'}
               tabIndex={1}
             />
           </Box>
@@ -117,9 +113,9 @@ export function Controls({
             <Icon
               as={InfoIcon}
               aria-label="Show Info"
-              fill={fillColor}
-              stroke={fillColor}
-              color={fillColor}
+              fill={'currentcolor'}
+              stroke={'currentcolor'}
+              color={'currentcolor'}
               tabIndex={1}
             />
           </Box>
@@ -131,9 +127,9 @@ export function Controls({
           <Icon
             as={AAAIcon}
             aria-label="Show Color Scale Button"
-            fill={fillColor}
-            stroke={fillColor}
-            color={fillColor}
+            fill={'currentcolor'}
+            stroke={'currentcolor'}
+            color={'currentcolor'}
             tabIndex={0}
             boxSize="5"
           />
@@ -145,9 +141,9 @@ export function Controls({
           <Icon
             as={ScalesIcon}
             aria-label="Show Color Scale Button"
-            fill={fillColor}
-            stroke={fillColor}
-            color={fillColor}
+            fill={'currentColor'}
+            stroke={'currentColor'}
+            color={'currentColor'}
             tabIndex={0}
             boxSize={5}
           />
@@ -159,9 +155,9 @@ export function Controls({
           <Icon
             as={PaletteIcon}
             aria-label="Show Color Scale Button"
-            fill={fillColor}
-            stroke={fillColor}
-            color={fillColor}
+            fill={'currentColor'}
+            stroke={'currentColor'}
+            color={'currentColor'}
             tabIndex={0}
             boxSize="5"
           />

@@ -51,36 +51,19 @@ export function InfoPanel({
         bg: 'blackAlpha.50',
       }}
     >
-      <Accordion
-        w="full"
-        fontSize="md"
-        rounded="md"
-        allowToggle
-        color={instance.getContrastColors()[1]}
-        index={index}
-      >
+      <Accordion w="full" fontSize="md" rounded="md" allowToggle index={index}>
         <AccordionBox
           title={hasInfo ? info?.name?.value : undefined}
-          icon={{
-            Component: InfoIcon,
-            fillColor: instance.getContrastColors()[1],
-          }}
+          icon={{ Component: InfoIcon }}
           status={status}
-          contrast={instance.contrast}
+          contrast={instance.contrast} // used for bg color
           w={72}
           border="1px"
           isDisabled={!info}
         >
           <Flex direction="column" gap={4}>
             {Object.entries(info || {}).map(([field, item]) => {
-              return (
-                <InfoListItem
-                  key={field}
-                  field={field}
-                  item={item}
-                  instance={instance}
-                />
-              );
+              return <InfoListItem key={field} field={field} item={item} />;
             })}
           </Flex>
         </AccordionBox>
@@ -89,15 +72,7 @@ export function InfoPanel({
   );
 }
 
-function InfoListItem({
-  instance,
-  field,
-  item,
-}: {
-  instance: Color;
-  field: string;
-  item: any;
-}) {
+function InfoListItem({ field, item }: { field: string; item: any }) {
   const toast = useToast();
 
   const { isCopied, copy } = useClipboard({
@@ -116,10 +91,7 @@ function InfoListItem({
   return (
     <HStack
       key={field}
-      color={instance.getContrastColors()[1]}
       p={1}
-      borderBottom="1px"
-      borderColor="blackAlpha.100"
       borderRadius="md"
       _hover={{ bg: 'blackAlpha.200' }}
     >
@@ -134,17 +106,17 @@ function InfoListItem({
         )}
         {['rgb', 'hsl', 'hsv', 'cmyk', 'hex'].includes(field) ? (
           <Button
-            color={instance.getContrastColors()[1]}
             colorScheme="blackAlpha"
             size="xs"
             variant="outline"
             onClick={copy}
             fontSize="2xs"
+            color="inherit"
           >
             <Icon
               as={isCopied ? CheckIcon : CopyIcon}
-              fill={instance.getContrastColors()[1]}
-              stroke={instance.getContrastColors()[1]}
+              fill={'currentColor'}
+              stroke={'currentColor'}
             />
           </Button>
         ) : null}

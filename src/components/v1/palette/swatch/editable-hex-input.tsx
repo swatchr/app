@@ -15,7 +15,6 @@ import {
   HEX_COLOR_WITHOUT_HASH_REGEX,
   HEX_COLOR_WITHOUT_HASH_REGEX_STRING,
 } from '@/utils';
-import { useThemeColors } from 'chakra.ui';
 
 export function EditableHexInput({
   colorState,
@@ -25,7 +24,6 @@ export function EditableHexInput({
   handleChange: ColorDispatchValue['history']['handleChange'];
 }) {
   const [value, setValue] = useState(colorState.color?.replace('#', ''));
-  const { text } = useThemeColors();
 
   useEffect(
     () => setValue(colorState.color?.replace('#', '')),
@@ -38,17 +36,12 @@ export function EditableHexInput({
     }
   };
 
-  // blackAlpha.400 is the button bg on active
-  // blackAlpha.300 is the button bg on hover
-  // blackAlpha.200 is the button bg default
-
   return (
     <Center
       className="hex-input"
       position="absolute"
       fontFamily="heading"
       fontSize="3xl"
-      color={colorState.instance.getBestContrastColor(text)}
       onClick={(e) => e.stopPropagation()}
       zIndex={2} // must appear above color picker
       maxW="80%"

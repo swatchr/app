@@ -22,7 +22,6 @@ export function PaletteControls({
   const isOnlySwatch = palette.length === 1;
 
   const contrast = instance.contrast === 'dark' ? 'blackAlpha' : 'whiteAlpha';
-  const fillColor = instance.contrast === 'dark' ? 'whiteAlpha' : 'blackAlpha';
   return (
     <>
       <ControlWrapper
@@ -38,7 +37,7 @@ export function PaletteControls({
           size="2rem"
           rounded="50%"
           colorScheme={`${contrast}`}
-          color={`${fillColor}.500`}
+          color={'currentcolor'}
           onClick={handleAddSwatch}
           disabled={index === 4}
         />
@@ -60,7 +59,7 @@ export function PaletteControls({
           size="2rem"
           rounded="50%"
           colorScheme={`${contrast}`}
-          color={`${fillColor}.500`}
+          color={'currentColor'}
           onClick={handleRemoveSwatch}
           disabled={isOnlySwatch && index === 0}
         />

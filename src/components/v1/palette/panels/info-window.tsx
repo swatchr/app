@@ -1,4 +1,4 @@
-import { CopyIcon, SmallCloseIcon } from '@chakra-ui/icons';
+import { SmallCloseIcon } from '@chakra-ui/icons';
 import {
   Box,
   Button,
@@ -101,7 +101,6 @@ export function ColorScales({
   onClose: () => void;
   colorHandlers: ColorDispatchValue;
 }) {
-  // const toast = useToast();
   const [mode, setMode] = useState<Scales>('analogic');
 
   let contrastColor =
@@ -120,23 +119,13 @@ export function ColorScales({
   }, [colorHandlers?.tinycolor, mode]);
 
   return (
-    <Box
-      w="full"
-      py={1}
-      mb={2}
-      position="relative"
-      color={instance.getContrastColors()[1]}
-    >
+    <Box w="full" py={1} mb={2} position="relative">
       <HStack
         justifyContent="space-between"
         borderBottom="1px"
-        borderColor={`${contrastColor}.400`}
+        borderColor="currentColor"
       >
-        <Icon
-          as={PaletteIcon}
-          opacity={0.6}
-          fill={instance.getContrastColors()[1]}
-        />
+        <Icon as={PaletteIcon} opacity={0.6} fill={'currentColor'} />
         <chakra.p w="full" p={1} fontSize="sm" textAlign="center">
           {capitalize(mode)}
         </chakra.p>
@@ -147,8 +136,7 @@ export function ColorScales({
           aria-label="close window"
           icon={<SmallCloseIcon />}
           bg="transparent"
-          // color="gray.500"
-          color={instance.getContrastColors()[1]}
+          color={'currentColor'}
           size="xs"
           colorScheme="contrastColor"
           onClick={onClose}
@@ -170,7 +158,7 @@ export function ColorScales({
         mt={4}
         pt={3}
         borderTop="1px solid"
-        borderColor={`${contrastColor}.400`}
+        borderColor="currentColor"
         gap={1.5}
       >
         <chakra.p fontSize="sm">Mode:</chakra.p>
@@ -190,7 +178,7 @@ export function ColorScales({
                   bg={`${contrastColor}.100`}
                   rounded="md"
                   border={isSelected ? '1px' : 'initial'}
-                  borderColor={isSelected ? `${contrastColor}.500` : 'initial'}
+                  borderColor={isSelected ? 'currentColor' : 'initial'}
                   cursor="pointer"
                   onClick={() => setMode(currentMode as Scales)}
                 />
@@ -264,12 +252,10 @@ const ScaledColorItems = ({
 
 export type ComboModes = 'aa' | 'aaa' | 'fails';
 export function ColorCombos({
-  color,
   instance,
   onClose,
   colorHandlers,
 }: {
-  color: string;
   instance: Color;
   onClose: () => void;
   colorHandlers: ColorDispatchValue;
@@ -291,23 +277,13 @@ export function ColorCombos({
   }, [colorHandlers?.tinycolor, instance, mode]);
 
   return (
-    <Box
-      w="full"
-      py={1}
-      mb={2}
-      position="relative"
-      color={instance.getContrastColors()[1]}
-    >
+    <Box w="full" py={1} mb={2} position="relative">
       <HStack
         justifyContent="space-between"
         borderBottom="1px"
         borderColor={`${contrastColor}.300`}
       >
-        <Icon
-          as={ColorMixIcon}
-          opacity={0.6}
-          fill={instance.getContrastColors()[1]}
-        />
+        <Icon as={ColorMixIcon} opacity={0.6} fill="currentColor" />
         <chakra.p w="full" p={1} fontSize="sm" textAlign="center">
           WCAG Combinations
         </chakra.p>
@@ -318,7 +294,7 @@ export function ColorCombos({
           aria-label="close window"
           icon={<SmallCloseIcon />}
           bg="transparent"
-          color={instance.getContrastColors()[1]}
+          color={'currentColor'}
           size="xs"
           colorScheme="contrastColor"
           onClick={onClose}
@@ -416,7 +392,7 @@ export function ColorCombos({
         as="ul"
         pt={3}
         borderTop="0.25px solid"
-        borderColor={`${contrastColor}.300`}
+        borderColor={'currentColor'}
         gap={1.5}
         justifyContent="flex-end"
       >
@@ -475,24 +451,16 @@ export function MonochromeScale({
     instance.contrast === 'dark' ? 'blackAlpha' : 'whiteAlpha';
 
   const scales = useMemo(() => {
-    // return colorHandlers?.tinycolor.generateScale(mode);
     return new Color(color).generateColorScales('monochrome', 15);
   }, [color]);
   return (
-    <Box
-      position="relative"
-      w={72}
-      h="100vh"
-      py={1}
-      mb={2}
-      color={instance.getContrastColors()[1]}
-    >
+    <Box position="relative" w={72} h="100vh" py={1} mb={2}>
       <Box position="relative" zIndex="10">
         <IconButton
           position="absolute"
           right={0}
           aria-label=""
-          icon={<SmallCloseIcon fill="black" />}
+          icon={<SmallCloseIcon fill="gray.800" />}
           colorScheme={contrastColor}
           onClick={onClose}
           size="sm"
@@ -530,7 +498,7 @@ export function MonochromeScale({
               bg={_c}
               w={'full'}
               h={7}
-              color={contrast === 'dark' ? '#000' : '#FFF'}
+              color={contrast === 'dark' ? 'gray.800' : 'gray.200'}
               cursor="pointer"
               _hover={{
                 h: 12,

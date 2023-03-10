@@ -14,7 +14,7 @@ import type Color from 'lib/color';
 
 import { useDebounce } from '@/hooks';
 import { SmallCloseIcon } from '@chakra-ui/icons';
-import { BrightnessIcon, HueIcon, SaturationIcon } from '../../icons';
+import { BrightnessIcon, SaturationIcon } from '../../icons';
 import { ControlWrapper } from './control-wrapper';
 import { SimpleSlider } from './simple-slider';
 
@@ -30,8 +30,6 @@ export function FilterControls({
   updateColor: ColorDispatchValue['history']['handleChange'];
   setDefaultView: () => void;
 }) {
-  const fillColor = instance.getContrastColors()[1];
-
   const [hsl, setHsl] = useState(instance.toHsl(color));
 
   const hex = useMemo(() => tinycolor(hsl).toHexString(), [hsl]);
@@ -63,12 +61,7 @@ export function FilterControls({
       >
         <ControlWrapper label="Close Filters (⌘ + F)" action={setDefaultView}>
           <Box boxSize="1.35rem" tabIndex={-1}>
-            <Icon
-              as={SmallCloseIcon}
-              aria-label="Close Filters"
-              fill={'red'}
-              stroke={fillColor}
-            />
+            <Icon as={SmallCloseIcon} aria-label="Close Filters" />
           </Box>
         </ControlWrapper>
       </HStack>
@@ -76,7 +69,6 @@ export function FilterControls({
         gridArea="stack2"
         py={1}
         mb={14}
-        color={instance.getContrastColors()[1]}
         justifyContent="flex-end"
         tabIndex={-1}
         my="auto"
@@ -89,7 +81,11 @@ export function FilterControls({
             tabIndex={-1}
             justifyContent="center"
           >
-            <Icon aria-label="Brightness" as={BrightnessIcon} />
+            <Icon
+              aria-label="Brightness"
+              as={BrightnessIcon}
+              fill="currentcolor"
+            />
             <SimpleSlider
               min={0}
               max={1}
@@ -113,7 +109,6 @@ export function FilterControls({
       <VStack
         py={1}
         mb={14}
-        color={instance.getContrastColors()}
         justifyContent="flex-end"
         gridArea="stack4"
         tabIndex={-1}
@@ -127,7 +122,11 @@ export function FilterControls({
             tabIndex={-1}
             justifyContent="center"
           >
-            <Icon aria-label="Saturation" as={SaturationIcon} />
+            <Icon
+              aria-label="Saturation"
+              as={SaturationIcon}
+              fill="currentcolor"
+            />
             <SimpleSlider
               min={0}
               max={1}
@@ -156,7 +155,6 @@ export function FilterControls({
             tabIndex={-1}
             alignItems="center"
           >
-            {/* <Icon aria-label="Hue" as={HueIcon} /> */}
             <SimpleSlider
               min={0}
               max={360}

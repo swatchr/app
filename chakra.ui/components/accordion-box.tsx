@@ -3,17 +3,18 @@ import {
   AccordionIcon,
   AccordionItem,
   AccordionPanel,
-  Box,
   Center,
   chakra,
-  ComponentWithAs,
   Flex,
   Icon,
-  IconProps,
   Spinner,
 } from '@chakra-ui/react';
 
-import type { AccordionItemProps } from '@chakra-ui/react';
+import type {
+  AccordionItemProps,
+  ComponentWithAs,
+  IconProps,
+} from '@chakra-ui/react';
 
 import { capitalize } from '@/utils';
 
@@ -33,7 +34,6 @@ export const AccordionBox: React.FC<
     title?: string;
     icon?: {
       Component: ComponentWithAs<'svg', IconProps>;
-      fillColor?: string;
       props?: IconProps;
     };
     status?: ReactQueryStatus;
@@ -53,7 +53,7 @@ export const AccordionBox: React.FC<
     >
       <AccordionButton as={Flex} justifyContent="space-between">
         {icon ? (
-          <Icon as={icon.Component} fill={icon.fillColor} {...icon.props} />
+          <Icon as={icon.Component} fill={'currentColor'} {...icon.props} />
         ) : null}
         {status ? (
           // if there is a status then implement loading otherwise show title
@@ -63,20 +63,16 @@ export const AccordionBox: React.FC<
             ) : status === 'error' ? (
               'No info Available'
             ) : title ? (
-              // <Box as="span" flex="1" textAlign="center">
               <chakra.p fontSize="sm" cursor="pointer">
                 {capitalize(title)}
               </chakra.p>
-            ) : // </Box>
-            null}
+            ) : null}
           </Center>
         ) : title ? (
-          // <Box as="span" flex="1" textAlign="center">
           <chakra.p fontSize="sm" cursor="pointer">
             {capitalize(title)}
           </chakra.p>
-        ) : // </Box>
-        null}
+        ) : null}
         <AccordionIcon />
       </AccordionButton>
       <AccordionPanel maxH="30vh" overflowY="auto">
