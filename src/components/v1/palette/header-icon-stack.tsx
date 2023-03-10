@@ -28,13 +28,13 @@ export function HeaderIconStack({
 
   const contrast =
     new Color(palette[palette.length - 1]!).contrast == 'dark'
-      ? 'WhiteAlpha'
-      : 'blackAlpha';
+      ? 'blackAlpha'
+      : 'whiteAlpha';
 
   const fillColor =
     new Color(palette[palette.length - 1]!).contrast == 'dark'
-      ? 'gray.300'
-      : 'gray.900';
+      ? 'gray.900'
+      : 'gray.300';
 
   const handleSave = () => {
     savePalette();
