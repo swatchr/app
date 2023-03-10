@@ -120,9 +120,9 @@ export function Swatch({ index }: { index: number }) {
             ) : null}
           </Center>
         </Center>
-        <InfoPanel {...colorState} index={isActive('info') ? 0 : undefined} />
-        <InfoWindow />
       </SlideFade>
+      <InfoPanel {...colorState} index={isActive('info') ? 0 : undefined} />
+      <InfoWindow />
     </Flex>
   );
 }

@@ -67,9 +67,16 @@ export const AvatarMenu: React.FC = () => {
             as={Avatar}
             name={String(session?.user?.email ?? '')}
             src={session?.user?.image ?? ''}
-            _hover={{ cursor: 'pointer', border: 'lg' }}
             loading="lazy"
             shadow="md"
+            opacity={0.6}
+            _hover={{
+              cursor: 'pointer',
+              border: 'lg',
+              opacity: 1,
+              shadow: 'sm',
+            }}
+            transition="all 0.2s"
           />
         ) : (
           <Spinner />

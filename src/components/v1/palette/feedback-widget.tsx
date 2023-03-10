@@ -4,8 +4,10 @@ import {
   Checkbox,
   FormControl,
   HStack,
+  IconButton,
   Input,
   Textarea,
+  Tooltip,
   useDisclosure,
   VStack,
 } from '@chakra-ui/react';
@@ -25,17 +27,17 @@ type FeedbackState = {
 };
 function CustomFeedbackTrigger({ ...props }: ButtonProps) {
   return (
-    <Button
-      aria-label="Feedback"
-      leftIcon={<FeedbackIcon boxSize={'0.8rem'} fill="currentColor" />}
-      size="md"
-      {...props}
-    >
-      Feedback
-    </Button>
+    <Tooltip label="Feedback">
+      <IconButton
+        aria-label="Feedback"
+        icon={<FeedbackIcon boxSize={'1.2rem'} fill="currentColor" />}
+        size="md"
+        {...props}
+      />
+    </Tooltip>
   );
 }
-function WidgetStatesUi({ children }: { children: React.ReactNode }) {
+function WidgetStatesWrapper({ children }: { children: React.ReactNode }) {
   return (
     <VStack
       justifyContent="center"
@@ -104,11 +106,7 @@ export function FeedbackWidget({
   return (
     <Popover
       open={isOpen}
-      popoverProps={{
-        id: 'feedback-popover',
-        placement: 'bottom-start',
-        gutter: 24,
-      }}
+      popoverProps={{}}
       customButton={{
         Component: CustomFeedbackTrigger,
         props: { fill, color: fill, isDisabled },
@@ -131,17 +129,20 @@ export function FeedbackWidget({
           </chakra.p>
         ),
       }}
+      mt={12}
+      ml={-24}
     >
       {mutation.status === 'error' ? (
-        <WidgetStatesUi>
+        <WidgetStatesWrapper>
           <chakra.p fontSize="xs">
-            ❌ We&aposre sorry, there was an error, try again.
+            {/* eslint-disable-next-line react/no-unescaped-entities ------ */}
+            ❌ We're sorry, there was an error, try again.
           </chakra.p>
-        </WidgetStatesUi>
+        </WidgetStatesWrapper>
       ) : mutation.status === 'success' ? (
-        <WidgetStatesUi>
+        <WidgetStatesWrapper>
           <chakra.p fontSize="xs">✅ Thank you for your feedback!</chakra.p>
-        </WidgetStatesUi>
+        </WidgetStatesWrapper>
       ) : (
         <FeedbackForm
           handleSubmit={handleSubmit}

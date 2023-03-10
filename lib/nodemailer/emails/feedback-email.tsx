@@ -17,8 +17,9 @@ export function feedbackEmail({
           Hey!👋 Thanks for providing your feedback
         </Heading>
         <Text mb={4}>
-          We&aposll keep you updated on this issue. You&aposll receive updates
-          at {partialMaskEmail(email)}
+          {/* eslint-disable-next-line react/no-unescaped-entities  */}
+          We'll keep you updated on this issue. You'll receive updates at{' '}
+          {partialMaskEmail(email)}
         </Text>
       </Box>
     </EmailWrapper>

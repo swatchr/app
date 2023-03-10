@@ -17,7 +17,8 @@ export function verificationEmail({
           Hey!👋 Thanks for joining the Swatchr Beta!
         </Heading>
         <Heading as="h2" size="lg" mb={4}>
-          Let&aposs get you started.
+          {/* eslint-disable-next-line react/no-unescaped-entities */}
+          Let's get you started.
         </Heading>
         <Text mb={4}>
           An account is pending for the following email:{' '}

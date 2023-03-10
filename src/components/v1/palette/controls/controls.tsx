@@ -65,7 +65,7 @@ export function Controls({
           />
         </ControlWrapper>
         <ControlWrapper
-          label="Random Color"
+          label="Randomize"
           shortcuts={['SPACE']}
           action={colorHandlers.tinycolor.generateRandomColor}
         >
@@ -108,7 +108,7 @@ export function Controls({
         <PaletteControls index={colorState.index} modifier="increment" />
       </VStack>
       <HStack gridArea="stack5" py={2} px={1} justifyContent="space-between">
-        <ControlWrapper label="Color Info" action={toggleInfoActive}>
+        <ControlWrapper label="Info" action={toggleInfoActive}>
           <Box boxSize="1.5rem">
             <Icon
               as={InfoIcon}
@@ -121,7 +121,7 @@ export function Controls({
           </Box>
         </ControlWrapper>
         <ControlWrapper
-          label="Color Combinations"
+          label="Combinations"
           action={() => openAndUpdate('combos')}
         >
           <Icon
@@ -134,10 +134,7 @@ export function Controls({
             boxSize="5"
           />
         </ControlWrapper>
-        <ControlWrapper
-          label="Color Scale"
-          action={() => openAndUpdate('scales')}
-        >
+        <ControlWrapper label="Scale" action={() => openAndUpdate('scales')}>
           <Icon
             as={ScalesIcon}
             aria-label="Show Color Scale Button"
@@ -148,10 +145,7 @@ export function Controls({
             boxSize={5}
           />
         </ControlWrapper>
-        <ControlWrapper
-          label="Color Match"
-          action={() => openAndUpdate('match')}
-        >
+        <ControlWrapper label="Match" action={() => openAndUpdate('match')}>
           <Icon
             as={PaletteIcon}
             aria-label="Show Color Scale Button"
