@@ -4,8 +4,10 @@ import {
   Checkbox,
   FormControl,
   HStack,
+  IconButton,
   Input,
   Textarea,
+  Tooltip,
   useDisclosure,
   VStack,
 } from '@chakra-ui/react';
@@ -25,14 +27,14 @@ type FeedbackState = {
 };
 function CustomFeedbackTrigger({ ...props }: ButtonProps) {
   return (
-    <Button
-      aria-label="Feedback"
-      leftIcon={<FeedbackIcon boxSize={'0.8rem'} fill="currentColor" />}
-      size="md"
-      {...props}
-    >
-      Feedback
-    </Button>
+    <Tooltip label="Feedback">
+      <IconButton
+        aria-label="Feedback"
+        icon={<FeedbackIcon boxSize={'1.2rem'} fill="currentColor" />}
+        size="md"
+        {...props}
+      />
+    </Tooltip>
   );
 }
 function WidgetStatesUi({ children }: { children: React.ReactNode }) {
@@ -107,7 +109,7 @@ export function FeedbackWidget({
       popoverProps={{
         id: 'feedback-popover',
         placement: 'bottom-start',
-        gutter: 24,
+        // gutter: 24,
       }}
       customButton={{
         Component: CustomFeedbackTrigger,
@@ -135,7 +137,8 @@ export function FeedbackWidget({
       {mutation.status === 'error' ? (
         <WidgetStatesUi>
           <chakra.p fontSize="xs">
-            ❌ We&aposre sorry, there was an error, try again.
+            {/* eslint-disable-next-line react/no-unescaped-entities ------ */}
+            ❌ We're sorry, there was an error, try again.
           </chakra.p>
         </WidgetStatesUi>
       ) : mutation.status === 'success' ? (
