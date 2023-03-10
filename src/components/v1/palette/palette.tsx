@@ -50,7 +50,6 @@ export function Palette() {
       {showCB ? (
         <ColorBlindnessSimulator contrast={contrast} palette={palette} />
       ) : null}
-      (
       <Flex className="swatches" m={0} p={0} gap={0}>
         {palette && palette.length
           ? palette.map((swatch, index) => (
