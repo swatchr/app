@@ -95,7 +95,7 @@ export const Popover: React.FC<CustomPopoverProps> = ({
         {content?.header ? (
           <PopoverHeader>{content.header}</PopoverHeader>
         ) : null}
-        <PopoverArrow color="blue.300" />
+        <PopoverArrow />
         <PopoverBody>{children}</PopoverBody>
         {content?.footer ? (
           <PopoverFooter>{content.footer}</PopoverFooter>

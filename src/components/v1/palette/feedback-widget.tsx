@@ -109,7 +109,7 @@ export function FeedbackWidget({
       popoverProps={{}}
       customButton={{
         Component: CustomFeedbackTrigger,
-        props: { fill, color: fill, isDisabled },
+        props: { fill, color: 'inherit', isDisabled },
       }}
       content={{
         header: (
