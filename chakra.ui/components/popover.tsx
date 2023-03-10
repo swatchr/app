@@ -1,24 +1,27 @@
 import {
   Button,
-  ButtonProps,
-  ComponentWithAs,
   IconButton,
-  IconButtonProps,
-  IconProps,
   Popover as ChPopover,
   PopoverArrow,
   PopoverBody,
   PopoverCloseButton,
   PopoverContent,
-  PopoverContentProps,
   PopoverFooter,
   PopoverHeader,
-  PopoverProps,
   PopoverTrigger,
   useDisclosure,
 } from '@chakra-ui/react';
 
-import Color from 'lib/color';
+import type {
+  ButtonProps,
+  ComponentWithAs,
+  IconButtonProps,
+  IconProps,
+  PopoverContentProps,
+  PopoverProps,
+} from '@chakra-ui/react';
+import type Color from 'lib/color';
+
 import Image from 'next/image';
 
 type CustomPopoverProps = {
@@ -62,12 +65,6 @@ export const Popover: React.FC<CustomPopoverProps> = ({
       isOpen={open || isOpen}
       onOpen={onOpen}
       onClose={onClose}
-      placement="right-end"
-      flip={true}
-      autoFocus={true}
-      boundary="clippingParents"
-      closeOnEsc={true}
-      computePositionOnMount={true}
       {...popoverProps}
     >
       <PopoverTrigger>
@@ -84,6 +81,7 @@ export const Popover: React.FC<CustomPopoverProps> = ({
             {...icon.props}
           />
         ) : image ? (
+          // eslint-disable-next-line jsx-a11y/alt-text
           <Image {...image} onClick={onOpen} />
         ) : customButton ? (
           <customButton.Component onClick={onOpen} {...customButton.props} />
