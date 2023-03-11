@@ -82,10 +82,10 @@ model Color {
     hsl        String     @unique
     cmyk       String     @unique
     hsv        String     @unique
-    name       String
-    contrast   String
-    complement String
-    text       String
+    name       String?
+    contrast   String?
+    complement String?
+    text       String?
     Palette    Palette?   @relation(fields: [paletteId], references: [id], onDelete: Cascade, onUpdate: Cascade)
     paletteId  String?
     tags       Tag[]

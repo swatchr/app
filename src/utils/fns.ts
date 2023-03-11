@@ -382,6 +382,24 @@ export function makeValidHex(hex: string | null, fallback: string): string {
   }
 }
 
+export function validateAndConvertHexColor(hex: string): string | null {
+  // Check that the input is a string of length 3 or 6 and consists of only hexadecimal characters
+  const validHexRegex = /^([0-9A-Fa-f]{3}){1,2}$/; // @TODO: test with other regix
+  if (!validHexRegex.test(hex)) {
+    return null;
+  }
+
+  // If the input is 3 characters long, convert it to its 6 character counterpart
+  if (hex.length === 3) {
+    hex = hex
+      .split('')
+      .map((char) => char + char)
+      .join('');
+  }
+
+  return hex.toUpperCase();
+}
+
 /* -------------------------------------------------------------------------- */
 /*                               RANDOM HELPERS                               */
 /* -------------------------------------------------------------------------- */

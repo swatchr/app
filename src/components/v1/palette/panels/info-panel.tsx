@@ -31,7 +31,7 @@ export function InfoPanel({
 }) {
   const [info, setInfo] = useState<ColorApiClientInfo>();
 
-  const { status, isLoading, isError } = api.color.scheme.useQuery(
+  const { status, isLoading, isError } = api.color.schemeAPI.useQuery(
     { hex: color.replace('#', '') },
     {
       enabled: !!color,

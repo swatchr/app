@@ -1,27 +1,166 @@
 import { z } from 'zod';
 
+import type { TRPCContext } from '@/server/api/trpc';
+
 import { createTRPCRouter, publicProcedure } from '@/server/api/trpc';
+import {
+  HEX_COLOR_WITHOUT_HASH_REGEX,
+  validateAndConvertHexColor,
+} from '@/utils';
+import { trpcPrismaErrorHandler } from '@/utils/error';
+import Color from 'lib/color';
 import { handleServerError } from '../utils';
 
+const colorApiSchema = z.object({
+  hex: z.object({
+    value: z.string(),
+    clean: z.string(),
+  }),
+  rgb: z.object({
+    value: z.string(),
+  }),
+  hsl: z.object({
+    value: z.string(),
+  }),
+  hsv: z.object({
+    value: z.string(),
+  }),
+  name: z.object({
+    value: z.string(),
+  }),
+  cmyk: z.object({
+    value: z.string(),
+  }),
+  // image: z.object({
+  //   bare: z.string(),
+  //   named: z.string(),
+  // }),
+  contrast: z.object({
+    value: z.string(),
+  }),
+});
+
+export type ColorApiSchema = z.infer<typeof colorApiSchema>;
+
+async function createColor(ctx: TRPCContext, hex: string) {
+  const res = await fetchTheColorApi(hex, 'id');
+  const data = colorApiSchema.parse(res);
+  if (!data.hex.clean) throw new Error('there was an issue');
+  const color = new Color(data.hex.clean);
+  return (
+    data.hex.clean &&
+    ctx.prisma.color.create({
+      data: {
+        hex: data.hex.clean,
+        rgb: data.rgb.value,
+        hsl: data.hsl.value,
+        hsv: data.hsv.value,
+        cmyk: data.cmyk.value,
+        name: data.name.value,
+        contrast: data.contrast.value,
+        complement: color.complement,
+        text: color.contrast === 'light' ? '#000' : '#fff',
+      },
+    })
+  );
+}
+
+const fetchTheColorApi = async (hex: string, endpoint = 'scheme') => {
+  const mode = 'analogic-complement';
+  const count = 10;
+  try {
+    const res = await fetch(
+      `https://www.thecolorapi.com/${endpoint}?hex=${hex}&mode=${mode}&count=${count}`,
+      {
+        headers: {
+          'Access-Control-Allow-Origin': '*',
+        },
+      }
+    );
+
+    return res.json();
+  } catch (e) {
+    return handleServerError(e, 'There was an issue with fetching data');
+  }
+};
+
+const colorExists = async (ctx: TRPCContext, hex: string) => {
+  const color = await ctx.prisma.color.findUnique({
+    where: { hex: hex },
+  });
+  return color;
+};
+
+// @TODO: throw errors instead foe each query
 export const colorRouter = createTRPCRouter({
-  scheme: publicProcedure
+  schemeAPI: publicProcedure
     .input(z.object({ hex: z.string() }))
     .query(async ({ input }) => {
-      const mode = 'analogic-complement';
-      const count = 10;
+      const hex = validateAndConvertHexColor(input.hex);
       try {
-        const res = await fetch(
-          `https://www.thecolorapi.com/scheme?hex=${input.hex}&mode=${mode}&count=${count}`,
-          {
-            headers: {
-              'Access-Control-Allow-Origin': '*',
-            },
-          }
-        );
-
-        return res.json();
-      } catch (e) {
-        return handleServerError(e, 'There was an issue with fetching data');
+        if (!hex) throw new Error(`not valid hex | input: ${input.hex}`);
+        const res = await fetchTheColorApi(hex);
+        return res;
+      } catch (error) {
+        trpcPrismaErrorHandler(error);
+      }
+    }),
+  colorAPI: publicProcedure
+    .input(z.object({ hex: z.string(), endpoint: z.string().optional() }))
+    .query(async ({ input }) => {
+      const hex = validateAndConvertHexColor(input.hex);
+      try {
+        if (!hex) throw new Error(`not valid hex | input: ${input.hex}`);
+        const res = await fetchTheColorApi(hex, input.endpoint ?? 'id');
+        return res;
+      } catch (error) {
+        trpcPrismaErrorHandler(error);
+      }
+    }),
+  get: publicProcedure
+    .input(z.object({ hex: z.string() }))
+    .query(async ({ ctx, input }) => {
+      const hex = validateAndConvertHexColor(input.hex);
+      try {
+        if (!hex) throw new Error(`not valid hex | input: ${input.hex}`);
+        const color = ctx.prisma.color.findUnique({
+          where: { hex: hex },
+        });
+        return color;
+      } catch (error) {
+        trpcPrismaErrorHandler(error);
+      }
+    }),
+  save: publicProcedure
+    .input(z.object({ hex: z.string() }))
+    .mutation(async ({ ctx, input }) => {
+      const hex = validateAndConvertHexColor(input.hex);
+      try {
+        if (!hex) throw new Error(`not valid hex | input: ${input.hex}`);
+        const colorExists = await ctx.prisma.color.findUnique({
+          where: { hex: hex },
+        });
+        if (!colorExists) {
+          const color = await createColor(ctx, hex);
+          return color;
+        }
+        return colorExists;
+      } catch (error) {
+        trpcPrismaErrorHandler(error);
+      }
+    }),
+  delete: publicProcedure
+    .input(z.object({ hex: z.string() }))
+    .mutation(async ({ ctx, input }) => {
+      const hex = validateAndConvertHexColor(input.hex);
+      if (!hex) return console.error('not valid hex', input.hex);
+      try {
+        const color = await ctx.prisma.color.delete({
+          where: { hex: hex },
+        });
+        return color;
+      } catch (error) {
+        trpcPrismaErrorHandler(error);
       }
     }),
 });

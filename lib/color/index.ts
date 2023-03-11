@@ -69,6 +69,27 @@ class Color {
     return color ? tinycolor(color).toHsl() : this.color.toHsl();
   }
 
+  toCmykString(hex?: string): string {
+    // Remove # character if present
+    hex = hex?.replace('#', '');
+
+    // Convert hex to RGB values
+    let r = parseInt(hex?.substr(0, 2)!, 16) / 255;
+    let g = parseInt(hex?.substr(2, 2)!, 16) / 255;
+    let b = parseInt(hex?.substr(4, 2)!, 16) / 255;
+
+    // Calculate CMYK values
+    let k = Math.min(1 - r, 1 - g, 1 - b);
+    let c = (1 - r - k) / (1 - k);
+    let m = (1 - g - k) / (1 - k);
+    let y = (1 - b - k) / (1 - k);
+
+    // Format CMYK values as a string
+    return `${Math.round(c * 100)}%, ${Math.round(m * 100)}%, ${Math.round(
+      y * 100
+    )}%, ${Math.round(k * 100)}%`;
+  }
+
   darken(amount: number, color?: string): string {
     return color
       ? tinycolor(color).darken(amount).toHexString()
