@@ -30,7 +30,7 @@ export const signIn: CallbacksOptions['signIn'] = ({
   email,
   credentials,
 }) => {
-  // must specify a validation check for each provider
+  // @NOTE: must specify a validation check for each provider
   if (account?.provider === 'google' && profile?.email) {
     return profile?.email.endsWith('@gmail.com');
   }

@@ -39,6 +39,7 @@
     "@types/jsonwebtoken": "^9.0.1",
     "@vercel/analytics": "^0.1.11",
     "analytics": "^0.8.1",
+    "analytics-plugin-do-not-track": "^0.1.5",
     "bcryptjs": "^2.4.3",
     "framer-motion": "^10.2.3",
     "jsonwebtoken": "^9.0.0",

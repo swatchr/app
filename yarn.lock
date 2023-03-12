@@ -1791,6 +1791,11 @@ ajv@^6.10.0, ajv@^6.12.4:
     json-schema-traverse "^0.4.1"
     uri-js "^4.2.2"
 
+analytics-plugin-do-not-track@^0.1.5:
+  version "0.1.5"
+  resolved "https://registry.yarnpkg.com/analytics-plugin-do-not-track/-/analytics-plugin-do-not-track-0.1.5.tgz#e5a3ffb14b900538d322402c71bad065bf9932cd"
+  integrity sha512-Bnadur6Y8UB2GrZD11SXAmIVraPpsVINcU8cgbq6ynJIE00xrcJ/RhqFdqqIM7Heyuze93FhcEKLl5WGV9N9mA==
+
 analytics-utils@^1.0.10:
   version "1.0.10"
   resolved "https://registry.yarnpkg.com/analytics-utils/-/analytics-utils-1.0.10.tgz#e44078176c67005e5b11aae1dc538202744a5ca5"

@@ -18,26 +18,18 @@ export const CustomAnalytics: React.FC<IAnalytics> = ({ asPath }) => {
 
   useEffect(() => {
     if (status === 'loading') return;
-    if (status === 'authenticated') {
-      analytics.identify(
-        session.user.id!,
-        {
-          email: session.user.email,
-          name: session.user.name,
-          image: session.user.image,
-          anon: getAnonId()!,
-          ip: ip,
-        },
-        () => console.log('Identified user')
-      );
-    } else if (status === 'unauthenticated') {
+    if (status === 'unauthenticated') {
       const anon = getAnonId();
-      analytics.identify(anon!, { ip }, () =>
-        console.log('Identified anon user', anon, ip)
+      analytics.identify(
+        anon!,
+        {
+          category: 'anon',
+          label: 'anon-user',
+          value: 1,
+        },
+        () => console.log('Identified anon user', anon, ip)
       );
     }
-
-    // @TODO: create new random user using shortname
   }, [session, status, ip]);
 
   return null;

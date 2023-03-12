@@ -56,14 +56,6 @@ export const AvatarMenu: React.FC = () => {
   const { data: session, status } = useSession();
   const isUser = status !== 'loading' && !!session?.user;
 
-  const handleSignIn = () => {
-    signIn('google');
-    analytics.track('Sign In', { method: 'Google' });
-  };
-  const handleSignOut = () => {
-    signOut();
-    analytics.track('Sign Out');
-  };
   return (
     <Box pos="fixed" top={9} right={6} zIndex="dropdown">
       <Menu
@@ -96,9 +88,9 @@ export const AvatarMenu: React.FC = () => {
           {defaultLinks?.length ? defaultLinks?.map(routeLink) : null}
           {isUser ? protectedRoutes?.map(routeLink) : null}
           {isUser ? (
-            <MenuItemButton label="sign out" onClick={handleSignOut} />
+            <MenuItemButton label="sign out" onClick={() => signOut()} />
           ) : (
-            <MenuItemButton label="sign in" onClick={handleSignIn} />
+            <MenuItemButton label="sign in" onClick={() => signIn('google')} />
           )}
         </MenuList>
       </Menu>
