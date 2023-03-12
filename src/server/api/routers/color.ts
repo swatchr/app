@@ -84,7 +84,7 @@ const fetchTheColorApi = async (hex: string, endpoint = 'scheme') => {
   }
 };
 
-const colorExists = async (ctx: TRPCContext, hex: string) => {
+const hexExists = async (ctx: TRPCContext, hex: string) => {
   const color = await ctx.prisma.color.findUnique({
     where: { hex: hex },
   });
@@ -137,13 +137,13 @@ export const colorRouter = createTRPCRouter({
       const hex = validateAndConvertHexColor(input.hex);
       try {
         if (!hex) throw new Error(`not valid hex | input: ${input.hex}`);
-        const colorExists = await ctx.prisma.color.findUnique({
-          where: { hex: hex },
-        });
+        const colorExists = await hexExists(ctx, hex);
+
         if (!colorExists) {
           const color = await createColor(ctx, hex);
           return color;
         }
+
         return colorExists;
       } catch (error) {
         trpcPrismaErrorHandler(error);
@@ -153,7 +153,7 @@ export const colorRouter = createTRPCRouter({
     .input(z.object({ hex: z.string() }))
     .mutation(async ({ ctx, input }) => {
       const hex = validateAndConvertHexColor(input.hex);
-      if (!hex) return console.error('not valid hex', input.hex);
+      if (!hex) throw new Error(`not valid hex | input: ${input.hex}`);
       try {
         const color = await ctx.prisma.color.delete({
           where: { hex: hex },
