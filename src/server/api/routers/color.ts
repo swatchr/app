@@ -3,10 +3,7 @@ import { z } from 'zod';
 import type { TRPCContext } from '@/server/api/trpc';
 
 import { createTRPCRouter, publicProcedure } from '@/server/api/trpc';
-import {
-  HEX_COLOR_WITHOUT_HASH_REGEX,
-  validateAndConvertHexColor,
-} from '@/utils';
+import { validateAndConvertHexColor } from '@/utils';
 import { trpcPrismaErrorHandler } from '@/utils/error';
 import Color from 'lib/color';
 import { handleServerError } from '../utils';

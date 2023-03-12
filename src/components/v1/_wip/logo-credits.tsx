@@ -1,18 +1,6 @@
-import {
-  Box,
-  Button,
-  chakra,
-  Container,
-  HStack,
-  Icon,
-  Input,
-  InputGroup,
-  Link,
-  VisuallyHidden,
-} from '@chakra-ui/react';
+import { Box, chakra, Container, HStack, Icon, Link } from '@chakra-ui/react';
 import { useState } from 'react';
 
-import { InputUser } from '@/hooks/use-input';
 import { isDev } from '@/utils';
 import { Drawer, Sidebar } from 'chakra.ui';
 import { LogoIconNew } from '../icons/swatchr/logo-icon-new';
