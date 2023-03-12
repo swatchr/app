@@ -16,6 +16,8 @@ import {
 import Color from 'lib/color';
 
 import { useKeyboardShortcut } from '@/hooks';
+import { api } from '@/utils/api';
+import { makeValidHex } from '../../utils/fns';
 
 export type Swatch = string;
 export type Palette = Swatch[];
@@ -91,6 +93,8 @@ export const PaletteProvider: React.FC<PaletteProviderProps> = ({
     initialState
   );
 
+  const colorMutation = api.color.save.useMutation();
+
   useEffect(() => {
     if (colorParams.length) {
       setState({ palettes: [colorParams] });
@@ -132,19 +136,27 @@ export const PaletteProvider: React.FC<PaletteProviderProps> = ({
   const addSwatch = useCallback(
     (swatchIndex: number) => {
       const newColor = new Color('#BADA55').random();
+      colorMutation.mutate({
+        hex: newColor.startsWith('#') ? newColor.replace('#', '') : newColor,
+      });
       setState({
         palette: insertAtIndex(palette, swatchIndex, newColor),
       });
     },
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- do not add colorMutation to deps
     [setState, palette]
   );
 
   const updateSwatch = useCallback(
     (swatchIndex: number, newColor: string) => {
+      colorMutation.mutate({
+        hex: newColor.startsWith('#') ? newColor.replace('#', '') : newColor,
+      });
       setState({
         palette: updateArrayAtIndex(palette, swatchIndex, () => newColor),
       });
     },
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- do not add colorMutation to deps
     [setState, palette]
   );
 
