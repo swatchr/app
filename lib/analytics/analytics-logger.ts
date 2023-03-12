@@ -16,7 +16,7 @@ export function loggerPlugin() {
     },
     /* Identify user */
     identify: ({ payload }: { payload: Record<string, any> }) => {
-      console.log('📊 Aidentify', payload);
+      console.log('📊 AIdentify', payload);
     },
   };
 }
