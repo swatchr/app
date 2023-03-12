@@ -2,13 +2,11 @@ import { isClient } from '@/utils';
 import mixpanelPlugin from '@analytics/mixpanel';
 import Analytics from 'analytics';
 
-import { getCookie } from '@analytics/cookie-utils';
-
 export function getConsent(): boolean {
   if (!isClient) return false;
   // @TTODO: extract key name to const and use in other places
-  const consent = getCookie('app-consent');
-  if (consent !== null || consent !== undefined) return JSON.parse(consent);
+  const consent = localStorage.getItem('app-consent');
+  if (consent !== null) return JSON.parse(consent);
   localStorage.setItem('app-consent', 'false');
   return false;
 }
