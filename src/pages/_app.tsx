@@ -9,7 +9,7 @@ import type { AppType } from 'next/app';
 
 import { AutoToast, CustomAnalytics, getToastStatus } from '@/components/';
 import { AuthGate } from '@/components/v1/auth';
-import { ErrorBoundary } from '@/utils';
+import { ErrorBoundary, isDev } from '@/utils';
 import { api } from '@/utils/api';
 import { ChakraWrapper } from 'chakra.ui';
 
@@ -34,7 +34,7 @@ const MyApp: AppType<{ session: Session | null }> = ({
       </SkipNavLink>
       <ErrorBoundary>
         <SessionProvider session={session}>
-          <CustomAnalytics asPath={router.asPath} />
+          {!isDev ? <CustomAnalytics asPath={router.asPath} /> : null}
           <ChakraWrapper>
             <AutoToast
               status={status}

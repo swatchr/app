@@ -33,6 +33,7 @@ const server = z.object({
 const client = z.object({
   // NEXT_PUBLIC_CLIENTVAR: z.string().min(1),
   NEXT_PUBLIC_TRUSTMARY: z.string().optional(),
+  NEXT_PUBLIC_MIXPANEL_TOKEN: z.string().optional(),
 });
 
 /**
@@ -53,6 +54,7 @@ const processEnv = {
   GOOGLE_CLIENT_SECRET: process.env.GOOGLE_CLIENT_SECRET,
   // NEXT_PUBLIC_CLIENTVAR: process.env.NEXT_PUBLIC_CLIENTVAR,
   NEXT_PUBLIC_TRUSTMARY: process.env.NEXT_PUBLIC_TRUSTMARY,
+  NEXT_PUBLIC_MIXPANEL_TOKEN: process.env.NEXT_PUBLIC_MIXPANEL_TOKEN,
 };
 
 // Don't touch the part below

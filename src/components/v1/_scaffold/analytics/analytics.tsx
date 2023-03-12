@@ -1,10 +1,9 @@
-import { analytics } from 'lib/analytics';
+import { getCookie, hasCookies } from '@analytics/cookie-utils';
+import { useSession } from 'next-auth/react';
 import { useEffect } from 'react';
 
 import { getAnonId } from '@/utils';
-// @ts-expect-error: no types for cookie-cutter
-import cookieCutter from 'cookie-cutter';
-import { useSession } from 'next-auth/react';
+import { analytics } from 'lib/analytics';
 
 interface IAnalytics {
   asPath: string;
@@ -26,12 +25,12 @@ export const CustomAnalytics: React.FC<IAnalytics> = ({ asPath }) => {
           name: session.user.name,
           image: session.user.image,
           anon: getAnonId()!,
-          ip: cookieCutter.get('current-ip'),
+          ip: hasCookies ? getCookie('current-ip') : null,
         },
         () => console.log('Identified user')
       );
     } else if (status === 'unauthenticated') {
-      const ip = cookieCutter.get('current-ip');
+      const ip = hasCookies ? getCookie('current-ip') : null;
       const anon = getAnonId();
       analytics.identify(anon!, { ip }, () =>
         console.log('Identified anon user', anon, ip)
