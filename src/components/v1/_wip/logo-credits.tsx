@@ -17,7 +17,7 @@ export function LogoCredits() {
         filter="drop-shadow(0.1rem 0.1rem 0.1rem #333)"
         onClick={() => setShowCredits(true)}
       />
-      {isDev && true ? (
+      {isDev && false ? (
         <Sidebar open={true}>
           <SidebarTests />
         </Sidebar>

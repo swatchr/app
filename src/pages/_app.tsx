@@ -7,7 +7,7 @@ import type { NextComponentTypeWithAuth } from '@/types';
 import type { Session } from 'next-auth';
 import type { AppType } from 'next/app';
 
-import { AutoToast, getToastStatus } from '@/components/';
+import { AutoToast, CustomAnalytics, getToastStatus } from '@/components/';
 import { AuthGate } from '@/components/v1/auth';
 import { ErrorBoundary } from '@/utils';
 import { api } from '@/utils/api';
@@ -34,6 +34,7 @@ const MyApp: AppType<{ session: Session | null }> = ({
       </SkipNavLink>
       <ErrorBoundary>
         <SessionProvider session={session}>
+          <CustomAnalytics asPath={router.asPath} />
           <ChakraWrapper>
             <AutoToast
               status={status}
