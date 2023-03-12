@@ -2,11 +2,13 @@ import { isClient } from '@/utils';
 import mixpanelPlugin from '@analytics/mixpanel';
 import Analytics from 'analytics';
 
+import { getCookie } from '@analytics/cookie-utils';
+
 export function getConsent(): boolean {
   if (!isClient) return false;
   // @TTODO: extract key name to const and use in other places
-  const consent = localStorage.getItem('app-consent');
-  if (consent !== null) return JSON.parse(consent);
+  const consent = getCookie('app-consent');
+  if (consent !== null || consent !== undefined) return JSON.parse(consent);
   localStorage.setItem('app-consent', 'false');
   return false;
 }
@@ -45,10 +47,10 @@ function crispPlugin(userConfig: { crispId: string; enabled: boolean }) {
 export const analytics = Analytics({
   app: 'swatchr',
   plugins: [
-    // mixpanelPlugin({
-    //   token: process.env.NEXT_PUBLIC_MIXPANEL_TOKEN,
-    //   enabled: !!process.env.NEXT_PUBLIC_MIXPANEL_TOKEN && getConsent(),
-    // }),
+    mixpanelPlugin({
+      token: process.env.NEXT_PUBLIC_MIXPANEL_TOKEN,
+      enabled: !!process.env.NEXT_PUBLIC_MIXPANEL_TOKEN && getConsent(),
+    }),
     // crispPlugin({
     //   crispId: String(process.env.NEXT_PUBLIC_CRISP_WEBSITE_ID),
     //   enabled: !!process.env.NEXT_PUBLIC_CRISP_WEBSITE_ID && getConsent(),
