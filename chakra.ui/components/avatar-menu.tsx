@@ -11,6 +11,7 @@ import {
   MenuList,
   Spinner,
 } from '@chakra-ui/react';
+import { analytics } from 'lib/analytics';
 import { signIn, signOut, useSession } from 'next-auth/react';
 import Link from 'next/link';
 
@@ -54,6 +55,15 @@ function MenuItemButton({
 export const AvatarMenu: React.FC = () => {
   const { data: session, status } = useSession();
   const isUser = status !== 'loading' && !!session?.user;
+
+  const handleSignIn = () => {
+    signIn('google');
+    analytics.track('Sign In', { method: 'Google' });
+  };
+  const handleSignOut = () => {
+    signOut();
+    analytics.track('Sign Out');
+  };
   return (
     <Box pos="fixed" top={9} right={6} zIndex="dropdown">
       <Menu
@@ -86,15 +96,9 @@ export const AvatarMenu: React.FC = () => {
           {defaultLinks?.length ? defaultLinks?.map(routeLink) : null}
           {isUser ? protectedRoutes?.map(routeLink) : null}
           {isUser ? (
-            <MenuItemButton
-              label="sign out"
-              onClick={onPromise(() => signOut())}
-            />
+            <MenuItemButton label="sign out" onClick={handleSignOut} />
           ) : (
-            <MenuItemButton
-              label="sign in"
-              onClick={onPromise(() => signIn('google'))}
-            />
+            <MenuItemButton label="sign in" onClick={handleSignIn} />
           )}
         </MenuList>
       </Menu>
