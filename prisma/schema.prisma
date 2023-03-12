@@ -59,6 +59,7 @@ model User {
     accounts      Account[]
     sessions      Session[]
     Favorite      Favorite[]
+    palettes      Palette[]
 }
 
 model VerificationToken {
@@ -94,12 +95,14 @@ model Color {
 
 model Palette {
     id        String     @id @default(cuid())
-    name      String
+    name      String     @unique
     colors    Color[]
     createdAt DateTime   @default(now())
     updatedAt DateTime   @updatedAt
     tags      Tag[]
     Favorite  Favorite[]
+    User      User?      @relation(fields: [userId], references: [id])
+    userId    String?
 }
 
 model Tag {
