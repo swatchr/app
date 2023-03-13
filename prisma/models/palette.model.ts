@@ -1,17 +1,26 @@
 import type { InnerTRPCContext } from '@/server';
+import { validateAndConvertHexColor } from '@/utils';
+import { User } from '@prisma/client';
 
 import { shortname } from 'lib/unique-names-generator';
 
 export class Palettes {
   constructor() {}
 
-  private DEFAULT_INCLUDES = {
-    colors: true,
+  private USER_INCLUDES = {
+    // Tags: true,
+    // Owned: true,
+    // Forked: true,
+  };
+
+  private PALETTE_INCLUDES = {
+    ...this.USER_INCLUDES,
     user: true,
-    Palettes: true,
+    Colors: true,
     Tags: true,
-    Owned: true,
+    Favorites: true,
     Forked: true,
+    Owned: true,
   };
 
   /**
@@ -55,21 +64,22 @@ export class Palettes {
       throw new Error('No palette or name provided');
     }
 
-    const palette = await ctx.prisma.user.findUnique({
+    const user = await ctx.prisma.user.findUnique({
       where: { id: ctx.session?.user.id },
       include: {
-        ...this.DEFAULT_INCLUDES,
+        ...this.USER_INCLUDES,
         Palettes: {
           where: input.palette
             ? { serial: this.stringifyPalette(input.palette) }
             : input.name
             ? { name: input.name }
-            : {},
+            : undefined,
         },
         ...options.include,
       },
     });
-    return palette;
+    console.log('🚀 | file: palette.model.ts:80 | Palettes | user:', user);
+    return user as User;
   }
 
   /**
@@ -99,7 +109,7 @@ export class Palettes {
         where: Object.assign({
           serial: input.palette.map((hex) => hex.replace('#', '')).join('-'),
         }),
-        include: this.DEFAULT_INCLUDES,
+        include: { ...this.PALETTE_INCLUDES, user: true },
       });
       return palette;
     }
@@ -109,7 +119,7 @@ export class Palettes {
         where: Object.assign({
           name: input.name,
         }),
-        include: this.DEFAULT_INCLUDES,
+        include: { ...this.PALETTE_INCLUDES, user: true },
       });
       return palette;
     }
@@ -139,24 +149,26 @@ export class Palettes {
     ctx: InnerTRPCContext;
     input: { name: string };
   }) {
-    const userPalette = await this.getOwnPalette({
+    const user = await this.getOwnPalette({
       ctx,
       input: {
         name: input.name ?? undefined,
       },
     });
+    console.log('🚀 | file: palette.model.ts:157 | Palettes | user:', user);
 
-    if (!userPalette) throw new Error('Palette not found');
-    if (userPalette.userId !== ctx.session?.user.id) {
-      throw new Error('Not authorized');
-    }
+    // if (!user?.) throw new Error('Palette not found');
+    // if (user?.userId !== ctx.session?.user.id) {
+    //   throw new Error('Not authorized');
+    // }
 
-    const deletedPalette = await ctx.prisma.palette.delete({
-      where: {
-        name: input.name,
-      },
-    });
-    return deletedPalette;
+    // const deletedPalette = await ctx.prisma.palette.delete({
+    //   where: {
+    //     name: input.name,
+    //     userId: ctx.session?.user.id,
+    //   },
+    // });
+    // return deletedPalette;
   }
 
   /**
@@ -180,9 +192,9 @@ export class Palettes {
     input,
   }: {
     ctx: InnerTRPCContext;
-    input: { palette: string[]; name?: string };
+    input: { palette: string[]; private: boolean; name?: string };
   }) {
-    const palette = await this.getOwnPalette({
+    const user = await this.getOwnPalette({
       ctx,
       input: {
         palette: input.palette ?? undefined,
@@ -190,7 +202,12 @@ export class Palettes {
       },
     });
 
-    if (palette) {
+    if (user?.palettes) {
+      console.log(
+        '🚀 | file: palette.model.ts:206 | Palettes | palette:',
+        user.Palettes
+      );
+
       return await ctx.prisma.forked.create({
         data: {
           Palette: { connect: { id: palette.id } },
@@ -203,6 +220,11 @@ export class Palettes {
           name: input.name ?? shortname(),
           serial: input.palette.map((hex) => hex.replace('#', '')).join('-'),
           user: { connect: { id: ctx.session?.user.id } },
+          Colors: {
+            connect: input.palette.map((hex) => ({
+              hex: hex.replace('#', ''),
+            })),
+          },
         },
       });
     }
