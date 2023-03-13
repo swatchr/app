@@ -56,9 +56,9 @@ export function LogoIconNew({ ...props }: IconProps) {
           gradientTransform="rotate(-38.729 1091.46 -863.376) scale(67.8736)"
           gradientUnits="userSpaceOnUse"
         >
-          <stop offset="0" stop-color="#4c7cfd" />
-          <stop offset=".5" stop-color="#532893" />
-          <stop offset="1" stop-color="#550c6f" />
+          <stop offset="0" stopColor="#4c7cfd" />
+          <stop offset=".5" stopColor="#532893" />
+          <stop offset="1" stopColor="#550c6f" />
         </linearGradient>
         <linearGradient
           id="b"
@@ -69,11 +69,11 @@ export function LogoIconNew({ ...props }: IconProps) {
           gradientTransform="rotate(-152.907 483.08 170.045) scale(81.3835)"
           gradientUnits="userSpaceOnUse"
         >
-          <stop offset="0" stop-color="#046756" />
-          <stop offset=".08" stop-color="#029a88" />
-          <stop offset=".17" stop-color="#01cdb9" />
-          <stop offset=".42" stop-color="#00e3cf" />
-          <stop offset="1" stop-color="#0011a5" />
+          <stop offset="0" stopColor="#046756" />
+          <stop offset=".08" stopColor="#029a88" />
+          <stop offset=".17" stopColor="#01cdb9" />
+          <stop offset=".42" stopColor="#00e3cf" />
+          <stop offset="1" stopColor="#0011a5" />
         </linearGradient>
         <linearGradient
           id="c"
@@ -84,8 +84,8 @@ export function LogoIconNew({ ...props }: IconProps) {
           gradientTransform="rotate(-38.906 1371.776 -741.953) scale(73.5159)"
           gradientUnits="userSpaceOnUse"
         >
-          <stop offset="0" stop-color="#e8e3c4" />
-          <stop offset="1" stop-color="#00ff8d" />
+          <stop offset="0" stopColor="#e8e3c4" />
+          <stop offset="1" stopColor="#00ff8d" />
         </linearGradient>
         <linearGradient
           id="d"
@@ -96,8 +96,8 @@ export function LogoIconNew({ ...props }: IconProps) {
           gradientTransform="rotate(156.225 308.06 424.472) scale(97.5728)"
           gradientUnits="userSpaceOnUse"
         >
-          <stop offset="0" stop-color="#d4e2c5" />
-          <stop offset="1" stop-color="#ffb200" />
+          <stop offset="0" stopColor="#d4e2c5" />
+          <stop offset="1" stopColor="#ffb200" />
         </linearGradient>
         <linearGradient
           id="e"
@@ -108,14 +108,14 @@ export function LogoIconNew({ ...props }: IconProps) {
           gradientTransform="rotate(-65.005 848.198 -232.999) scale(212.488)"
           gradientUnits="userSpaceOnUse"
         >
-          <stop offset="0" stop-color="#edc946" />
-          <stop offset=".15" stop-color="#ecbe51" />
-          <stop offset=".2" stop-color="#eaa66a" />
-          <stop offset=".25" stop-color="#e88c85" />
-          <stop offset=".35" stop-color="#ee407d" />
-          <stop offset=".42" stop-color="#e60de4" />
-          <stop offset=".5" stop-color="#e400ff" />
-          <stop offset="1" stop-color="#474ddf" />
+          <stop offset="0" stopColor="#edc946" />
+          <stop offset=".15" stopColor="#ecbe51" />
+          <stop offset=".2" stopColor="#eaa66a" />
+          <stop offset=".25" stopColor="#e88c85" />
+          <stop offset=".35" stopColor="#ee407d" />
+          <stop offset=".42" stopColor="#e60de4" />
+          <stop offset=".5" stopColor="#e400ff" />
+          <stop offset="1" stopColor="#474ddf" />
         </linearGradient>
       </defs>
     </chakra.svg>
