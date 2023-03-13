@@ -8,19 +8,20 @@ import {
 import { trpcPrismaErrorHandler } from '@/utils/error';
 import { Palettes } from 'prisma/models/palette.model';
 
+const palettesModel = new Palettes();
+
 export const paletteRouter = createTRPCRouter({
   save: protectedProcedure
     .input(
       z.object({
         palette: z.array(z.string()),
-        private: z.boolean().optional(),
+        private: z.boolean(),
+        name: z.string().optional(),
       })
     )
     .mutation(async ({ ctx, input }) => {
       try {
-        const palettes = new Palettes();
-        const palette = await palettes.create({ ctx, input });
-        return palette;
+        return await palettesModel.create({ ctx, input });
       } catch (error) {
         trpcPrismaErrorHandler(error);
       }
@@ -34,9 +35,7 @@ export const paletteRouter = createTRPCRouter({
     )
     .query(async ({ ctx, input }) => {
       try {
-        const palettes = new Palettes();
-        const palette = await palettes.get({ ctx, input });
-        return palette;
+        return await palettesModel.get({ ctx, input });
       } catch (error) {
         trpcPrismaErrorHandler(error);
       }
@@ -45,9 +44,7 @@ export const paletteRouter = createTRPCRouter({
     .input(z.object({ name: z.string() }))
     .mutation(async ({ ctx, input }) => {
       try {
-        const palettes = new Palettes();
-        const palette = await palettes.delete({ ctx, input });
-        return palette;
+        return await palettesModel.delete({ ctx, input });
       } catch (error) {
         trpcPrismaErrorHandler(error);
       }
