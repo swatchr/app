@@ -61,7 +61,7 @@ model User {
     Favorites     Favorite[]
     Palettes      Palette[]
     Owned         Owned[]
-    Forked        Forked[]
+    Forks         Fork[]
 }
 
 model VerificationToken {
@@ -103,13 +103,13 @@ model Palette {
     serial    String     @unique // @db.Text
     name      String     @unique // @db.Text
     private   Boolean?   @default(true)
-    colors    Color[]
+    Colors    Color[]
     user      User       @relation(fields: [userId], references: [id])
     userId    String     @unique // @db.Text
     Tags      Tag[]
     Favorites Favorite[]
     Owned     Owned[]
-    Forked    Forked[]
+    Forks     Fork[]
 }
 
 model Owned {
@@ -124,7 +124,7 @@ model Owned {
     @@unique([userId, paletteId])
 }
 
-model Forked {
+model Fork {
     id        String   @id @default(cuid())
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
@@ -158,11 +158,21 @@ model Favorite {
     updatedAt DateTime @updatedAt
     user      User     @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
     userId    String // @db.Text
-    palette   Palette? @relation(fields: [paletteId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+    Palette   Palette? @relation(fields: [paletteId], references: [id], onDelete: Cascade, onUpdate: Cascade)
     paletteId String? // @db.Text
-    color     Color?   @relation(fields: [colorId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+    Color     Color?   @relation(fields: [colorId], references: [id], onDelete: Cascade, onUpdate: Cascade)
     colorId   String? // @db.Text
 
     @@unique([userId, paletteId])
     @@unique([userId, colorId])
 }
+
+// @TODO: ADD ACHIEVEMENTS: ie, added first palette, etc.
+// a new user gets a related acheivemsnt list to complement with flags for each achievement
+
+// @TODO: Consider adding known brand colors.
+
+// @TODO: Add ability to emote on a color or palette
+// ask the quesiton how does this color make you feel?
+// if they interact with it then show then the actual emotion the color conveys and the consensus //
+// of the community
