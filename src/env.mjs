@@ -32,8 +32,11 @@ const server = z.object({
  */
 const client = z.object({
   // NEXT_PUBLIC_CLIENTVAR: z.string().min(1),
-  NEXT_PUBLIC_TRUSTMARY: z.string().optional(),
   NEXT_PUBLIC_MIXPANEL_TOKEN: z.string().optional(),
+  NEXT_PUBLIC_ROLE_ADMIN: z.string().optional(),
+  NEXT_PUBLIC_ROLE_USER: z.string().optional(),
+  NEXT_PUBLIC_ROLE_UNVERIFIED: z.string().optional(),
+  NEXT_PUBLIC_ROLE_ANONYMOUS: z.string().optional(),
 });
 
 /**
@@ -47,13 +50,18 @@ const processEnv = {
   NODE_ENV: process.env.NODE_ENV,
   NEXTAUTH_SECRET: process.env.NEXTAUTH_SECRET,
   NEXTAUTH_URL: process.env.NEXTAUTH_URL,
+  GOOGLE_CLIENT_ID: process.env.GOOGLE_CLIENT_ID,
+  GOOGLE_CLIENT_SECRET: process.env.GOOGLE_CLIENT_SECRET,
+  // ROLE VALUES
+  NEXT_PUBLIC_ROLE_ADMIN: process.env.NEXT_PUBLIC_ROLE_ADMIN,
+  NEXT_PUBLIC_ROLE_USER: process.env.NEXT_PUBLIC_ROLE_USER,
+  NEXT_PUBLIC_ROLE_UNVERIFIED: process.env.NEXT_PUBLIC_ROLE_UNVERIFIED,
+  NEXT_PUBLIC_ROLE_ANONYMOUS: process.env.NEXT_PUBLIC_ROLE_ANONYMOUS,
+  // EMAIL
   ADMIN_EMAIL: process.env.ADMIN_EMAIL,
   SMTP_USER: process.env.SMTP_USER,
   SMTP_PASSWORD: process.env.SMTP_PASSWORD,
-  GOOGLE_CLIENT_ID: process.env.GOOGLE_CLIENT_ID,
-  GOOGLE_CLIENT_SECRET: process.env.GOOGLE_CLIENT_SECRET,
   // NEXT_PUBLIC_CLIENTVAR: process.env.NEXT_PUBLIC_CLIENTVAR,
-  NEXT_PUBLIC_TRUSTMARY: process.env.NEXT_PUBLIC_TRUSTMARY,
   NEXT_PUBLIC_MIXPANEL_TOKEN: process.env.NEXT_PUBLIC_MIXPANEL_TOKEN,
 };
 
