@@ -26,7 +26,7 @@ export const session: CallbacksOptions['session'] = ({
 export const signIn: CallbacksOptions['signIn'] = ({
   user,
   account,
-  profile,
+  profile, // @NOTE: this is the profile from the provider not our profile
   email,
   credentials,
 }) => {

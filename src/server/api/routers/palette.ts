@@ -1,6 +1,9 @@
 import { z } from 'zod';
 
+import type { Prisma } from '@prisma/client';
+
 import {
+  adminProcedure,
   createTRPCRouter,
   protectedProcedure,
   publicProcedure,
@@ -21,7 +24,10 @@ export const paletteRouter = createTRPCRouter({
     )
     .mutation(async ({ ctx, input }) => {
       try {
-        return await palettesModel.createPalette({ ctx, ...input });
+        return await palettesModel.createPalette({
+          session: ctx.session,
+          ...input,
+        });
       } catch (error) {
         trpcPrismaErrorHandler(error);
       }
@@ -32,35 +38,40 @@ export const paletteRouter = createTRPCRouter({
     )
     .query(async ({ ctx, input }) => {
       try {
-        return await palettesModel.get({ serial: input.serial! });
+        return await palettesModel.get(
+          Object.assign(
+            {},
+            input?.id ? { id: input.id! } : { serial: input.serial! }
+          )
+        );
       } catch (error) {
         trpcPrismaErrorHandler(error);
       }
     }),
   update: protectedProcedure
-    .input(
-      z.object({
-        serial: z.string(),
-        data: z.any(),
-        isAdmin: z.boolean().optional(),
-      })
-    )
-    .mutation(async ({ ctx, input }) => {
+    .input(z.object({ serial: z.string(), data: z.unknown() }))
+    .mutation(async ({ ctx, input: { serial, data } }) => {
       try {
         return palettesModel.update({
-          serial: input.serial,
-          data: input.data,
-          isAdmin: input.isAdmin,
+          serial,
+          data: data as Prisma.PaletteUpdateInput,
         });
       } catch (error) {
         trpcPrismaErrorHandler(error);
       }
     }),
-  delete: protectedProcedure
-    .input(z.object({ serial: z.string(), isAdmin: z.boolean() }))
+  delete: adminProcedure
+    .input(
+      z.object({ id: z.string().optional(), serial: z.string().optional() })
+    )
     .mutation(async ({ ctx, input }) => {
       try {
-        return palettesModel.delete(input);
+        return palettesModel.delete(
+          Object.assign(
+            {},
+            input?.id ? { id: input.id! } : { serial: input.serial! }
+          )
+        );
       } catch (error) {
         trpcPrismaErrorHandler(error);
       }

@@ -1,6 +1,9 @@
+import { PrismaClient } from '@prisma/client';
 import { type NextAuthOptions } from 'next-auth';
 
 import { analytics } from '../../analytics';
+
+const prisma = new PrismaClient();
 
 // @link: https://next-auth.js.org/configuration/options#events
 export const events: NextAuthOptions['events'] = {
@@ -28,11 +31,17 @@ export const events: NextAuthOptions['events'] = {
     analytics.identify(message.session.user.id, {});
   },
   async createUser(message) {
+    // const profile = await prisma.profile.create({
+    //   data: {
+    //     user: { connect: { id: message.user.id } },
+    //   },
+    // });
     analytics.track('auth-user-create', {
       category: 'auth',
       label: 'user:create',
       value: 1,
       ...message.user,
+      // profile: profile.id,
     });
     analytics.identify(message.user.id, {
       ...message.user,

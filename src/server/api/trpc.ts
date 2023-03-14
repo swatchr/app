@@ -55,6 +55,16 @@ export const createTRPCContext = async (opts: CreateNextContextOptions) => {
   // Get the session from the server using the getServerSession wrapper function
   const session = await getServerAuthSession({ req, res });
 
+  const profile = await prisma.profile.findUnique({
+    where: { userId: session?.user?.id },
+  });
+
+  if (session && profile) {
+    if (!session?.user.profile) {
+      session.user.profile = profile.id!;
+    }
+  }
+
   return createInnerTRPCContext({
     session,
     req,
@@ -115,6 +125,19 @@ const enforceUserIsAuthed = t.middleware(({ ctx, next }) => {
   });
 });
 
+/** Reusable middleware that enforces users are logged in before running the procedure. */
+const enforceUserIsAdmin = t.middleware(({ ctx, next }) => {
+  if (!ctx.session || !ctx.session.user || !ctx.session.user.profile) {
+    throw new TRPCError({ code: 'UNAUTHORIZED' });
+  }
+  return next({
+    ctx: {
+      // infers the `session` as non-nullable
+      session: { ...ctx.session, user: ctx.session.user },
+    },
+  });
+});
+
 /**
  * Protected (authenticated) procedure
  *
@@ -124,6 +147,7 @@ const enforceUserIsAuthed = t.middleware(({ ctx, next }) => {
  * @see https://trpc.io/docs/procedures
  */
 export const protectedProcedure = t.procedure.use(enforceUserIsAuthed);
+export const adminProcedure = t.procedure.use(enforceUserIsAdmin);
 export type TRPCContext = inferAsyncReturnType<typeof createTRPCContext>;
 export type InnerTRPCContext = inferAsyncReturnType<
   typeof createInnerTRPCContext

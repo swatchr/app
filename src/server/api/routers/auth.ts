@@ -35,7 +35,7 @@ export const authRouter = createTRPCRouter({
             name,
             email,
             password: hashPassword(plainPassword),
-            roleType: 'user',
+            roleType: 'unverified',
           },
         });
         return {

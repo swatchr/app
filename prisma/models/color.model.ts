@@ -89,13 +89,10 @@ export class Color {
   async updateHex({
     hex,
     data,
-    isAdmin = false,
   }: {
     hex: string;
     data: Prisma.ColorUpdateInput;
-    isAdmin?: boolean;
   }) {
-    if (!isAdmin) throw new Error('Unauthorized Operation');
     if (!data) throw new Error('No Data Provided');
     const strippedHex = validateAndConvertHexColor(hex);
     if (!strippedHex) throw new Error('Invalid Hex Code');
@@ -108,14 +105,7 @@ export class Color {
     });
   }
 
-  async deleteHex({
-    hex,
-    isAdmin = false,
-  }: {
-    hex: string;
-    isAdmin?: boolean;
-  }) {
-    if (!isAdmin) throw new Error('Unauthorized Operation');
+  async deleteHex({ hex }: { hex: string }) {
     const strippedHex = validateAndConvertHexColor(hex);
     if (!strippedHex) throw new Error('Invalid Hex Code');
     const hexExists = await this.hexExists(strippedHex);

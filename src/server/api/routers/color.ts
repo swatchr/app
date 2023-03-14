@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-import type { TRPCContext } from '@/server/api/trpc';
+import { adminProcedure, TRPCContext } from '@/server/api/trpc';
 
 import {
   createTRPCRouter,
@@ -146,33 +146,28 @@ export const colorRouter = createTRPCRouter({
         trpcPrismaErrorHandler(error);
       }
     }),
-  update: protectedProcedure
+  update: adminProcedure
     .input(
       z.object({
         hex: z.string(),
         data: z.any(),
-        isAdmin: z.boolean().optional(),
       })
     )
     .mutation(async ({ ctx, input }) => {
-      if (!input.isAdmin) throw new Error('not authorized');
-
       try {
         const client = new Color();
         const color = await client.updateHex({
           hex: input?.hex,
           data: input?.data,
-          isAdmin: input?.isAdmin,
         });
         return color;
       } catch (error) {
         trpcPrismaErrorHandler(error);
       }
     }),
-  delete: protectedProcedure
-    .input(z.object({ hex: z.string(), isAdmin: z.boolean().optional() }))
+  delete: adminProcedure
+    .input(z.object({ hex: z.string() }))
     .mutation(async ({ ctx, input }) => {
-      if (!input.isAdmin) throw new Error('not authorized');
       try {
         const client = new Color();
         const color = await client.deleteHex(input);

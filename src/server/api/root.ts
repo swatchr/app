@@ -2,6 +2,7 @@ import { createTRPCRouter } from '@/server/api/trpc';
 import {
   authRouter,
   colorRouter,
+  dbRouter,
   emailRouter,
   paletteRouter,
   serverRouter,
@@ -20,6 +21,7 @@ export const appRouter = createTRPCRouter({
   email: emailRouter,
   color: colorRouter,
   palette: paletteRouter,
+  db: dbRouter,
 });
 
 // export type definition of API
