@@ -7,9 +7,10 @@ import { Drawer, mapDocs } from '../components';
 
 export const Sidebar: React.FC<Partial<DrawerProps> & { open: boolean }> = ({
   open,
+  onClose,
   children,
 }) => {
-  const { isOpen, onOpen, onClose } = useDisclosure();
+  const { isOpen, onOpen, onClose: internalClose } = useDisclosure();
 
   return (
     <Box as="aside">
@@ -23,7 +24,11 @@ export const Sidebar: React.FC<Partial<DrawerProps> & { open: boolean }> = ({
         _hover={{ bg: 'brand.800' }}
       />
       <Drawer
-        {...{ isOpen: open || isOpen, onOpen, onClose }}
+        {...{
+          isOpen: open ?? isOpen,
+          onOpen,
+          onClose: onClose ?? internalClose,
+        }}
         placement="right"
       >
         {children ?? (

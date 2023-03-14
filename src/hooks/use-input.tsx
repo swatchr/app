@@ -9,18 +9,25 @@ import { useState } from 'react';
 
 import type { InputProps } from '@chakra-ui/react';
 
-function useInput(inputName: string) {
-  const [value, setValue] = useState('');
+function useInput(
+  inputName: string,
+  options?: {
+    initialValue?: string;
+    onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  }
+) {
+  const [value, setValue] = useState(options?.initialValue || '');
 
+  // @TODO: ADD DEBOUNCING
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setValue(event.target.value);
+    options?.onChange ? options.onChange(event) : setValue(event.target.value);
   };
 
   return {
     id: inputName,
     name: inputName,
     value,
-    onChange: handleChange,
+    onChange: options?.onChange ?? handleChange,
   };
 }
 
@@ -31,11 +38,16 @@ export function InputUser({
 }: {
   name: string;
   // disallow onChange to manage state internally
-  config: Partial<Omit<InputProps, 'onChange'>>;
+  config: Partial<InputProps>;
   showLabel?: boolean;
 }) {
   const [focused, setFocused] = useState(false);
-  const inputProps = useInput(name);
+  const inputProps = useInput(
+    name,
+    config?.onChange
+      ? { initialValue: config.value as string, onChange: config?.onChange }
+      : {}
+  );
 
   return (
     <VStack

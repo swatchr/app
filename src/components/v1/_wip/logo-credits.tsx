@@ -1,4 +1,12 @@
-import { Box, chakra, Container, HStack, Icon, Link } from '@chakra-ui/react';
+import {
+  Box,
+  chakra,
+  Container,
+  HStack,
+  Icon,
+  Link,
+  useDisclosure,
+} from '@chakra-ui/react';
 import { useState } from 'react';
 
 import { isDev } from '@/utils';
@@ -8,17 +16,18 @@ import { SidebarTests } from './sidebar-tests';
 
 export function LogoCredits() {
   const [showCredits, setShowCredits] = useState(false);
-
+  const { isOpen, onClose, onOpen } = useDisclosure();
   return (
     <Box position="absolute" bottom={12} right={12} cursor="pointer">
       <Icon
         as={LogoIconNew}
         boxSize={14}
         filter="drop-shadow(0.1rem 0.1rem 0.1rem #333)"
-        onClick={() => setShowCredits(true)}
+        // onClick={() => setShowCredits(true)}
+        onClick={onOpen}
       />
-      {isDev && false ? (
-        <Sidebar open={true}>
+      {isDev && isOpen ? (
+        <Sidebar open={true} onClose={onClose}>
           <SidebarTests />
         </Sidebar>
       ) : isDev ? (

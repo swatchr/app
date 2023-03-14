@@ -2,13 +2,18 @@ import { z } from 'zod';
 
 import type { TRPCContext } from '@/server/api/trpc';
 
-import { createTRPCRouter, publicProcedure } from '@/server/api/trpc';
+import {
+  createTRPCRouter,
+  protectedProcedure,
+  publicProcedure,
+} from '@/server/api/trpc';
 import { validateAndConvertHexColor } from '@/utils';
 import { trpcPrismaErrorHandler } from '@/utils/error';
-import Color from 'lib/color';
+import ColorLab from 'lib/color';
+import { Color } from 'prisma/models/color.model';
 import { handleServerError } from '../utils';
 
-const colorApiSchema = z.object({
+export const colorApiSchema = z.object({
   hex: z.object({
     value: z.string(),
     clean: z.string(),
@@ -39,11 +44,11 @@ const colorApiSchema = z.object({
 
 export type ColorApiSchema = z.infer<typeof colorApiSchema>;
 
-async function createColor(ctx: TRPCContext, hex: string) {
+export async function createColor(ctx: TRPCContext, hex: string) {
   const res = await fetchTheColorApi(hex, 'id');
   const data = colorApiSchema.parse(res);
   if (!data.hex.clean) throw new Error('there was an issue');
-  const color = new Color(data.hex.clean);
+  const color = new ColorLab(data.hex.clean);
   return (
     data.hex.clean &&
     ctx.prisma.color.create({
@@ -62,7 +67,7 @@ async function createColor(ctx: TRPCContext, hex: string) {
   );
 }
 
-const fetchTheColorApi = async (hex: string, endpoint = 'scheme') => {
+export const fetchTheColorApi = async (hex: string, endpoint = 'scheme') => {
   const mode = 'analogic-complement';
   const count = 10;
   try {
@@ -79,13 +84,6 @@ const fetchTheColorApi = async (hex: string, endpoint = 'scheme') => {
   } catch (e) {
     return handleServerError(e, 'There was an issue with fetching data');
   }
-};
-
-const hexExists = async (ctx: TRPCContext, hex: string) => {
-  const color = await ctx.prisma.color.findUnique({
-    where: { hex: hex },
-  });
-  return color;
 };
 
 // @TODO: throw errors instead foe each query
@@ -117,44 +115,67 @@ export const colorRouter = createTRPCRouter({
   get: publicProcedure
     .input(z.object({ hex: z.string() }))
     .query(async ({ ctx, input }) => {
-      const hex = validateAndConvertHexColor(input.hex);
       try {
-        if (!hex) throw new Error(`not valid hex | input: ${input.hex}`);
-        const color = ctx.prisma.color.findUnique({
-          where: { hex: hex },
-        });
+        const client = new Color();
+        const color = await client.get({ hex: input.hex! });
         return color;
+      } catch (error) {
+        trpcPrismaErrorHandler(error);
+        return;
+      }
+    }),
+  getAll: publicProcedure
+    .input(z.object({ palette: z.array(z.string()) }))
+    .query(async ({ ctx, input }) => {
+      try {
+        const client = new Color();
+        const palette = await client.getAll({ palette: input.palette });
+        return palette;
       } catch (error) {
         trpcPrismaErrorHandler(error);
       }
     }),
   save: publicProcedure
     .input(z.object({ hex: z.string() }))
-    .mutation(async ({ ctx, input }) => {
-      const hex = validateAndConvertHexColor(input.hex);
+    .mutation(async ({ input }) => {
       try {
-        if (!hex) throw new Error(`not valid hex | input: ${input.hex}`);
-        const colorExists = await hexExists(ctx, hex);
-
-        if (!colorExists) {
-          const color = await createColor(ctx, hex);
-          return color;
-        }
-
-        return colorExists;
+        const client = new Color();
+        const color = await client.createColor({ hex: input.hex });
+        return color;
       } catch (error) {
         trpcPrismaErrorHandler(error);
       }
     }),
-  delete: publicProcedure
-    .input(z.object({ hex: z.string() }))
+  update: protectedProcedure
+    .input(
+      z.object({
+        hex: z.string(),
+        data: z.any(),
+        isAdmin: z.boolean().optional(),
+      })
+    )
     .mutation(async ({ ctx, input }) => {
-      const hex = validateAndConvertHexColor(input.hex);
-      if (!hex) throw new Error(`not valid hex | input: ${input.hex}`);
+      if (!input.isAdmin) throw new Error('not authorized');
+
       try {
-        const color = await ctx.prisma.color.delete({
-          where: { hex: hex },
+        const client = new Color();
+        const color = await client.updateHex({
+          hex: input?.hex,
+          data: input?.data,
+          isAdmin: input?.isAdmin,
         });
+        return color;
+      } catch (error) {
+        trpcPrismaErrorHandler(error);
+      }
+    }),
+  delete: protectedProcedure
+    .input(z.object({ hex: z.string(), isAdmin: z.boolean().optional() }))
+    .mutation(async ({ ctx, input }) => {
+      if (!input.isAdmin) throw new Error('not authorized');
+      try {
+        const client = new Color();
+        const color = await client.deleteHex(input);
         return color;
       } catch (error) {
         trpcPrismaErrorHandler(error);

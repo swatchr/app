@@ -384,6 +384,7 @@ export function makeValidHex(hex: string | null, fallback: string): string {
 
 export function validateAndConvertHexColor(hex: string): string | null {
   // Check that the input is a string of length 3 or 6 and consists of only hexadecimal characters
+  hex = hex.trim();
   const validHexRegex = /^([0-9A-Fa-f]{3}){1,2}$/; // @TODO: test with other regix
   if (!validHexRegex.test(hex)) {
     return null;

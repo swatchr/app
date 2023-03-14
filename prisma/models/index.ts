@@ -1,1 +1,1 @@
-export * from './palette.model';
+export * from './color.model';
