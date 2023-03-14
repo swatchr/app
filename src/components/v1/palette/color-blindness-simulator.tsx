@@ -1,5 +1,5 @@
 import { Box, Button, Flex, HStack, VStack } from '@chakra-ui/react';
-import Color from 'lib/color';
+import ColorLab from 'lib/color';
 import { useState } from 'react';
 
 export function ColorBlindnessSimulator({
@@ -54,7 +54,7 @@ export function ColorBlindnessSimulator({
       <Flex w="full" h="100vh" position="absolute" inset={0} zIndex={2}>
         {palette?.length
           ? palette.map((color) => {
-              const filters = new Color(color).applyColorFilters();
+              const filters = new ColorLab(color).applyColorFilters();
               const filter =
                 filters[colorBlindnessMode as keyof typeof filters];
               return <Box key={color} bg={filter} w="full" h="100vh" />;

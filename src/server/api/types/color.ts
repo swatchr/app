@@ -1,4 +1,4 @@
-import type Color from 'lib/color';
+import type ColorLab from 'lib/color';
 
 import { z } from 'zod';
 
@@ -58,7 +58,7 @@ export type ColorApiAppInfo = z.infer<typeof ColorApiAppInfoSchema>;
 
 export function createColorInfo(
   info: ColorApiAppInfo | undefined,
-  instance: Color
+  instance: ColorLab
 ): ColorApiClientInfo {
   return {
     hex: info?.hex?.value,

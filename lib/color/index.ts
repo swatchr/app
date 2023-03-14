@@ -43,7 +43,7 @@ interface ColorFilters {
 
 const SCALE_STEPS = 10;
 
-class Color {
+class ColorLab {
   color: tinycolor.Instance;
   complement: string;
   contrast: 'light' | 'dark';
@@ -613,4 +613,4 @@ class Color {
   }
 }
 
-export default Color;
+export default ColorLab;

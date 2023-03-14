@@ -10,7 +10,7 @@ import {
   usePaletteState,
 } from '@/contexts';
 import { isDev } from '@/utils';
-import Color from 'lib/color';
+import ColorLab from 'lib/color';
 import { CommandPalette } from '../_wip/command-palette';
 import { LogoCredits } from '../_wip/logo-credits';
 import { ColorBlindnessSimulator } from './color-blindness-simulator';
@@ -27,7 +27,7 @@ export function Palette() {
   );
 
   const contrast =
-    new Color(palette[0]!).contrast == 'dark' ? 'whiteAlpha' : 'blackAlpha';
+    new ColorLab(palette[0]!).contrast == 'dark' ? 'whiteAlpha' : 'blackAlpha';
 
   const { isOpen, onOpen, onClose } = useDisclosure(); // export modal
 

@@ -7,7 +7,7 @@ import {
 } from 'react';
 
 import type { Palette, Swatch } from '@/contexts';
-import type Color from 'lib/color';
+import type ColorLab from 'lib/color';
 
 import { usePaletteDispatch, usePaletteState } from '@/contexts';
 import { useKeyboardShortcut } from '@/hooks';
@@ -23,7 +23,7 @@ interface ColorProviderProps {
 export interface ColorStateValue {
   color: Swatch;
   index: number;
-  instance: Color;
+  instance: ColorLab;
   isActive: boolean;
   activeSwatchIndex: number;
   palette: Palette;

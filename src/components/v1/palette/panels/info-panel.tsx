@@ -12,7 +12,7 @@ import {
 import { useState } from 'react';
 
 import type { ColorApiClientInfo, ColorApiScheme } from '@/server/api/types';
-import type Color from 'lib/color';
+import type ColorLab from 'lib/color';
 
 import { CopyIcon, InfoIcon } from '@/components';
 import { useClipboard } from '@/hooks';
@@ -26,7 +26,7 @@ export function InfoPanel({
   index,
 }: {
   color: string;
-  instance: Color;
+  instance: ColorLab;
   index: number | undefined;
 }) {
   const [info, setInfo] = useState<ColorApiClientInfo>();

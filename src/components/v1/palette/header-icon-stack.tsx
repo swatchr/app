@@ -8,7 +8,7 @@ import {
 
 import { SaveIcon } from '@/components';
 import { usePaletteDispatch } from '@/contexts';
-import Color from 'lib/color';
+import ColorLab from 'lib/color';
 import { ExportIcon, SunglassesIcon } from '../icons';
 import { FeedbackWidget } from './feedback-widget';
 
@@ -27,12 +27,12 @@ export function HeaderIconStack({
   const toast = useToast();
 
   const contrast =
-    new Color(palette[palette.length - 1]!).contrast == 'dark'
+    new ColorLab(palette[palette.length - 1]!).contrast == 'dark'
       ? 'blackAlpha'
       : 'whiteAlpha';
 
   const fillColor =
-    new Color(palette[palette.length - 1]!).contrast == 'dark'
+    new ColorLab(palette[palette.length - 1]!).contrast == 'dark'
       ? 'gray.900'
       : 'gray.300';
 

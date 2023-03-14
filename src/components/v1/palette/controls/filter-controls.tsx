@@ -10,7 +10,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import tinycolor from 'tinycolor2';
 
 import type { ColorDispatchValue } from '@/contexts';
-import type Color from 'lib/color';
+import type ColorLab from 'lib/color';
 
 import { useDebounce } from '@/hooks';
 import { SmallCloseIcon } from '@chakra-ui/icons';
@@ -26,7 +26,7 @@ export function FilterControls({
 }: {
   color: string;
   index: number;
-  instance: Color;
+  instance: ColorLab;
   updateColor: ColorDispatchValue['history']['handleChange'];
   setDefaultView: () => void;
 }) {

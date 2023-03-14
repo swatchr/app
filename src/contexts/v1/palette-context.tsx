@@ -13,7 +13,7 @@ import {
   stringifyPalette,
   updateArrayAtIndex,
 } from '@/utils';
-import Color from 'lib/color';
+import ColorLab from 'lib/color';
 
 import { useKeyboardShortcut } from '@/hooks';
 import { api } from '@/utils/api';
@@ -135,7 +135,7 @@ export const PaletteProvider: React.FC<PaletteProviderProps> = ({
 
   const addSwatch = useCallback(
     (swatchIndex: number) => {
-      const newColor = new Color('#BADA55').random();
+      const newColor = new ColorLab('#BADA55').random();
       colorMutation.mutate({
         hex: newColor.startsWith('#') ? newColor.replace('#', '') : newColor,
       });

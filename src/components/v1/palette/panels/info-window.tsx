@@ -27,7 +27,7 @@ import {
 import { useClipboard } from '@/hooks';
 import { capitalize } from '@/utils';
 import { MotionBox } from 'chakra.ui';
-import Color from 'lib/color';
+import ColorLab from 'lib/color';
 import {
   AAAIcon,
   AAIcon,
@@ -93,7 +93,7 @@ export function ColorScales({
   onClose,
   colorHandlers,
 }: {
-  instance: Color;
+  instance: ColorLab;
   onClose: () => void;
   colorHandlers: ColorDispatchValue;
 }) {
@@ -252,7 +252,7 @@ export function ColorCombos({
   onClose,
   colorHandlers,
 }: {
-  instance: Color;
+  instance: ColorLab;
   onClose: () => void;
   colorHandlers: ColorDispatchValue;
 }) {
@@ -414,12 +414,12 @@ export function ColorCombos({
                 icon={
                   <CurrentIcon
                     boxSize="1.25rem"
-                    fill={new Color(complement).getContrastColors()[1]}
+                    fill={new ColorLab(complement).getContrastColors()[1]}
                   />
                 }
                 bg={isSelected ? `${complement}` : `${contrastColor}.100`}
                 _hover={{
-                  bg: `${new Color(complement).lighten(20)}`,
+                  bg: `${new ColorLab(complement).lighten(20)}`,
                 }}
               />
             </Tooltip>
@@ -437,7 +437,7 @@ export function MonochromeScale({
   colorHandlers,
 }: {
   color: string;
-  instance: Color;
+  instance: ColorLab;
   onClose: () => void;
   colorHandlers: ColorDispatchValue;
 }) {
@@ -447,7 +447,7 @@ export function MonochromeScale({
     instance.contrast === 'dark' ? 'blackAlpha' : 'whiteAlpha';
 
   const scales = useMemo(() => {
-    return new Color(color).generateColorScales('monochrome', 15);
+    return new ColorLab(color).generateColorScales('monochrome', 15);
   }, [color]);
   return (
     <Box position="relative" w={72} h="100vh" py={1} mb={2}>
@@ -486,7 +486,7 @@ export function MonochromeScale({
             },
           });
 
-          const contrast = new Color(_c).contrast;
+          const contrast = new ColorLab(_c).contrast;
           return (
             <Center
               key={_c}
