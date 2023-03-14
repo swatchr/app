@@ -1,4 +1,5 @@
 // import { authEventChannel } from '@/utils/event-bus';
+import { isDev } from '@/utils';
 import { onPromise } from '@/utils/fns';
 import {
   Avatar,
@@ -83,16 +84,21 @@ export const AvatarMenu: React.FC = () => {
         ) : (
           <Spinner />
         )}
-        <MenuList border="lg">
-          <hr />
-          {defaultLinks?.length ? defaultLinks?.map(routeLink) : null}
-          {isUser ? protectedRoutes?.map(routeLink) : null}
-          {isUser ? (
-            <MenuItemButton label="sign out" onClick={() => signOut()} />
-          ) : (
-            <MenuItemButton label="sign in" onClick={() => signIn('google')} />
-          )}
-        </MenuList>
+        {isDev ? (
+          <MenuList border="lg">
+            <hr />
+            {defaultLinks?.length ? defaultLinks?.map(routeLink) : null}
+            {isUser ? protectedRoutes?.map(routeLink) : null}
+            {isUser ? (
+              <MenuItemButton label="sign out" onClick={() => signOut()} />
+            ) : (
+              <MenuItemButton
+                label="sign in"
+                onClick={() => signIn('google')}
+              />
+            )}
+          </MenuList>
+        ) : null}
       </Menu>
     </Box>
   );
