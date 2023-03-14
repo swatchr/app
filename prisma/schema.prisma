@@ -92,7 +92,7 @@ model Color {
     text       String?
     Palette    Palette?   @relation(fields: [paletteId], references: [id], onDelete: Cascade, onUpdate: Cascade)
     paletteId  String?
-    tags       Tag[]
+    Tags       Tag[]
     Favorite   Favorite[]
 }
 
