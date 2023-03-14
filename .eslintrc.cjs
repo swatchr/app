@@ -18,6 +18,8 @@ const config = {
   plugins: ['@typescript-eslint', 'prettier'],
   extends: ['next/core-web-vitals', 'prettier'],
   rules: {
+    'object-property-newline': ['off', { allowAllPropertiesOnSameLine: true }],
+    'array-element-newline': ['off', { multiline: true, minItems: 5 }],
     '@typescript-eslint/consistent-type-imports': [
       'warn',
       {
