@@ -133,7 +133,6 @@ function TestColorUpdate() {
               data: {
                 name: 'Red',
               },
-              // isAdmin: true,
             });
           },
           placeholder: 'Enter a hex color without the "#"',
@@ -165,7 +164,6 @@ function TestColorDelete() {
             e.preventDefault();
             mutation.mutate({
               hex: e.currentTarget.querySelector('input')?.value!?.trim(),
-              isAdmin: true,
             });
           },
           placeholder: 'Enter a hex color without the "#"',
