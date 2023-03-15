@@ -8,7 +8,6 @@ import { prisma } from '@/server/db';
 // @link: https://next-auth.js.org/configuration/options#events
 export const events: NextAuthOptions['events'] = {
   async signIn(message) {
-    (message.user as User)['password'] = '********';
     analytics.track('auth-signIn', {
       category: 'auth',
       label: 'auth:signIn',
@@ -32,7 +31,6 @@ export const events: NextAuthOptions['events'] = {
     analytics.identify(message.session.user.id, {});
   },
   async createUser(message) {
-    // console.log('🚀 | file: events.ts:43 | message:', message);
     const user = await prisma.user.update({
       where: { id: message.user.id },
       data: {
@@ -43,7 +41,6 @@ export const events: NextAuthOptions['events'] = {
     });
 
     if (user && user.Profile && user.role) {
-      // message.user.password = '********';
       analytics.track('auth-user-create', {
         category: 'auth',
         label: 'user:create',
@@ -58,7 +55,6 @@ export const events: NextAuthOptions['events'] = {
     }
   },
   async updateUser(message) {
-    // (message.user as User).password = '********';
     analytics.track('auth-user-update', {
       category: 'auth',
       label: 'user:update',
