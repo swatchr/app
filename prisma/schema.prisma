@@ -81,7 +81,6 @@ model Profile {
     bio       String?
     website   String?
     location  String?
-    Palettes  Palette[]
     Forks     Fork[]
     Owned     Owned[]
     Favorites Favorite[]
@@ -121,13 +120,9 @@ model Palette {
     status    String     @default("public")
     Colors    Color[]
     Tags      Tag[]
-    Profile   Profile?   @relation(fields: [profileId], references: [id])
-    profileId String?
     Owned     Owned[]
-    Fork      Fork[]
-    Favorite  Favorite[]
-
-    @@index([profileId, serial])
+    Forks     Fork[]
+    Favorited Favorite[]
 }
 
 model Owned {
@@ -178,7 +173,6 @@ model Favorite {
     paletteId String? // @db.Text
     Color     Color?   @relation(fields: [colorId], references: [id], onDelete: Cascade, onUpdate: Cascade)
     colorId   String? // @db.Text
-
     Profile   Profile? @relation(fields: [profileId], references: [id])
     profileId String?
 
