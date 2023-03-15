@@ -16,7 +16,9 @@ import {
 import ColorLab from 'lib/color';
 
 import { useKeyboardShortcut } from '@/hooks';
+import { AuthSession } from '@/server';
 import { api } from '@/utils/api';
+import { useSession } from 'next-auth/react';
 import { makeValidHex } from '../../utils/fns';
 
 export type Swatch = string;
@@ -58,6 +60,10 @@ export const PaletteProvider: React.FC<PaletteProviderProps> = ({
   colorParams,
   children,
 }) => {
+  const { data: session, status } = useSession();
+
+  const mutation = api.palette.save.useMutation();
+
   const initialState: PaletteStateValue = {
     palettes: [['#BADA55']],
     palette: ['#BADA55'],
@@ -131,7 +137,16 @@ export const PaletteProvider: React.FC<PaletteProviderProps> = ({
   const savePalette = useCallback(() => {
     const serializedPalette = stringifyPalette(palette);
     localStorage.setItem('palette', serializedPalette);
-  }, [palette]);
+
+    if (session?.user?.profileId) {
+      // profile is missing from session
+      mutation.mutate({
+        session: session,
+        palette,
+        // @TODO: impelment palette name
+      });
+    }
+  }, [palette, mutation, session]);
 
   const addSwatch = useCallback(
     (swatchIndex: number) => {

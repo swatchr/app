@@ -1,6 +1,7 @@
 import { z } from 'zod';
 
 import type { Prisma } from '@prisma/client';
+import type { Session } from 'next-auth';
 
 import {
   adminProcedure,
@@ -8,6 +9,7 @@ import {
   protectedProcedure,
   publicProcedure,
 } from '@/server/api/trpc';
+import { authSessionSchema } from '@/server/auth';
 import { trpcPrismaErrorHandler } from '@/utils/error';
 import { Palette } from 'prisma/models/palette.model';
 
@@ -17,16 +19,18 @@ export const paletteRouter = createTRPCRouter({
   save: protectedProcedure
     .input(
       z.object({
+        session: authSessionSchema,
         palette: z.array(z.string()),
         name: z.string().optional(),
         status: z.string().default('public'),
       })
     )
     .mutation(async ({ ctx, input }) => {
+      const { session, ...restInput } = input;
       try {
         return await palettesModel.createPalette({
-          session: ctx.session,
-          ...input,
+          session: (session as Session) ?? ctx.session,
+          ...restInput,
         });
       } catch (error) {
         trpcPrismaErrorHandler(error);

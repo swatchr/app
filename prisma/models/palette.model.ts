@@ -14,12 +14,15 @@ const colorInstance = new Color();
 export class Palette {
   prisma: PrismaClient;
   constructor() {
-    this.prisma = new PrismaClient();
+    this.prisma = new PrismaClient({
+      errorFormat: 'pretty',
+    });
   }
 
   async paletteExists(palette: string[], status: string = 'public') {
     const color = await this.prisma.palette.findFirst({
       where: { serial: stringifyPalette(palette), status },
+      include: { Owned: true, Forks: true },
     });
     return color;
   }
@@ -37,6 +40,30 @@ export class Palette {
   }) {
     if (!palette?.length) throw new Error('Invalid Palette');
 
+    // check if the palette already exists
+    const paletteExists = await this.paletteExists(palette);
+    if (paletteExists) {
+      if (
+        // check if current user is the owner, if so return palette otherwise fork palette
+        paletteExists.Owned.filter(
+          ({ profileId }) => profileId === session?.user.profileId
+        )
+      ) {
+        return paletteExists;
+      }
+
+      // if palette exists and user is not the owner then fork the palette
+      return await this.prisma.palette.update({
+        where: { id: paletteExists.id },
+        data: {
+          Forks: {
+            create: { Profile: { connect: { id: session?.user.profileId } } },
+          },
+        },
+      });
+    }
+
+    // make sure each of the colors in the palette exist, if not create them
     const colors = await Promise.all(
       palette
         .map(async (hex) => {
@@ -60,40 +87,27 @@ export class Palette {
         .filter(Boolean)
     );
 
+    // make sure all colors still exist
     if (!colors.length || colors.length !== palette.length) {
       throw new Error('Invalid Palette');
     }
 
-    const paletteExists = await this.paletteExists(palette);
-    if (paletteExists) {
-      // check if current user is the owner, if so return palette otherwise fork palette
-      if (paletteExists.profileId === session?.user.profile) {
-        return paletteExists;
-      }
-      await this.prisma.palette.update({
-        where: { id: paletteExists.id },
-        data: {
-          Fork: {
-            create: { Profile: { connect: { id: session?.user.profile } } },
-          },
-        },
-      });
-    }
-
-    const newPalette = await this.prisma.palette.create({
+    // if all colors exist then create the new palette and make user the owner
+    let newPalette = await this.prisma.palette.create({
       data: {
         name: name ?? shortname(),
         serial: stringifyPalette(palette),
         status,
-        Profile: { connect: { id: session?.user.id } },
         Colors: {
           connect: (colors as PrismaColor[]).map((color) => ({ id: color.id })),
         },
         Owned: {
-          create: { Profile: { connect: { id: session?.user.profile } } },
+          create: { profileId: session?.user.profileId },
         },
       },
     });
+
+    if (!newPalette?.id) throw new Error('Invalid Palette');
 
     return newPalette;
   }
@@ -102,7 +116,7 @@ export class Palette {
     if (!id && !serial) throw new Error('Invalid Palette');
     const palette = await this.prisma.palette.findUnique({
       where: Object.assign({}, id ? { id } : { serial }),
-      include: { Colors: true, Owned: true, Fork: true },
+      include: { Colors: true, Owned: true, Forks: true },
     });
 
     if (!palette?.id) throw new Error('Palette not found');
