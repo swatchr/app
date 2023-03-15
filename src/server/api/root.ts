@@ -21,7 +21,7 @@ export const appRouter = createTRPCRouter({
   email: emailRouter,
   color: colorRouter,
   palette: paletteRouter,
-  db: dbRouter,
+  // db: dbRouter,
 });
 
 // export type definition of API
