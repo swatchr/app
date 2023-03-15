@@ -1,9 +1,12 @@
 import { PrismaAdapter } from '@next-auth/prisma-adapter';
 import { getServerSession } from 'next-auth';
 
-import type { Profile, User } from '@prisma/client';
 import { type GetServerSidePropsContext } from 'next';
-import { type DefaultSession, type NextAuthOptions } from 'next-auth';
+import {
+  type DefaultSession,
+  type DefaultUser,
+  type NextAuthOptions,
+} from 'next-auth';
 
 import { prisma } from '@/server/db';
 import { callbacks, events, providers } from 'lib/next-auth/options';
@@ -15,20 +18,20 @@ import { callbacks, events, providers } from 'lib/next-auth/options';
  * @see https://next-auth.js.org/getting-started/typescript#module-augmentation
  */
 declare module 'next-auth' {
+  interface User extends DefaultUser {
+    // ...other properties
+    role: number | null;
+    profile: string | undefined;
+  }
   interface Session extends DefaultSession {
     accessToken: string | unknown;
     user: {
       id: string;
       // ...other properties
-      role: User['role'];
+      role: number;
       profile: string | undefined;
     } & DefaultSession['user'];
   }
-
-  // interface User {
-  //   // ...other properties
-  //   // role: UserRole;
-  // }
 }
 
 /**

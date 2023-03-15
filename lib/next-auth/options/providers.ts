@@ -9,6 +9,7 @@ import { type NextAuthOptions } from 'next-auth';
 // import { ONE_DAY } from '@/utils';
 import { env } from '@/env.mjs';
 import { TEST_ENV } from '@/utils';
+import { User } from '@prisma/client';
 import { comparePasswords } from '../services';
 
 const google = GoogleProvider({
@@ -19,6 +20,8 @@ const google = GoogleProvider({
   //     prompt: 'consent',
   //     access_type: 'offline',
   //     response_type: 'code',
+  //     scope:
+  //       'openid https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/userinfo.email',
   //   },
   // },
 });
@@ -66,13 +69,14 @@ const credentials = CredentialsProvider({
     }
     const user = await prisma.user.findUnique({
       where: { email: credentials?.email },
+      include: { Profile: true },
     });
 
     if (!user || !user?.password) return null;
 
     if (comparePasswords(credentials?.password, user?.password)) {
       console.log('🟢 password compare success');
-      return user;
+      return { ...user, profile: user?.Profile?.id };
     }
     console.log('🔴 password compare fail');
     return null;

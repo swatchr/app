@@ -55,16 +55,6 @@ export const createTRPCContext = async (opts: CreateNextContextOptions) => {
   // Get the session from the server using the getServerSession wrapper function
   const session = await getServerAuthSession({ req, res });
 
-  const profile = await prisma.profile.findUnique({
-    where: { userId: session?.user?.id },
-  });
-
-  if (session && profile) {
-    if (!session?.user.profile) {
-      session.user.profile = profile.id!;
-    }
-  }
-
   return createInnerTRPCContext({
     session,
     req,
@@ -130,9 +120,14 @@ const enforceUserIsAdmin = t.middleware(({ ctx, next }) => {
   if (!ctx.session || !ctx.session.user || !ctx.session.user.profile) {
     throw new TRPCError({ code: 'UNAUTHORIZED' });
   }
+
+  // @TODO: replace with constant
+  if (ctx.session.user.role !== 101) {
+    throw new TRPCError({ code: 'UNAUTHORIZED' });
+  }
+
   return next({
     ctx: {
-      // infers the `session` as non-nullable
       session: { ...ctx.session, user: ctx.session.user },
     },
   });
