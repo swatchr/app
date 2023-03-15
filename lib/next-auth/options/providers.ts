@@ -45,6 +45,7 @@ const google = GoogleProvider({
 /**
  * @NOTE: Requires JWT strategy + callback to work
  * + must also add password field to db
+ * @FIXME: this is not working due to a type issue after updating client side user/session/role handling see #sha- 250b035b441448c2e5e3461ad6393a56222c16ab
  */
 // const credentials = CredentialsProvider({
 //   name: 'Credentials',
