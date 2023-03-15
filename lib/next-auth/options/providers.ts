@@ -46,42 +46,42 @@ const google = GoogleProvider({
  * @NOTE: Requires JWT strategy + callback to work
  * + must also add password field to db
  */
-const credentials = CredentialsProvider({
-  name: 'Credentials',
-  credentials: {
-    email: {
-      label: 'Username',
-      type: 'text',
-      placeholder: 'you@youremail.com',
-      value: process.env.TEST_USER,
-    },
-    password: {
-      label: 'Password',
-      type: 'password',
-      placeholder: '***********',
-      value: process.env.TEST_PW,
-    },
-  },
-  async authorize(credentials, req) {
-    if (!credentials || !credentials?.email || !credentials?.password) {
-      console.log('🔴 invalid credentials');
-      return null;
-    }
-    const user = await prisma.user.findUnique({
-      where: { email: credentials?.email },
-      include: { Profile: true },
-    });
+// const credentials = CredentialsProvider({
+//   name: 'Credentials',
+//   credentials: {
+//     email: {
+//       label: 'Username',
+//       type: 'text',
+//       placeholder: 'you@youremail.com',
+//       value: process.env.TEST_USER,
+//     },
+//     password: {
+//       label: 'Password',
+//       type: 'password',
+//       placeholder: '***********',
+//       value: process.env.TEST_PW,
+//     },
+//   },
+//   async authorize(credentials, req) {
+//     if (!credentials || !credentials?.email || !credentials?.password) {
+//       console.log('🔴 invalid credentials');
+//       return null;
+//     }
+//     const user = await prisma.user.findUnique({
+//       where: { email: credentials?.email },
+//       include: { Profile: true },
+//     });
 
-    if (!user || !user?.password) return null;
+//     if (!user || !user?.password) return null;
 
-    if (comparePasswords(credentials?.password, user?.password)) {
-      console.log('🟢 password compare success');
-      return { ...user, profile: user?.Profile?.id };
-    }
-    console.log('🔴 password compare fail');
-    return null;
-  },
-});
+//     if (comparePasswords(credentials?.password, user?.password)) {
+//       console.log('🟢 password compare success');
+//       return { ...user, profile: user?.Profile?.id };
+//     }
+//     console.log('🔴 password compare fail');
+//     return null;
+//   },
+// });
 
 export const providers: NextAuthOptions['providers'] = [google];
 // TEST_ENV ? providers.push(credentials) : providers.push(google);
