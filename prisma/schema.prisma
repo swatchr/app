@@ -56,25 +56,10 @@ model User {
     password      String?
     accounts      Account[]
     sessions      Session[]
-    role          Int?      @default(0)
-    Roles         Role?     @relation(fields: [role], references: [level], onDelete: SetDefault)
+    Role          Role?     @relation(fields: [role], references: [id], onDelete: SetDefault)
+    role          String?
     Profile       Profile?  @relation(fields: [profileId], references: [id])
-    profileId     String?
-}
-
-model Profile {
-    id        String     @id @default(cuid())
-    createdAt DateTime   @default(now())
-    updatedAt DateTime   @updatedAt
-    userId    String     @unique
-    bio       String?
-    website   String?
-    location  String?
-    user      User[]
-    Palettes  Palette[]
-    Forks     Fork[]
-    Owned     Owned[]
-    Favorites Favorite[]
+    profileId     String?   @unique @default(cuid())
 }
 
 model VerificationToken {
@@ -83,6 +68,20 @@ model VerificationToken {
     expires    DateTime
 
     @@unique([identifier, token])
+}
+
+model Profile {
+    id        String     @id @default(cuid())
+    createdAt DateTime   @default(now())
+    updatedAt DateTime   @updatedAt
+    bio       String?
+    website   String?
+    location  String?
+    Palettes  Palette[]
+    Forks     Fork[]
+    Owned     Owned[]
+    Favorites Favorite[]
+    User      User?
 }
 
 model Role {
