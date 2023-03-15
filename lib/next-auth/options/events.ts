@@ -1,13 +1,14 @@
-import { PrismaClient } from '@prisma/client';
-import { type NextAuthOptions } from 'next-auth';
+import { PrismaClient, type User } from '@prisma/client';
+import type { NextAuthOptions } from 'next-auth';
 
 import { analytics } from '../../analytics';
 
-const prisma = new PrismaClient();
+import { prisma } from '@/server/db';
 
 // @link: https://next-auth.js.org/configuration/options#events
 export const events: NextAuthOptions['events'] = {
   async signIn(message) {
+    (message.user as User)['password'] = '********';
     analytics.track('auth-signIn', {
       category: 'auth',
       label: 'auth:signIn',
@@ -31,26 +32,33 @@ export const events: NextAuthOptions['events'] = {
     analytics.identify(message.session.user.id, {});
   },
   async createUser(message) {
+    // console.log('🚀 | file: events.ts:43 | message:', message);
     const user = await prisma.user.update({
       where: { id: message.user.id },
       data: {
-        Profile: { connect: { id: message.user.id } },
+        Profile: { create: {} },
+        Role: { connect: { level: 0 } },
       },
       include: { Profile: true },
     });
-    analytics.track('auth-user-create', {
-      category: 'auth',
-      label: 'user:create',
-      value: 1,
-      ...message.user,
-      profile: user.Profile?.id,
-    });
-    analytics.identify(message.user.id, {
-      ...message.user,
-      profile: user.Profile?.id,
-    });
+
+    if (user && user.Profile && user.role) {
+      // message.user.password = '********';
+      analytics.track('auth-user-create', {
+        category: 'auth',
+        label: 'user:create',
+        value: 1,
+        ...message.user,
+        profile: user.profileId,
+      });
+      analytics.identify(message.user.id, {
+        ...message.user,
+        profile: user.profileId,
+      });
+    }
   },
   async updateUser(message) {
+    // (message.user as User).password = '********';
     analytics.track('auth-user-update', {
       category: 'auth',
       label: 'user:update',
@@ -62,6 +70,13 @@ export const events: NextAuthOptions['events'] = {
     });
   },
   async linkAccount(message) {
+    delete message.account.access_token;
+    delete message.account.expires_at;
+    delete message.account['id_token'];
+    delete message.account['token_type'];
+    delete message.account.scope;
+    delete message.account['expires_at'];
+    message.account['providerAccountId'] = '*****';
     analytics.track('auth-link-account', {
       category: 'auth',
       label: 'account:link',

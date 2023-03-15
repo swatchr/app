@@ -16,6 +16,7 @@ export function loggerPlugin() {
     },
     /* Identify user */
     identify: ({ payload }: { payload: Record<string, any> }) => {
+      delete payload?.traits?.password;
       console.log('📊 AIdentify', payload);
     },
   };
