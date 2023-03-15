@@ -56,10 +56,14 @@ model User {
     password      String?
     accounts      Account[]
     sessions      Session[]
-    Role          Role?     @relation(fields: [role], references: [id], onDelete: SetDefault)
-    role          String?
-    Profile       Profile?  @relation(fields: [profileId], references: [id])
+    Role          Role?     @relation(fields: [role], references: [level], onDelete: SetDefault)
+    role          Int?      @default(0)
+    Profile       Profile?  @relation(fields: [profileId], references: [id], onDelete: Cascade)
     profileId     String?   @unique @default(cuid())
+
+    @@unique([email, name])
+    @@unique([email, profileId])
+    @@unique([id, profileId])
 }
 
 model VerificationToken {
@@ -81,12 +85,12 @@ model Profile {
     Forks     Fork[]
     Owned     Owned[]
     Favorites Favorite[]
-    User      User?
+    user      User?
 }
 
 model Role {
     id    String @id @default(cuid())
-    type  String @unique @default("anonymous")
+    type  String @unique @default("ANON")
     level Int    @unique @default(0)
     user  User[]
 }
