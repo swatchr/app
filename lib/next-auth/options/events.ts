@@ -31,20 +31,23 @@ export const events: NextAuthOptions['events'] = {
     analytics.identify(message.session.user.id, {});
   },
   async createUser(message) {
-    // const profile = await prisma.profile.create({
-    //   data: {
-    //     user: { connect: { id: message.user.id } },
-    //   },
-    // });
+    const user = await prisma.user.update({
+      where: { id: message.user.id },
+      data: {
+        Profile: { connect: { id: message.user.id } },
+      },
+      include: { Profile: true },
+    });
     analytics.track('auth-user-create', {
       category: 'auth',
       label: 'user:create',
       value: 1,
       ...message.user,
-      // profile: profile.id,
+      profile: user.Profile?.id,
     });
     analytics.identify(message.user.id, {
       ...message.user,
+      profile: user.Profile?.id,
     });
   },
   async updateUser(message) {

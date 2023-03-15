@@ -32,7 +32,6 @@ function TestColorCreate() {
             e.preventDefault();
             const color = mutation.mutate({
               hex: e.currentTarget.querySelector('input')?.value!?.trim(),
-              // isAdmin: true,
             });
           },
           placeholder: 'Enter a hex color without the "#"',
@@ -107,7 +106,6 @@ function TestColorGetAll() {
             setState(palette);
           },
           placeholder: 'Enter a hex palette without the "#"',
-          // pattern: HEX_COLOR_WITHOUT_HASH_REGEX_STRING,
         }}
       />
       {isSuccess && JSON.stringify({ success: isSuccess, data }, null, 2)}

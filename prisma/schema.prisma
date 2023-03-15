@@ -57,8 +57,7 @@ model User {
     accounts      Account[]
     sessions      Session[]
     role          Int?      @default(0)
-    roles         Role?     @relation(fields: [role], references: [value], onDelete: SetDefault)
-    // profile       Profile?
+    Roles         Role?     @relation(fields: [role], references: [level], onDelete: SetDefault)
     Profile       Profile?  @relation(fields: [profileId], references: [id])
     profileId     String?
 }
@@ -71,8 +70,7 @@ model Profile {
     bio       String?
     website   String?
     location  String?
-    // user      User       @relation(fields: [userId], references: [id], onDelete: Cascade)
-    User      User[]
+    user      User[]
     Palettes  Palette[]
     Forks     Fork[]
     Owned     Owned[]
@@ -90,7 +88,7 @@ model VerificationToken {
 model Role {
     id    String @id @default(cuid())
     type  String @unique @default("anonymous")
-    value Int    @unique @default(0)
+    level Int    @unique @default(0)
     user  User[]
 }
 
@@ -184,13 +182,3 @@ model Favorite {
     @@unique([profileId, paletteId])
     @@unique([profileId, colorId])
 }
-
-// @TODO: ADD ACHIEVEMENTS: ie, added first palette, etc.
-// a new user gets a related acheivemsnt list to complement with flags for each achievement
-
-// @TODO: Consider adding known brand colors.
-
-// @TODO: Add ability to emote on a color or palette
-// ask the quesiton how does this color make you feel?
-// if they interact with it then show then the actual emotion the color conveys and the consensus //
-// of the community
