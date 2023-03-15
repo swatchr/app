@@ -1,4 +1,4 @@
-import { useDebounce, useKeyboardShortcut, useKeyPress } from '@/hooks';
+import { useKeyboardShortcut } from '@/hooks';
 import {
   Box,
   Button,
@@ -12,14 +12,11 @@ import {
   InputLeftElement,
   List,
   ListItem,
-  Menu,
-  MenuItem,
-  MenuList,
   useDisclosure,
   VisuallyHidden,
   VStack,
 } from '@chakra-ui/react';
-import { useMemo, useReducer, useRef, useState } from 'react';
+import { useReducer, useState } from 'react';
 
 import { useKeyboardNavigation } from '@/hooks/use-keyboard-navigation';
 import { Search2Icon } from '@chakra-ui/icons';
