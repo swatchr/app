@@ -1,8 +1,9 @@
 import { z } from 'zod';
 
-import { adminProcedure, TRPCContext } from '@/server/api/trpc';
+import type { TRPCContext } from '@/server/api/trpc';
 
 import {
+  adminProcedure,
   createTRPCRouter,
   protectedProcedure,
   publicProcedure,
@@ -13,11 +14,7 @@ import ColorLab from 'lib/color';
 import { Color } from 'prisma/models/color.model';
 import { handleServerError } from '../utils';
 
-export const colorApiSchema = z.object({
-  hex: z.object({
-    value: z.string(),
-    clean: z.string(),
-  }),
+export const baseApiSchema = z.object({
   rgb: z.object({
     value: z.string(),
   }),
@@ -42,7 +39,23 @@ export const colorApiSchema = z.object({
   }),
 });
 
+const fullHexSchema = z.object({
+  clean: z.string(),
+  value: z.string(),
+});
+const cleanHexSchema = z.object({
+  clean: z.string(),
+});
+
+export const colorApiSchema = baseApiSchema.merge(
+  z.object({ hex: fullHexSchema })
+);
 export type ColorApiSchema = z.infer<typeof colorApiSchema>;
+
+export const cleanColorApiSchema = baseApiSchema.merge(
+  z.object({ hex: cleanHexSchema })
+);
+export type CleanColorApiSchema = z.infer<typeof cleanColorApiSchema>;
 
 export async function createColor(ctx: TRPCContext, hex: string) {
   const res = await fetchTheColorApi(hex, 'id');
@@ -66,6 +79,8 @@ export async function createColor(ctx: TRPCContext, hex: string) {
     })
   );
 }
+
+export type ColorApiReturn = ReturnType<typeof createColor>;
 
 export const fetchTheColorApi = async (hex: string, endpoint = 'scheme') => {
   const mode = 'analogic-complement';

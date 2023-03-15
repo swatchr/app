@@ -7,17 +7,19 @@ import {
   useReducer,
 } from 'react';
 
+import type { CleanColorApiSchema } from '@/server/api/routers/color';
+
+import { useKeyboardShortcut } from '@/hooks';
+import { cleanColorApiSchema } from '@/server/api/routers/color';
 import {
   insertAtIndex,
+  publish,
   removeFromArrayAtIndex,
   stringifyPalette,
   updateArrayAtIndex,
 } from '@/utils';
-import ColorLab from 'lib/color';
-
-import { useKeyboardShortcut } from '@/hooks';
-import { AuthSession } from '@/server';
 import { api } from '@/utils/api';
+import ColorLab from 'lib/color';
 import { useSession } from 'next-auth/react';
 import { makeValidHex } from '../../utils/fns';
 
@@ -63,6 +65,7 @@ export const PaletteProvider: React.FC<PaletteProviderProps> = ({
   const { data: session, status } = useSession();
 
   const mutation = api.palette.save.useMutation();
+  const colorMutation = api.color.save.useMutation();
 
   const initialState: PaletteStateValue = {
     palettes: [['#BADA55']],
@@ -98,8 +101,6 @@ export const PaletteProvider: React.FC<PaletteProviderProps> = ({
     },
     initialState
   );
-
-  const colorMutation = api.color.save.useMutation();
 
   useEffect(() => {
     if (colorParams.length) {
@@ -151,11 +152,11 @@ export const PaletteProvider: React.FC<PaletteProviderProps> = ({
   const addSwatch = useCallback(
     (swatchIndex: number) => {
       const newColor = new ColorLab('#BADA55').random();
-      colorMutation.mutate({
-        hex: newColor.startsWith('#') ? newColor.replace('#', '') : newColor,
-      });
       setState({
         palette: insertAtIndex(palette, swatchIndex, newColor),
+      });
+      colorMutation.mutate({
+        hex: newColor.startsWith('#') ? newColor.replace('#', '') : newColor,
       });
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps -- do not add colorMutation to deps
@@ -164,11 +165,11 @@ export const PaletteProvider: React.FC<PaletteProviderProps> = ({
 
   const updateSwatch = useCallback(
     (swatchIndex: number, newColor: string) => {
-      colorMutation.mutate({
-        hex: newColor.startsWith('#') ? newColor.replace('#', '') : newColor,
-      });
       setState({
         palette: updateArrayAtIndex(palette, swatchIndex, () => newColor),
+      });
+      colorMutation.mutate({
+        hex: newColor.startsWith('#') ? newColor.replace('#', '') : newColor,
       });
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps -- do not add colorMutation to deps
