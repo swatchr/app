@@ -5,7 +5,6 @@ import doNotTrack from 'analytics-plugin-do-not-track';
 import { loggerPlugin } from './analytics-logger';
 // @link: https://getanalytics.io/plugins/do-not-track/
 
-// @TODO: Implement consent management
 // @TODO: Impelment tab events @SEE: https://getanalytics.io/plugins/tab-events/
 
 export function getConsent(): boolean {

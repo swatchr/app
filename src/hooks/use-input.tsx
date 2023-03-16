@@ -18,7 +18,7 @@ function useInput(
 ) {
   const [value, setValue] = useState(options?.initialValue || '');
 
-  // @TODO: ADD DEBOUNCING
+  // @FIXME: ADDING DEBOUNCE makes the logic break
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     options?.onChange ? options.onChange(event) : setValue(event.target.value);
   };

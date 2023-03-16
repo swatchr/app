@@ -101,7 +101,6 @@ export const fetchTheColorApi = async (hex: string, endpoint = 'scheme') => {
   }
 };
 
-// @TODO: throw errors instead foe each query
 export const colorRouter = createTRPCRouter({
   schemeAPI: publicProcedure
     .input(z.object({ hex: z.string() }))
