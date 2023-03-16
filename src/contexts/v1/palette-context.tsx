@@ -7,13 +7,9 @@ import {
   useReducer,
 } from 'react';
 
-import type { CleanColorApiSchema } from '@/server/api/routers/color';
-
 import { useKeyboardShortcut } from '@/hooks';
-import { cleanColorApiSchema } from '@/server/api/routers/color';
 import {
   insertAtIndex,
-  publish,
   removeFromArrayAtIndex,
   stringifyPalette,
   updateArrayAtIndex,
@@ -21,7 +17,6 @@ import {
 import { api } from '@/utils/api';
 import ColorLab from 'lib/color';
 import { useSession } from 'next-auth/react';
-import { makeValidHex } from '../../utils/fns';
 
 export type Swatch = string;
 export type Palette = Swatch[];

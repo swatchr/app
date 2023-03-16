@@ -1,4 +1,11 @@
-import { Center, Flex, SlideFade, useDisclosure } from '@chakra-ui/react';
+import {
+  Button,
+  ButtonProps,
+  Center,
+  Flex,
+  SlideFade,
+  useDisclosure,
+} from '@chakra-ui/react';
 import { motion, useAnimation } from 'framer-motion';
 import { useCallback, useEffect, useState } from 'react';
 
@@ -56,6 +63,7 @@ export function Swatch({ index }: { index: number }) {
     <Flex
       direction="column"
       className="swatch-wrapper"
+      position="relative"
       w="full"
       h="100vh"
       my="auto"
@@ -73,6 +81,24 @@ export function Swatch({ index }: { index: number }) {
         swatchMenuOnClose();
       }}
       color={text} // all of the icons and text inherit the text color
+      _before={
+        swatchMenuIsOpen
+          ? {
+              content: '""',
+              position: 'absolute',
+              bottom: 12,
+              left: '50%',
+              right: '50%',
+              transform: 'translateX(-50%)',
+              width: '1.25rem',
+              height: '1.25rem',
+              borderRadius: '50%',
+              backgroundColor: 'currentColor',
+              opacity: 0.1,
+              zIndex: 3,
+            }
+          : {}
+      }
     >
       <SlideFade in={mounted} offsetX={-96} reverse unmountOnExit>
         <Center

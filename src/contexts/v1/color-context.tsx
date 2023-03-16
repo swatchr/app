@@ -52,13 +52,14 @@ export const ColorProvider: React.FC<ColorProviderProps> = ({
   const isActive = paletteState.activeSwatchIndex === index;
   const updateColor = useCallback(
     (newColor: string) => {
+      if (!isActive) return;
       // if (!newColor || newColor === color) return;
       paletteHandlers.updateSwatch(index, newColor);
     },
-    [index, paletteHandlers]
+    [index, paletteHandlers, isActive]
   );
 
-  const history = useSwatchUndo(color, updateColor);
+  const history = useSwatchUndo(color, updateColor, index);
 
   const [{ instance }, colorHandlers] = useTinyColor(
     color,

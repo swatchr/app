@@ -55,7 +55,6 @@ export function EditableHexInput({
         onChange={useDebounce((value) => setValue(value), 100)}
         onSubmit={handleSubmit}
         maxW="80%"
-        outline=""
       >
         <InputGroup>
           <EditablePreview
