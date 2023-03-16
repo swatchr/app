@@ -11,8 +11,7 @@ import type ColorLab from 'lib/color';
 
 import { usePaletteDispatch, usePaletteState } from '@/contexts';
 import { useKeyboardShortcut } from '@/hooks';
-import { useSwatchUndo } from './hooks/use-swatch-undo';
-import { useTinyColor } from './hooks/use-tinycolor';
+import { useSwatchUndo, useTinyColor } from './hooks';
 
 interface ColorProviderProps {
   color: Swatch;
@@ -28,6 +27,19 @@ export interface ColorStateValue {
   activeSwatchIndex: number;
   palette: Palette;
 }
+
+type SwatchUndoState = {
+  history: string[];
+  currentIndex: number;
+};
+
+type SwatchUndoActions = {
+  undo: () => void;
+  redo: () => void;
+  handleChange: (newColor: string) => void;
+  handleRemove: (index: number) => void;
+  clearHistory: () => void;
+};
 
 export interface ColorDispatchValue {
   paletteHandlers: ReturnType<typeof usePaletteDispatch>;
@@ -58,8 +70,25 @@ export const ColorProvider: React.FC<ColorProviderProps> = ({
     },
     [index, paletteHandlers, isActive]
   );
+  const removeColor = useCallback(
+    (index: number) => {
+      if (!isActive) return;
+      paletteHandlers.removeSwatch(index);
+    },
+    [paletteHandlers, isActive]
+  );
 
-  const history = useSwatchUndo(color, updateColor, index);
+  const history = useSwatchUndo(
+    color,
+    updateColor,
+    removeColor,
+    index,
+    isActive
+  );
+
+  /* -------------------------------------------------------------------------- */
+  /*                                  TINYCOLOR                                 */
+  /* -------------------------------------------------------------------------- */
 
   const [{ instance }, colorHandlers] = useTinyColor(
     color,
@@ -70,10 +99,10 @@ export const ColorProvider: React.FC<ColorProviderProps> = ({
   /* -------------------------------------------------------------------------- */
   /*                             KEYBOARD SHORTCUTS                             */
   /* -------------------------------------------------------------------------- */
-
   // empty space represents the spacebar
   useKeyboardShortcut([' '], () => {
     if (!isActive) return;
+    console.log('generating color');
     colorHandlers.generateRandomColor();
   });
   /* -------------------------------------------------------------------------- */
@@ -118,7 +147,11 @@ export const ColorProvider: React.FC<ColorProviderProps> = ({
   );
 
   const colorDispatchValue: ColorDispatchValue = useMemo(
-    () => ({ paletteHandlers, tinycolor: colorHandlers, history }),
+    () => ({
+      paletteHandlers,
+      tinycolor: colorHandlers,
+      history,
+    }),
     [paletteHandlers, colorHandlers, history]
   );
 

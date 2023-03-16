@@ -2,9 +2,11 @@ import {
   Button,
   ButtonProps,
   Center,
+  chakra,
   Flex,
   SlideFade,
   useDisclosure,
+  VStack,
 } from '@chakra-ui/react';
 import { motion, useAnimation } from 'framer-motion';
 import { useCallback, useEffect, useState } from 'react';
@@ -149,6 +151,27 @@ export function Swatch({ index }: { index: number }) {
       </SlideFade>
       <InfoPanel {...colorState} index={isActive('info') ? 0 : undefined} />
       <InfoWindow />
+      <VStack w="full" mx={2} p={2} borderRadius="xl">
+        <chakra.p fontSize="xs">History</chakra.p>
+        <Flex w="full" justifyContent="center">
+          {colorHandlers.history.history.map((color, i) => {
+            return (
+              <Center
+                key={color + i}
+                ml={1}
+                bg={color}
+                rounded="xl"
+                boxSize="1.25em"
+                border={
+                  colorHandlers.history.historyIndex === i
+                    ? '1px solid currentColor'
+                    : 'none'
+                }
+              />
+            );
+          })}
+        </Flex>
+      </VStack>
     </Flex>
   );
 }

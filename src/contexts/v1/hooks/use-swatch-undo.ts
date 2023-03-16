@@ -1,74 +1,133 @@
-import { useKeyboardShortcut } from '@/hooks/use-keyboard-shortcut';
-import { useToast } from '@chakra-ui/react';
-import { useCallback, useEffect, useMemo, useRef } from 'react';
+import { useCallback, useEffect, useReducer } from 'react';
 
 import { useDebounce } from '@/hooks';
+import { useKeyboardShortcut } from '@/hooks/use-keyboard-shortcut';
+import { isClient } from '@/utils';
+import { useToast } from '@chakra-ui/react';
+
+type SwatchUndoState = {
+  history: string[];
+  currentIndex: number;
+};
+
+type SwatchUndoActions = {
+  undo: () => void;
+  redo: () => void;
+  handleChange: (newColor: string) => void;
+  handleRemove: (index: number) => void;
+  clearHistory: () => void;
+};
+
+const HISTORY_LIMIT = 10;
 
 export const useSwatchUndo = (
   initialColor: string,
-  updateSwatch: (color: string) => void
+  updateSwatch: (color: string) => void,
+  removeColor: (index: number) => void,
+  index: number,
+  isActive: boolean
 ) => {
-  const colorHistoryRef = useRef<string[]>([initialColor]);
-  const historyIndexRef = useRef(0);
+  const key = `swatch-${index}`;
+  const [{ history, currentIndex }, setState] = useReducer(
+    (prev: SwatchUndoState, next: Partial<SwatchUndoState>) => {
+      if (next?.history && next.history.length > HISTORY_LIMIT) {
+        next.history?.shift();
+      }
 
-  const canUndo = historyIndexRef.current > 0;
-  const canRedo = historyIndexRef.current < colorHistoryRef.current.length - 1;
+      return { ...prev, ...next };
+    },
+    { history: [initialColor], currentIndex: 0 }
+  );
+
+  const canUndo = currentIndex > 0;
+  const canRedo = currentIndex < history.length - 1;
+
   const toast = useToast();
+  const notify = useCallback(
+    (title: string) => {
+      isActive &&
+        toast({ title, status: 'info', duration: 2000, isClosable: true });
+    },
+    [isActive, toast]
+  );
+
+  useEffect(() => {
+    if (isClient) {
+      const storedState = localStorage.getItem(key);
+      if (storedState) {
+        setState(JSON.parse(storedState));
+      }
+    }
+  }, [key]);
+
+  useEffect(() => {
+    const newState = { history, currentIndex };
+    localStorage.setItem(key, JSON.stringify(newState));
+  }, [history, currentIndex, key]);
 
   const undo = useCallback(() => {
-    if (canUndo) {
-      historyIndexRef.current--;
-      updateSwatch(colorHistoryRef.current[historyIndexRef.current]!);
+    if (isActive && canUndo) {
+      const newIndex = currentIndex - 1;
+      setState({ currentIndex: newIndex });
+      updateSwatch(history[newIndex]!);
+      localStorage.setItem(
+        key,
+        JSON.stringify({ history, currentIndex: newIndex })
+      );
     } else {
-      toast({
-        title: 'Cannot Undo - Limit Reached',
-        status: 'error',
-        duration: 600,
-        isClosable: true,
-      });
+      notify('Nothing to undo');
     }
-  }, [canUndo, updateSwatch, toast]);
+  }, [isActive, canUndo, currentIndex, updateSwatch, history, key, notify]);
 
   const redo = useCallback(() => {
-    if (canRedo) {
-      historyIndexRef.current++;
-      updateSwatch(colorHistoryRef.current[historyIndexRef.current]!);
+    if (isActive && canRedo) {
+      const newIndex = currentIndex + 1;
+      setState({ currentIndex: newIndex });
+      updateSwatch(history[newIndex]!);
+      localStorage.setItem(
+        key,
+        JSON.stringify({ history, currentIndex: newIndex })
+      );
     } else {
-      toast({
-        title: 'Cannot Redo - Limit Reached',
-        status: 'error',
-        duration: 600,
-        isClosable: true,
-      });
+      notify('Nothing to redo');
     }
-  }, [canRedo, updateSwatch, toast]);
+  }, [isActive, canRedo, currentIndex, updateSwatch, history, key, notify]);
 
   const handleChange = useDebounce(
     useCallback(
       (newColor: string) => {
-        if (newColor !== colorHistoryRef.current[historyIndexRef.current]) {
-          const newColorHistory = [
-            ...colorHistoryRef.current.slice(0, historyIndexRef.current + 1),
-            newColor,
-          ];
-          colorHistoryRef.current = newColorHistory;
-          historyIndexRef.current = newColorHistory.length - 1;
+        if (isActive && newColor !== history[currentIndex]) {
+          const newHistory = history;
+          newHistory.push(newColor);
+          const lastIndex = newHistory.length - 1;
+          setState({
+            history: newHistory,
+            currentIndex: lastIndex,
+          });
           updateSwatch(newColor);
         }
       },
-      [updateSwatch]
+      [isActive, history, currentIndex, updateSwatch]
     ),
     200
   );
 
-  useEffect(() => {
-    // only set a new history when the initial color actually changes
-    if (initialColor !== colorHistoryRef.current[historyIndexRef.current]) {
-      colorHistoryRef.current = [initialColor];
-      historyIndexRef.current = 0;
-      updateSwatch(initialColor);
+  const handleRemove = useCallback(
+    (index: number) => {
+      if (isActive && isClient && localStorage.getItem(key)) {
+        localStorage.removeItem(key);
+      }
+      removeColor(index);
+    },
+    [isActive, key, removeColor]
+  );
+
+  const clearHistory = useCallback(() => {
+    if (isActive && isClient && localStorage.getItem(key)) {
+      localStorage.removeItem(key);
     }
-  }, [initialColor, updateSwatch]);
+    setState({ history: [initialColor], currentIndex: 0 });
+  }, [initialColor, isActive, key]);
 
   /* -------------------------------------------------------------------------- */
   /*                             KEYBOARD SHORTCUTS                             */
@@ -84,19 +143,15 @@ export const useSwatchUndo = (
     repeatOnHold: false,
   });
 
-  const actions = useMemo(() => ({ undo, redo }), [redo, undo]);
-  const state = useMemo(
-    () => ({ canUndo, canRedo, color: colorHistoryRef.current }),
-    [canRedo, canUndo, colorHistoryRef]
-  );
-
   return {
-    color: colorHistoryRef.current[historyIndexRef.current],
+    history,
+    historyIndex: currentIndex,
+    color: history[currentIndex],
     undo,
     redo,
     canUndo,
     canRedo,
     handleChange,
+    handleRemove,
   };
-  // return { ...actions, ...state, handleChange };
 };

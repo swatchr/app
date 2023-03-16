@@ -1,7 +1,12 @@
 import { AddIcon, MinusIcon, NotAllowedIcon } from '@chakra-ui/icons';
 import { IconButton } from '@chakra-ui/react';
 
-import { useColorState, usePaletteDispatch, usePaletteState } from '@/contexts';
+import {
+  useColorDispatch,
+  useColorState,
+  usePaletteDispatch,
+  usePaletteState,
+} from '@/contexts';
 import { ControlWrapper } from './control-wrapper';
 
 export function PaletteControls({
@@ -12,13 +17,15 @@ export function PaletteControls({
   modifier: string;
 }) {
   const { palette } = usePaletteState();
-  const { addSwatch, removeSwatch } = usePaletteDispatch();
+  const { addSwatch } = usePaletteDispatch();
+  const { history } = useColorDispatch();
+
   const { instance } = useColorState();
 
   const swatchIndex = modifier === 'increment' ? index + 1 : index - 1;
 
   const handleAddSwatch = () => addSwatch(swatchIndex);
-  const handleRemoveSwatch = () => removeSwatch(index);
+  const handleRemoveSwatch = () => history.handleRemove(index);
   const isOnlySwatch = palette.length === 1;
 
   const contrast = instance.contrast === 'dark' ? 'blackAlpha' : 'whiteAlpha';
