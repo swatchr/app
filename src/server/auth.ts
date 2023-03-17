@@ -23,6 +23,7 @@ import { z } from 'zod';
 type U = Omit<PrismaUser, keyof DefaultUser>;
 declare module 'next-auth' {
   interface User extends U {
+    emailVerified: Date | null;
     role: number | null;
     profileId: string | undefined;
   }
@@ -32,6 +33,7 @@ declare module 'next-auth' {
     user: {
       role: number | undefined;
       profileId: string | undefined;
+      emailVerified: Date | null;
     } & DefaultUser;
   }
 }
