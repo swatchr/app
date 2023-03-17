@@ -37,6 +37,7 @@ export function ColorBlindnessSimulator({
           <Button
             role="button"
             key={filter}
+            w="full"
             // colorScheme={contrast}
             size="sm"
             cursor="pointer"
