@@ -56,13 +56,7 @@ function WidgetStatesWrapper({ children }: { children: React.ReactNode }) {
   );
 }
 
-export function FeedbackWidget({
-  fill,
-  isDisabled,
-}: {
-  fill: string;
-  isDisabled: boolean;
-}) {
+export function FeedbackWidget({ isDisabled }: { isDisabled: boolean }) {
   const initialState: FeedbackState = {
     feedback: undefined,
     email: undefined,
@@ -109,7 +103,7 @@ export function FeedbackWidget({
       popoverProps={{}}
       customButton={{
         Component: CustomFeedbackTrigger,
-        props: { fill, color: 'inherit', isDisabled },
+        props: { fill: 'inherit', color: 'inherit', isDisabled },
       }}
       content={{
         header: (
