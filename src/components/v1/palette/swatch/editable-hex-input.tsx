@@ -19,7 +19,9 @@ import {
 export function EditableHexInput({
   colorState,
   handleChange,
+  show,
 }: {
+  show: boolean;
   colorState: ColorStateValue;
   handleChange: ColorDispatchValue['history']['handleChange'];
 }) {
@@ -67,6 +69,7 @@ export function EditableHexInput({
               left: -3.5,
               top: 1,
             }}
+            opacity={show ? 1 : 0.5}
           />
           <FormControl>
             <EditableInput

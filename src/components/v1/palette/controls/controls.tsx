@@ -108,7 +108,7 @@ export function Controls({
         <PaletteControls index={colorState.index} modifier="increment" />
       </VStack>
       <HStack gridArea="stack5" py={2} px={1} justifyContent="space-between">
-        <ControlWrapper label="Info" action={toggleInfoActive}>
+        {/* <ControlWrapper label="Info" action={toggleInfoActive}>
           <Box boxSize="1.5rem">
             <Icon
               as={InfoIcon}
@@ -119,7 +119,7 @@ export function Controls({
               tabIndex={1}
             />
           </Box>
-        </ControlWrapper>
+        </ControlWrapper> */}
         <ControlWrapper
           label="Combinations"
           action={() => openAndUpdate('combos')}

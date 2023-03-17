@@ -28,6 +28,7 @@ export const BaseLayout: FC<BaseLayoutProps> = ({
           w="full"
           color={'text'}
           minHeight="100vh"
+          maxHeight="100vh"
           overflowX="hidden"
         >
           {children}

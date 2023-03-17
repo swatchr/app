@@ -1,12 +1,9 @@
 import {
-  Button,
-  ButtonProps,
   Center,
   chakra,
   Flex,
   SlideFade,
   useDisclosure,
-  VStack,
 } from '@chakra-ui/react';
 import { motion, useAnimation } from 'framer-motion';
 import { useCallback, useEffect, useState } from 'react';
@@ -19,7 +16,7 @@ import {
 import { useMounted } from '@/hooks/use-mounted';
 import { useThemeColors } from 'chakra.ui';
 import { ColorPickerWrapper, EditableHexInput, SwatchMenu } from '.';
-import { InfoPanel, InfoWindow } from '../panels';
+import { HistoryViewer, InfoPanel, InfoWindow } from '../panels';
 
 const BG_TRANSITION = { duration: 0.5, ease: 'easeInOut' };
 
@@ -83,24 +80,6 @@ export function Swatch({ index }: { index: number }) {
         swatchMenuOnClose();
       }}
       color={text} // all of the icons and text inherit the text color
-      _before={
-        swatchMenuIsOpen
-          ? {
-              content: '""',
-              position: 'absolute',
-              bottom: 12,
-              left: '50%',
-              right: '50%',
-              transform: 'translateX(-50%)',
-              width: '1.25rem',
-              height: '1.25rem',
-              borderRadius: '50%',
-              backgroundColor: 'currentColor',
-              opacity: 0.1,
-              zIndex: 3,
-            }
-          : {}
-      }
     >
       <SlideFade in={mounted} offsetX={-96} reverse unmountOnExit>
         <Center
@@ -111,7 +90,6 @@ export function Swatch({ index }: { index: number }) {
         >
           {swatchMenuIsOpen ? (
             <SwatchMenu
-              // the icon grid menu behind the swatch
               colorState={colorState}
               colorHandlers={colorHandlers}
               reset={reset}
@@ -142,6 +120,7 @@ export function Swatch({ index }: { index: number }) {
             ) : null}
             {view == 'swatch' ? (
               <EditableHexInput
+                show={swatchMenuIsOpen}
                 colorState={colorState}
                 handleChange={colorHandlers.history.handleChange}
               />
@@ -149,29 +128,17 @@ export function Swatch({ index }: { index: number }) {
           </Center>
         </Center>
       </SlideFade>
-      <InfoPanel {...colorState} index={isActive('info') ? 0 : undefined} />
-      <InfoWindow />
-      <VStack w="full" mx={2} p={2} borderRadius="xl">
-        <chakra.p fontSize="xs">History</chakra.p>
-        <Flex w="full" justifyContent="center">
-          {colorHandlers.history.history.map((color, i) => {
-            return (
-              <Center
-                key={color + i}
-                ml={1}
-                bg={color}
-                rounded="xl"
-                boxSize="1.25em"
-                border={
-                  colorHandlers.history.historyIndex === i
-                    ? '1px solid currentColor'
-                    : 'none'
-                }
-              />
-            );
-          })}
-        </Flex>
-      </VStack>
+      <InfoPanel
+        {...colorState}
+        index={isActive('info') ? 0 : undefined}
+        showIcon={swatchMenuIsOpen}
+      />
+      {colorState.isActive ? (
+        <>
+          <InfoWindow />
+          <HistoryViewer colorHandlers={colorHandlers} />
+        </>
+      ) : null}
     </Flex>
   );
 }
