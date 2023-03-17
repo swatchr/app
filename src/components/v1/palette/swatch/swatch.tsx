@@ -12,7 +12,7 @@ import { useColorDispatch, useColorState } from '@/contexts';
 import { useMounted } from '@/hooks/use-mounted';
 import { useThemeColors } from 'chakra.ui';
 import { ColorPickerWrapper, EditableHexInput, SwatchMenu } from '.';
-import { HistoryViewer, InfoPanel, InfoWindow } from '../panels';
+import { HistoryViewer, InfoPanel, SwatchWindow } from '../panels';
 
 const BG_TRANSITION = { duration: 0.5, ease: 'easeInOut' };
 
@@ -90,9 +90,11 @@ export function Swatch({ index }: { index: number }) {
               reset={reset}
             />
           ) : null}
+          <SwatchWindow isActive={swatchMenuIsOpen} />
           <Center
             as={motion.div}
             className="picker-swatch"
+            position="relative"
             role="button"
             initial={{ boxShadow: '0px 0px 20px rgba(0,0,0, 0)' }}
             animate={controls}
@@ -126,7 +128,6 @@ export function Swatch({ index }: { index: number }) {
       <InfoPanel {...colorState} showIcon={swatchMenuIsOpen} />
       {colorState.isActive ? (
         <>
-          <InfoWindow isActive={colorState.isActive} />
           <HistoryViewer colorHandlers={colorHandlers} />
         </>
       ) : null}
