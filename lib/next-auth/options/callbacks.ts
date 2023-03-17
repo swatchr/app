@@ -1,3 +1,4 @@
+import type { User } from '@prisma/client';
 import type { CallbacksOptions } from 'next-auth';
 
 export const jwt: CallbacksOptions['jwt'] = ({ token, account, profile }) => {
@@ -15,7 +16,9 @@ export const session: CallbacksOptions['session'] = ({
   token,
 }) => {
   if (session.user) {
-    session.user.id = user?.id;
+    session.user.id = user.id;
+    session.user.profileId = user?.profileId;
+    session.user.role = user?.role || 0; // make user anonymous if they don't have a role
     if (!session?.accessToken) {
       session.accessToken = token?.accessToken;
     }
@@ -26,11 +29,11 @@ export const session: CallbacksOptions['session'] = ({
 export const signIn: CallbacksOptions['signIn'] = ({
   user,
   account,
-  profile,
+  profile, // @NOTE: this is the profile from the provider not our profile
   email,
   credentials,
 }) => {
-  // must specify a validation check for each provider
+  // @NOTE: must specify a validation check for each provider
   if (account?.provider === 'google' && profile?.email) {
     return profile?.email.endsWith('@gmail.com');
   }

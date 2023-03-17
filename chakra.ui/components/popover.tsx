@@ -20,7 +20,7 @@ import type {
   PopoverContentProps,
   PopoverProps,
 } from '@chakra-ui/react';
-import type Color from 'lib/color';
+import type ColorLab from 'lib/color';
 
 import Image from 'next/image';
 
@@ -31,7 +31,7 @@ type CustomPopoverProps = {
   icon?: {
     Component: ComponentWithAs<'svg', IconProps>;
     fillColor?: string;
-    instance?: Color;
+    instance?: ColorLab;
     props?: IconButtonProps;
   };
   customButton?: {
@@ -95,7 +95,7 @@ export const Popover: React.FC<CustomPopoverProps> = ({
         {content?.header ? (
           <PopoverHeader>{content.header}</PopoverHeader>
         ) : null}
-        <PopoverArrow color="blue.300" />
+        <PopoverArrow />
         <PopoverBody>{children}</PopoverBody>
         {content?.footer ? (
           <PopoverFooter>{content.footer}</PopoverFooter>

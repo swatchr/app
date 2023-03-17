@@ -1,4 +1,5 @@
 // import { authEventChannel } from '@/utils/event-bus';
+import { isDev } from '@/utils';
 import { onPromise } from '@/utils/fns';
 import {
   Avatar,
@@ -11,6 +12,7 @@ import {
   MenuList,
   Spinner,
 } from '@chakra-ui/react';
+import { analytics } from 'lib/analytics';
 import { signIn, signOut, useSession } from 'next-auth/react';
 import Link from 'next/link';
 
@@ -54,6 +56,7 @@ function MenuItemButton({
 export const AvatarMenu: React.FC = () => {
   const { data: session, status } = useSession();
   const isUser = status !== 'loading' && !!session?.user;
+
   return (
     <Box pos="fixed" top={9} right={6} zIndex="dropdown">
       <Menu
@@ -81,22 +84,21 @@ export const AvatarMenu: React.FC = () => {
         ) : (
           <Spinner />
         )}
-        <MenuList border="lg">
-          <hr />
-          {defaultLinks?.length ? defaultLinks?.map(routeLink) : null}
-          {isUser ? protectedRoutes?.map(routeLink) : null}
-          {isUser ? (
-            <MenuItemButton
-              label="sign out"
-              onClick={onPromise(() => signOut())}
-            />
-          ) : (
-            <MenuItemButton
-              label="sign in"
-              onClick={onPromise(() => signIn('google'))}
-            />
-          )}
-        </MenuList>
+        {isDev ? (
+          <MenuList border="lg">
+            <hr />
+            {defaultLinks?.length ? defaultLinks?.map(routeLink) : null}
+            {isUser ? protectedRoutes?.map(routeLink) : null}
+            {isUser ? (
+              <MenuItemButton label="sign out" onClick={() => signOut()} />
+            ) : (
+              <MenuItemButton
+                label="sign in"
+                onClick={() => signIn('google')}
+              />
+            )}
+          </MenuList>
+        ) : null}
       </Menu>
     </Box>
   );

@@ -11,12 +11,12 @@ export const createTestUser = ({
   password = process.env.TEST_PW,
   image = '',
   emailVerified = addDays(new Date(), -3),
-  roleType = 'test',
+  role = 0,
 }: Partial<TestUser>): TestUser => ({
   email,
   name,
   password: hashPassword(String(password)),
   image,
   emailVerified,
-  roleType,
+  role,
 });

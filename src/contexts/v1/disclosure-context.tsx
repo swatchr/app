@@ -1,4 +1,4 @@
-// create a react typescript disclosure context
+// @NOTE: this context was originally used for the info panel, but is now unused
 
 import { createContext, useCallback, useContext, useState } from 'react';
 import { removeAtIndex } from '../../utils/fns';
@@ -19,7 +19,7 @@ export const DisclosureProvider = ({
 }) => {
   const [active, setActive] = useState<string[]>([]);
 
-  // @NOTE: this hook will cause a re-render on each render. because isActive is re-evaluated everytime
+  // @NOTE: this hook will cause a re-render on each render. because isActive is re-evaluated every time
   const isActive = useCallback((id: string) => active.includes(id), [active]);
   const toggleActive = useCallback((id: string) => {
     setActive((prevActive) =>

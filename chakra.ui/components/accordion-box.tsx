@@ -3,6 +3,7 @@ import {
   AccordionIcon,
   AccordionItem,
   AccordionPanel,
+  Box,
   Center,
   chakra,
   Flex,
@@ -39,8 +40,17 @@ export const AccordionBox: React.FC<
     status?: ReactQueryStatus;
     contrast: string;
     children: React.ReactNode;
+    showIcon: boolean;
   } & AccordionItemProps
-> = ({ title, icon, status, contrast, children, ...rest }) => {
+> = ({
+  title,
+  icon,
+  status,
+  contrast,
+  children,
+  showIcon = false,
+  ...rest
+}) => {
   let contrastColor = contrast === 'dark' ? 'blackAlpha' : 'whiteAlpha';
 
   return (
@@ -57,7 +67,7 @@ export const AccordionBox: React.FC<
         ) : null}
         {status ? (
           // if there is a status then implement loading otherwise show title
-          <Center w="full">
+          <Center w="full" opacity={showIcon ? 1 : 0.5}>
             {status === 'loading' ? (
               <Spinner size="xs" />
             ) : status === 'error' ? (
@@ -73,7 +83,9 @@ export const AccordionBox: React.FC<
             {capitalize(title)}
           </chakra.p>
         ) : null}
-        <AccordionIcon />
+        <Box visibility={showIcon ? 'visible' : 'hidden'}>
+          <AccordionIcon />
+        </Box>
       </AccordionButton>
       <AccordionPanel maxH="30vh" overflowY="auto">
         {children}

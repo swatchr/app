@@ -28,6 +28,7 @@ export const BaseLayout: FC<BaseLayoutProps> = ({
           w="full"
           color={'text'}
           minHeight="100vh"
+          maxHeight="100vh"
           overflowX="hidden"
         >
           {children}
@@ -56,15 +57,15 @@ const Main: FC<MainProps> = ({ children }) => {
         mt={0}
         pb={0}
       >
-        <Box
+        {/* <Box
           position="relative"
           w="full"
           color={'text'}
           minHeight="100vh"
           overflowX="hidden"
-        >
-          {children}
-        </Box>
+        > */}
+        {children}
+        {/* </Box> */}
       </MotionBox>
     </chakra.main>
   );

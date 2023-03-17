@@ -1,46 +1,101 @@
-import { isDev } from '@/utils';
-import { type NextAuthOptions } from 'next-auth';
-// import { onCreateuser } from './handlers/onCreateUser';
+import { PrismaClient, type User } from '@prisma/client';
+import type { NextAuthOptions } from 'next-auth';
+
+import { analytics } from '../../analytics';
+
+import { prisma } from '@/server/db';
+
 // @link: https://next-auth.js.org/configuration/options#events
-
-// NOTE: UNUSED IN THIS PROJECT
-
 export const events: NextAuthOptions['events'] = {
-  // @link: https://next-auth.js.org/configuration/options#events
   async signIn(message) {
-    // await wait(50);
-    console.log('event:signIn | message', isDev && message);
+    analytics.track('auth-signIn', {
+      category: 'auth',
+      label: 'auth:signIn',
+      value: 1,
+      ...message.user,
+      isNewUser: message.isNewUser,
+      // @TODO: add emailVerified field to tracking
+    });
+    analytics.identify(message.user.id, {
+      ...message.user,
+      isNewUser: message.isNewUser,
+    });
   },
   async signOut(message) {
-    // await wait(50);
-    console.log('event:signOut | message', isDev && message);
+    analytics.track('auth-signOut', {
+      category: 'auth',
+      label: 'auth:signOut',
+      value: 1,
+      ...message.session.user,
+    });
+    analytics.identify(message.session.user.id, {});
   },
   async createUser(message) {
-    console.log('event:createUser | message', isDev && message);
-    // await onCreateuser({
-    //   id: message?.user?.id,
-    //   name: String(message?.user?.name),
-    //   email: String(message?.user?.email),
-    // });
+    const user = await prisma.user.update({
+      where: { id: message.user.id },
+      data: {
+        Profile: { create: {} },
+        Role: { connect: { level: 0 } },
+      },
+      include: { Profile: true },
+    });
+
+    if (user && user.Profile && user.role) {
+      analytics.track('auth-user-create', {
+        category: 'auth',
+        label: 'user:create',
+        value: 1,
+        ...message.user,
+        profile: user.profileId,
+      });
+      analytics.identify(message.user.id, {
+        ...message.user,
+        profile: user.profileId,
+      });
+    }
   },
   async updateUser(message) {
-    // await wait(50);
-    console.log('event:updateUser | message', isDev && message);
+    analytics.track('auth-user-update', {
+      category: 'auth',
+      label: 'user:update',
+      value: 1,
+      ...message.user,
+    });
+    analytics.identify(message.user.id, {
+      ...message.user,
+    });
   },
   async linkAccount(message) {
-    console.log('event:linkAccount| message', isDev && message);
-
+    delete message.account.access_token;
+    delete message.account.expires_at;
+    delete message.account['id_token'];
+    delete message.account['token_type'];
+    delete message.account.scope;
+    delete message.account['expires_at'];
+    message.account['providerAccountId'] = '*****';
+    analytics.track('auth-link-account', {
+      category: 'auth',
+      label: 'account:link',
+      value: 1,
+      ...message.account,
+    });
     if (!message.account && !message.user.name) {
-      // await wait(50);
-      console.error(
-        'event:linkAccount |',
-        isDev && 'no account or user.name found'
-      );
+      analytics.track('auth-link-account-error', {
+        category: 'auth',
+        label: 'account:link:error',
+        value: 1,
+      });
+      analytics.identify(message.user.id, {
+        ...message.user,
+      });
     }
   },
   async session(message) {
-    console.log('event:session | message', isDev && message);
-    // await wait(50);
-    console.log('event:session - ', isDev && 'active');
+    analytics.track('auth-session', {
+      category: 'auth',
+      label: 'session',
+      value: 1,
+      ...message.session.user,
+    });
   },
 };

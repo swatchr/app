@@ -44,7 +44,7 @@ export const FileInput = () => {
             required
           />
           <InputRightAddon m={0} p={0}>
-            {/* @TODO: handle upload via a mutation - currently saves to local state */}
+            {/* @TODO: handle upload via a mutation - currently saves to app state */}
             <Button type="submit" size="sm" variant="outline">
               Upload
             </Button>

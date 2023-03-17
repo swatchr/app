@@ -1,14 +1,16 @@
+import { MoonIcon, SunIcon } from '@chakra-ui/icons';
 import {
   ButtonGroup,
   HStack,
   IconButton,
   Tooltip,
+  useColorMode,
   useToast,
 } from '@chakra-ui/react';
 
 import { SaveIcon } from '@/components';
 import { usePaletteDispatch } from '@/contexts';
-import Color from 'lib/color';
+import ColorLab from 'lib/color';
 import { ExportIcon, SunglassesIcon } from '../icons';
 import { FeedbackWidget } from './feedback-widget';
 
@@ -25,16 +27,17 @@ export function HeaderIconStack({
 }) {
   const { savePalette } = usePaletteDispatch();
   const toast = useToast();
+  const { colorMode, toggleColorMode } = useColorMode();
 
   const contrast =
-    new Color(palette[palette.length - 1]!).contrast == 'dark'
+    new ColorLab(palette[palette.length - 1]!).contrast == 'dark'
       ? 'blackAlpha'
       : 'whiteAlpha';
 
   const fillColor =
-    new Color(palette[palette.length - 1]!).contrast == 'dark'
-      ? 'gray.900'
-      : 'gray.300';
+    new ColorLab(palette[palette.length - 1]!).contrast == 'dark'
+      ? 'gray.300'
+      : 'gray.900';
 
   const handleSave = () => {
     savePalette();
@@ -60,11 +63,25 @@ export function HeaderIconStack({
       opacity={0.7}
       _hover={{ opacity: 1 }}
     >
-      <FeedbackWidget fill={fillColor} isDisabled={showCB} />
+      <Tooltip label={colorMode === 'dark' ? 'Light' : 'Dark'}>
+        <IconButton
+          aria-label="color mode"
+          color={'inherit'}
+          icon={
+            colorMode === 'dark' ? (
+              <SunIcon boxSize={'1.35rem'} />
+            ) : (
+              <MoonIcon boxSize={'1.35rem'} />
+            )
+          }
+          onClick={toggleColorMode}
+        />
+      </Tooltip>
+      <FeedbackWidget isDisabled={showCB} />
       <Tooltip label="Simulate Color Blindness">
         <IconButton
           aria-label="Export Palette"
-          icon={<SunglassesIcon boxSize={'1.35rem'} />}
+          icon={<SunglassesIcon boxSize={'1.7rem'} />}
           onClick={showColorBlindness}
           border={showCB ? '2px solid' : 'none'}
         />

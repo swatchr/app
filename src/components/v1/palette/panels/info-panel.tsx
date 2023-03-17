@@ -12,9 +12,9 @@ import {
 import { useState } from 'react';
 
 import type { ColorApiClientInfo, ColorApiScheme } from '@/server/api/types';
-import type Color from 'lib/color';
+import type ColorLab from 'lib/color';
 
-import { CopyIcon, InfoIcon } from '@/components';
+import { CopyIcon } from '@/components';
 import { useClipboard } from '@/hooks';
 import { createColorInfo } from '@/server/api/types';
 import { api } from '@/utils/api';
@@ -23,15 +23,15 @@ import { AccordionBox } from 'chakra.ui';
 export function InfoPanel({
   color,
   instance,
-  index,
+  showIcon,
 }: {
   color: string;
-  instance: Color;
-  index: number | undefined;
+  instance: ColorLab;
+  showIcon: boolean;
 }) {
   const [info, setInfo] = useState<ColorApiClientInfo>();
 
-  const { status, isLoading, isError } = api.color.scheme.useQuery(
+  const { status, isLoading, isError } = api.color.schemeAPI.useQuery(
     { hex: color.replace('#', '') },
     {
       enabled: !!color,
@@ -51,15 +51,15 @@ export function InfoPanel({
         bg: 'blackAlpha.50',
       }}
     >
-      <Accordion w="full" fontSize="md" rounded="md" allowToggle index={index}>
+      <Accordion w="full" fontSize="md" rounded="md" allowToggle>
         <AccordionBox
           title={hasInfo ? info?.name?.value : undefined}
-          icon={{ Component: InfoIcon }}
           status={status}
           contrast={instance.contrast} // used for bg color
           w={72}
-          border="1px"
+          border={'none'}
           isDisabled={!info}
+          showIcon={showIcon}
         >
           <Flex direction="column" gap={4}>
             {Object.entries(info || {}).map(([field, item]) => {
@@ -95,32 +95,30 @@ function InfoListItem({ field, item }: { field: string; item: any }) {
       borderRadius="md"
       _hover={{ bg: 'blackAlpha.200' }}
     >
-      <>
-        <chakra.span w="30%" fontSize="2xs">
-          {field === 'name' ? null : field + ':'}
-        </chakra.span>
-        {field === 'name' ? null : (
-          <chakra.p key={field} w="full" flex={1} pl={2} fontSize="2xs">
-            {item?.toString()}
-          </chakra.p>
-        )}
-        {['rgb', 'hsl', 'hsv', 'cmyk', 'hex'].includes(field) ? (
-          <Button
-            colorScheme="blackAlpha"
-            size="xs"
-            variant="outline"
-            onClick={copy}
-            fontSize="2xs"
-            color="inherit"
-          >
-            <Icon
-              as={isCopied ? CheckIcon : CopyIcon}
-              fill={'currentColor'}
-              stroke={'currentColor'}
-            />
-          </Button>
-        ) : null}
-      </>
+      <chakra.span w="30%" fontSize="2xs">
+        {field === 'name' ? null : field + ':'}
+      </chakra.span>
+      {field === 'name' ? null : (
+        <chakra.p key={field} w="full" flex={1} pl={2} fontSize="2xs">
+          {item?.toString()}
+        </chakra.p>
+      )}
+      {['rgb', 'hsl', 'hsv', 'cmyk', 'hex'].includes(field) ? (
+        <Button
+          colorScheme="blackAlpha"
+          size="xs"
+          variant="outline"
+          onClick={copy}
+          fontSize="2xs"
+          color="inherit"
+        >
+          <Icon
+            as={isCopied ? CheckIcon : CopyIcon}
+            fill={'currentColor'}
+            stroke={'currentColor'}
+          />
+        </Button>
+      ) : null}
     </HStack>
   );
 }

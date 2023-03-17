@@ -50,7 +50,9 @@ export const CHModal: React.FC<ModalProps & BoxProps & CustomModalProps> = ({
     >
       {!noOverlay && <ModalOverlay />}
       <ModalContent {...contentProps}>
-        <ModalHeader textTransform="capitalize">{title}</ModalHeader>
+        {title ? (
+          <ModalHeader textTransform="capitalize">{title}</ModalHeader>
+        ) : null}
         {allowClose && <ModalCloseButton colorScheme={colorScheme} />}
         <ModalBody>{children}</ModalBody>
         {footer ? (

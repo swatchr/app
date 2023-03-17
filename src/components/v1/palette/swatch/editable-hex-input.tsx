@@ -6,7 +6,7 @@ import {
   FormControl,
   InputGroup,
 } from '@chakra-ui/react';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 import type { ColorDispatchValue, ColorStateValue } from '@/contexts';
 
@@ -19,12 +19,14 @@ import {
 export function EditableHexInput({
   colorState,
   handleChange,
+  show,
 }: {
+  show: boolean;
   colorState: ColorStateValue;
   handleChange: ColorDispatchValue['history']['handleChange'];
 }) {
   const [value, setValue] = useState(colorState.color?.replace('#', ''));
-
+  const editableInputRef = useRef<HTMLInputElement | null>(null);
   useEffect(
     () => setValue(colorState.color?.replace('#', '')),
     [colorState.color]
@@ -47,6 +49,8 @@ export function EditableHexInput({
       maxW="80%"
     >
       <Editable
+        ref={editableInputRef}
+        tabIndex={0}
         value={value?.replace('#', '')}
         placeholder={value?.replace('#', '')}
         textAlign="center"
@@ -65,6 +69,7 @@ export function EditableHexInput({
               left: -3.5,
               top: 1,
             }}
+            opacity={show ? 1 : 0.5}
           />
           <FormControl>
             <EditableInput

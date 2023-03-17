@@ -15,13 +15,13 @@
  * These allow you to access things when processing a request, like the database, the session, etc.
  */
 import { type CreateNextContextOptions } from '@trpc/server/adapters/next';
-import { type Session } from 'next-auth';
 
 import { getServerAuthSession } from '@/server/auth';
 import { prisma } from '@/server/db';
 
 type CreateContextOptions = {
   session: Session | null;
+  req: NextApiRequest;
 };
 
 /**
@@ -38,6 +38,7 @@ const createInnerTRPCContext = (opts: CreateContextOptions) => {
   return {
     session: opts.session,
     prisma,
+    req: opts.req,
   };
 };
 
@@ -54,7 +55,8 @@ export const createTRPCContext = async (opts: CreateNextContextOptions) => {
   const session = await getServerAuthSession({ req, res });
 
   return createInnerTRPCContext({
-    session,
+    session: session,
+    req,
   });
 };
 
@@ -67,6 +69,9 @@ import { initTRPC, TRPCError } from '@trpc/server';
 import superjson from 'superjson';
 
 import type { inferAsyncReturnType } from '@trpc/server';
+import { ROLES } from 'lib/prisma/utils';
+import type { NextApiRequest } from 'next';
+import type { Session } from 'next-auth';
 
 const t = initTRPC.context<typeof createTRPCContext>().create({
   transformer: superjson,
@@ -111,6 +116,23 @@ const enforceUserIsAuthed = t.middleware(({ ctx, next }) => {
   });
 });
 
+/** Reusable middleware that enforces users are logged in before running the procedure. */
+const enforceUserIsAdmin = t.middleware(({ ctx, next }) => {
+  if (!ctx.session || !ctx.session.user || !ctx.session.user.profileId) {
+    throw new TRPCError({ code: 'UNAUTHORIZED' });
+  }
+
+  if (ctx.session.user.role !== ROLES.ADMIN) {
+    throw new TRPCError({ code: 'UNAUTHORIZED' });
+  }
+
+  return next({
+    ctx: {
+      session: { ...ctx.session, user: ctx.session.user },
+    },
+  });
+});
+
 /**
  * Protected (authenticated) procedure
  *
@@ -120,4 +142,8 @@ const enforceUserIsAuthed = t.middleware(({ ctx, next }) => {
  * @see https://trpc.io/docs/procedures
  */
 export const protectedProcedure = t.procedure.use(enforceUserIsAuthed);
-export type Context = inferAsyncReturnType<typeof createTRPCContext>;
+export const adminProcedure = t.procedure.use(enforceUserIsAdmin);
+export type TRPCContext = inferAsyncReturnType<typeof createTRPCContext>;
+export type InnerTRPCContext = inferAsyncReturnType<
+  typeof createInnerTRPCContext
+>;

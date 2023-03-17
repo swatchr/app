@@ -7,7 +7,7 @@ export const styles: ChakraTheme['styles'] = {
       border: 0,
       margin: 0,
       padding: 0,
-      fontFeatureSettings: `'kern'`,
+      fontFeatureSettings: 'kern',
       textRendering: 'optimizeLegibility',
       WebkitFontSmoothing: 'antialiased',
       WebkitTapHighlightColor: 'rgba(0, 0, 0, 0)',

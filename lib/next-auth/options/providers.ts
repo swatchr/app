@@ -9,6 +9,7 @@ import { type NextAuthOptions } from 'next-auth';
 // import { ONE_DAY } from '@/utils';
 import { env } from '@/env.mjs';
 import { TEST_ENV } from '@/utils';
+import { User } from '@prisma/client';
 import { comparePasswords } from '../services';
 
 const google = GoogleProvider({
@@ -19,6 +20,8 @@ const google = GoogleProvider({
   //     prompt: 'consent',
   //     access_type: 'offline',
   //     response_type: 'code',
+  //     scope:
+  //       'openid https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/userinfo.email',
   //   },
   // },
 });
@@ -42,42 +45,44 @@ const google = GoogleProvider({
 /**
  * @NOTE: Requires JWT strategy + callback to work
  * + must also add password field to db
+ * @FIXME: this is not working due to a type issue after updating client side user/session/role handling see #sha- 250b035b441448c2e5e3461ad6393a56222c16ab
  */
-const credentials = CredentialsProvider({
-  name: 'Credentials',
-  credentials: {
-    email: {
-      label: 'Username',
-      type: 'text',
-      placeholder: 'you@youremail.com',
-      value: process.env.TEST_USER,
-    },
-    password: {
-      label: 'Password',
-      type: 'password',
-      placeholder: '***********',
-      value: process.env.TEST_PW,
-    },
-  },
-  async authorize(credentials, req) {
-    if (!credentials || !credentials?.email || !credentials?.password) {
-      console.log('🔴 invalid credentials');
-      return null;
-    }
-    const user = await prisma.user.findUnique({
-      where: { email: credentials?.email },
-    });
+// const credentials = CredentialsProvider({
+//   name: 'Credentials',
+//   credentials: {
+//     email: {
+//       label: 'Username',
+//       type: 'text',
+//       placeholder: 'you@youremail.com',
+//       value: process.env.TEST_USER,
+//     },
+//     password: {
+//       label: 'Password',
+//       type: 'password',
+//       placeholder: '***********',
+//       value: process.env.TEST_PW,
+//     },
+//   },
+//   async authorize(credentials, req) {
+//     if (!credentials || !credentials?.email || !credentials?.password) {
+//       console.log('🔴 invalid credentials');
+//       return null;
+//     }
+//     const user = await prisma.user.findUnique({
+//       where: { email: credentials?.email },
+//       include: { Profile: true },
+//     });
 
-    if (!user || !user?.password) return null;
+//     if (!user || !user?.password) return null;
 
-    if (comparePasswords(credentials?.password, user?.password)) {
-      console.log('🟢 password compare success');
-      return user;
-    }
-    console.log('🔴 password compare fail');
-    return null;
-  },
-});
+//     if (comparePasswords(credentials?.password, user?.password)) {
+//       console.log('🟢 password compare success');
+//       return { ...user, profile: user?.Profile?.id };
+//     }
+//     console.log('🔴 password compare fail');
+//     return null;
+//   },
+// });
 
 export const providers: NextAuthOptions['providers'] = [google];
 // TEST_ENV ? providers.push(credentials) : providers.push(google);

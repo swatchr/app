@@ -1,6 +1,6 @@
 import { useCallback, useMemo } from 'react';
 
-import Color from 'lib/color';
+import ColorLab from 'lib/color';
 
 export type Scales =
   | 'analogic'
@@ -18,7 +18,7 @@ export function useTinyColor(
   updateColor: (colorHex: string) => void,
   palette: string[]
 ) {
-  const instance = useMemo(() => new Color(color), [color]);
+  const instance = useMemo(() => new ColorLab(color), [color]);
 
   /* -------------------------------------------------------------------------- */
   /*                                COLOR HELPERS                               */
@@ -41,7 +41,7 @@ export function useTinyColor(
   );
 
   const colorCombinations = useCallback(
-    (instance: Color) => {
+    (instance: ColorLab) => {
       const grays = [
         '#060606',
         '#171717',

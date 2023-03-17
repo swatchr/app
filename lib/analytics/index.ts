@@ -1,6 +1,11 @@
-import { isClient } from '@/utils';
+import { isClient, isDev } from '@/utils';
 import mixpanelPlugin from '@analytics/mixpanel';
-import Analytics from 'analytics';
+import Analytics, { type AnalyticsInstance } from 'analytics';
+import doNotTrack from 'analytics-plugin-do-not-track';
+import { loggerPlugin } from './analytics-logger';
+// @link: https://getanalytics.io/plugins/do-not-track/
+
+// @TODO: Impelment tab events @SEE: https://getanalytics.io/plugins/tab-events/
 
 export function getConsent(): boolean {
   if (!isClient) return false;
@@ -11,47 +16,30 @@ export function getConsent(): boolean {
   return false;
 }
 
-function crispPlugin(userConfig: { crispId: string; enabled: boolean }) {
-  // return object for analytics to use
-  return {
-    name: 'crisp-plugin',
-    config: {
-      crispId: userConfig.crispId,
-      enabled: userConfig.enabled,
-    },
-    initialize: ({ config }: any) => {
-      // load your script here.
-      if (!config.enabled) return;
-      (<any>window).$crisp = [];
-      (<any>window).CRISP_WEBSITE_ID = config.crispId;
-      (function () {
-        const d = document;
-        // this might be causing an unterminated string literal error
-        // @SEE: https://tinyurl.com/2ocvkfvt
-
-        const s = d.createElement('script');
-        s.src = 'https://client.crisp.chat/l.js';
-        // s.async = 1;
-        s.async = true;
-        d?.getElementsByTagName('head')[0]?.appendChild(s);
-      })();
-    },
-  };
-}
-
-// @TODO: Add ability to disable tracking: -- is this done?
-// @link: https://getanalytics.io/plugins/do-not-track/
-
+const analyze = !isDev && getConsent();
 export const analytics = Analytics({
   app: 'swatchr',
+  debug: isDev,
   plugins: [
-    // mixpanelPlugin({
-    //   token: process.env.NEXT_PUBLIC_MIXPANEL_TOKEN,
-    //   enabled: !!process.env.NEXT_PUBLIC_MIXPANEL_TOKEN && getConsent(),
-    // }),
-    // crispPlugin({
-    //   crispId: String(process.env.NEXT_PUBLIC_CRISP_WEBSITE_ID),
-    //   enabled: !!process.env.NEXT_PUBLIC_CRISP_WEBSITE_ID && getConsent(),
-    // }),
+    analyze
+      ? mixpanelPlugin({
+          token: process.env.NEXT_PUBLIC_MIXPANEL_TOKEN,
+          enabled: !!process.env.NEXT_PUBLIC_MIXPANEL_TOKEN,
+        })
+      : doNotTrack(),
+    loggerPlugin(),
   ],
 });
+
+export type WindowWithAnalytics = Window &
+  typeof globalThis & { Analytics: AnalyticsInstance };
+if (isClient) {
+  (window as WindowWithAnalytics).Analytics = analytics;
+}
+
+/**
+ * @NOTE: FIREFOX BROWSER
+ * Firefox blocks cookies from third-party trackers by default.
+ * @SEE: https://developer.mozilla.org/en-US/docs/Web/Privacy/Storage_access_policy/Errors/CookieBlockedTracker
+ *
+ */

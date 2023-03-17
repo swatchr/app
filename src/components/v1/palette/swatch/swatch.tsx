@@ -1,16 +1,18 @@
-import { Center, Flex, SlideFade, useDisclosure } from '@chakra-ui/react';
+import {
+  Center,
+  chakra,
+  Flex,
+  SlideFade,
+  useDisclosure,
+} from '@chakra-ui/react';
 import { motion, useAnimation } from 'framer-motion';
 import { useCallback, useEffect, useState } from 'react';
 
-import {
-  useColorDispatch,
-  useColorState,
-  useDisclosureDispatch,
-} from '@/contexts';
+import { useColorDispatch, useColorState } from '@/contexts';
 import { useMounted } from '@/hooks/use-mounted';
 import { useThemeColors } from 'chakra.ui';
 import { ColorPickerWrapper, EditableHexInput, SwatchMenu } from '.';
-import { InfoPanel, InfoWindow } from '../panels';
+import { HistoryViewer, InfoPanel, InfoWindow } from '../panels';
 
 const BG_TRANSITION = { duration: 0.5, ease: 'easeInOut' };
 
@@ -24,7 +26,6 @@ export function Swatch({ index }: { index: number }) {
   const { text: themeTexts } = useThemeColors();
   const text = colorState.instance.getBestContrastColor(themeTexts);
 
-  const { isActive } = useDisclosureDispatch(); // used for info panel
   const mounted = useMounted();
   const {
     isOpen: swatchMenuIsOpen,
@@ -56,6 +57,7 @@ export function Swatch({ index }: { index: number }) {
     <Flex
       direction="column"
       className="swatch-wrapper"
+      position="relative"
       w="full"
       h="100vh"
       my="auto"
@@ -72,7 +74,7 @@ export function Swatch({ index }: { index: number }) {
         colorHandlers.paletteHandlers.activateSwatch(-1);
         swatchMenuOnClose();
       }}
-      color={text} // all of the icons and text inherit the text color
+      color={text} // all of the icons and text inherit this text color
     >
       <SlideFade in={mounted} offsetX={-96} reverse unmountOnExit>
         <Center
@@ -83,7 +85,6 @@ export function Swatch({ index }: { index: number }) {
         >
           {swatchMenuIsOpen ? (
             <SwatchMenu
-              // the icon grid menu behind the swatch
               colorState={colorState}
               colorHandlers={colorHandlers}
               reset={reset}
@@ -114,6 +115,7 @@ export function Swatch({ index }: { index: number }) {
             ) : null}
             {view == 'swatch' ? (
               <EditableHexInput
+                show={swatchMenuIsOpen}
                 colorState={colorState}
                 handleChange={colorHandlers.history.handleChange}
               />
@@ -121,8 +123,13 @@ export function Swatch({ index }: { index: number }) {
           </Center>
         </Center>
       </SlideFade>
-      <InfoPanel {...colorState} index={isActive('info') ? 0 : undefined} />
-      <InfoWindow />
+      <InfoPanel {...colorState} showIcon={swatchMenuIsOpen} />
+      {colorState.isActive ? (
+        <>
+          <InfoWindow isActive={colorState.isActive} />
+          <HistoryViewer colorHandlers={colorHandlers} />
+        </>
+      ) : null}
     </Flex>
   );
 }

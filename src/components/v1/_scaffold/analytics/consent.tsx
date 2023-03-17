@@ -41,21 +41,26 @@ export const CookieConsent = () => {
       handleConsent={handleConsent}
       consent={consent}
     >
-      <chakra.p fontWeight="medium" lineHeight={1.4}>
+      <chakra.p fontSize="sm" fontWeight="medium" lineHeight={1.4}>
         We use cookies to personalize content and provide you with a better
         browsing experience.
       </chakra.p>
-      {/* <chakra.p
-        fontSize="md"
+      <chakra.p
+        fontSize="xs"
         fontStyle="italic"
         color="gray.500"
         lineHeight={1.4}
+        mt={1}
       >
-        For more info check out our
+        For more info visit out our
         <ChNextLink href="/policies/privacy" px={1} fontStyle="normal">
           Privacy Policy
         </ChNextLink>
-      </chakra.p> */}
+        and
+        <ChNextLink href="/policies/terms" px={1} fontStyle="normal">
+          Terms and Conditions
+        </ChNextLink>
+      </chakra.p>
     </Banner>
   ) : null;
 };

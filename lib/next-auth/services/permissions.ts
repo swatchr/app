@@ -1,37 +1,36 @@
-export default {};
 /**
  *
- * @TODO: implement permissions handling as inspired from BisonApp
+ * @fileoverview This file contains functions that can be used to check if a user has permissions to perform an action
  * @SEE: https://github.com/echobind/bisonapp/blob/canary/packages/create-bison-app/template/services/permissions.ts
  *
  * Requires user roles to be added to prisma db
  */
 
-// import { User } from '@prisma/client';
+import type { InnerTRPCContext } from '@/server/api/trpc';
+import type { User } from '@prisma/client';
 
-// // import { Context } from '@/server/trpc/context';
-// import { Context } from '@/server/api/trpc';
+import { ROLES } from 'lib/prisma/utils';
 
 // /**
 //  * Returns true if the user has a role of admin
 //  * @param user The user to check the role for
 //  */
-// export const isAdmin = (user?: Partial<User> | null): boolean => {
-//   if (!user?.roleType) {
-//     return false;
-//   }
+export const isAdmin = (user?: Partial<User> | null): boolean => {
+  if (!user?.role) {
+    return false;
+  }
 
-//   return user.roleType.includes('admin');
-// };
+  return user.role === Number(ROLES.ADMIN);
+};
 
 // /**
 //  * Returns true if the passed in user is the same as the logged in user
 //  * @param user the user to test
 //  * @param ctx the context which contains the current user
 //  */
-// export function isSelf(user: Pick<User, 'id'>, ctx: Context): boolean {
-//   return user.id === ctx.session?.user.id;
-// }
+export function isSelf(user: Pick<User, 'id'>, ctx: InnerTRPCContext): boolean {
+  return user.id === ctx.session?.user.id;
+}
 
 // /**
 //  * Returns true if a user can access an object. This is a very basic check that quickly does the following:
@@ -42,14 +41,14 @@ export default {};
 //  * @param ctx the context which contains the current user
 //  * @param idField the key in the object to check against
 //  */
-// export function canAccess(
-//   object: User,
-//   ctx: Context,
-//   idField = 'userId'
-// ): boolean {
-//   if (!ctx.session?.user) return false;
-//   if (isAdmin(ctx.session.user)) return true;
-//   if (isSelf(object, ctx)) return true;
+export function canAccess(
+  user: User,
+  ctx: InnerTRPCContext,
+  idField = 'id' || 'userId'
+): boolean {
+  if (!ctx.session?.user) return false;
+  if (isAdmin(ctx.session.user)) return true;
+  if (isSelf(user, ctx)) return true;
 
-//   return (object as any)[idField] === ctx.session.user?.id;
-// }
+  return (user as any)[idField] === ctx.session.user?.id;
+}

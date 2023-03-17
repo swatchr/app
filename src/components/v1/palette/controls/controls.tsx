@@ -6,16 +6,14 @@ import {
   VisuallyHidden,
   VStack,
 } from '@chakra-ui/react';
-import { useCallback } from 'react';
 
 import type { useColorDispatch, useColorState } from '@/contexts';
 
-import { useContentDispatch, useDisclosureDispatch } from '@/contexts';
+import { useContentDispatch } from '@/contexts';
 import {
   AAAIcon,
   DiceIcon,
   FiltersIcon,
-  InfoIcon,
   PaletteIcon,
   ScalesIcon,
 } from '../../icons';
@@ -32,12 +30,6 @@ export function Controls({
   setFilterView: () => void;
 }) {
   const { openAndUpdate } = useContentDispatch(); // used to toggle scales / combos panel
-
-  const { toggleActive } = useDisclosureDispatch(); // used to toggle info panel
-  const toggleInfoActive = useCallback(
-    () => toggleActive('info'),
-    [toggleActive]
-  );
 
   return (
     <>
@@ -108,18 +100,6 @@ export function Controls({
         <PaletteControls index={colorState.index} modifier="increment" />
       </VStack>
       <HStack gridArea="stack5" py={2} px={1} justifyContent="space-between">
-        <ControlWrapper label="Info" action={toggleInfoActive}>
-          <Box boxSize="1.5rem">
-            <Icon
-              as={InfoIcon}
-              aria-label="Show Info"
-              fill={'currentcolor'}
-              stroke={'currentcolor'}
-              color={'currentcolor'}
-              tabIndex={1}
-            />
-          </Box>
-        </ControlWrapper>
         <ControlWrapper
           label="Combinations"
           action={() => openAndUpdate('combos')}
