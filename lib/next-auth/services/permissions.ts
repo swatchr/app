@@ -28,8 +28,18 @@ export const isAdmin = (user?: Partial<User> | null): boolean => {
 //  * @param user the user to test
 //  * @param ctx the context which contains the current user
 //  */
-export function isSelf(user: Pick<User, 'id'>, ctx: InnerTRPCContext): boolean {
-  return user.id === ctx.session?.user.id;
+export function isSelf(
+  id: User['id'],
+  session: InnerTRPCContext['session']
+): boolean {
+  return id === session?.user.id;
+}
+
+export function isOwner(
+  profileId: User['profileId'],
+  session: InnerTRPCContext['session']
+): boolean {
+  return profileId === session?.user.profileId;
 }
 
 // /**
@@ -43,12 +53,12 @@ export function isSelf(user: Pick<User, 'id'>, ctx: InnerTRPCContext): boolean {
 //  */
 export function canAccess(
   user: User,
-  ctx: InnerTRPCContext,
+  session: InnerTRPCContext['session'],
   idField = 'id' || 'userId'
 ): boolean {
-  if (!ctx.session?.user) return false;
-  if (isAdmin(ctx.session.user)) return true;
-  if (isSelf(user, ctx)) return true;
+  if (!session?.user) return false;
+  if (isAdmin(session.user)) return true;
+  if (isSelf(user.id, session)) return true;
 
-  return (user as any)[idField] === ctx.session.user?.id;
+  return (user as any)[idField] === session.user?.id;
 }
