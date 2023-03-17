@@ -1,4 +1,3 @@
-import { Search2Icon } from '@chakra-ui/icons';
 import { Flex, useDisclosure } from '@chakra-ui/react';
 import { useCallback, useState } from 'react';
 
