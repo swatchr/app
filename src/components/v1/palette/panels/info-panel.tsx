@@ -23,12 +23,10 @@ import { AccordionBox } from 'chakra.ui';
 export function InfoPanel({
   color,
   instance,
-  index,
   showIcon,
 }: {
   color: string;
   instance: ColorLab;
-  index: number | undefined;
   showIcon: boolean;
 }) {
   const [info, setInfo] = useState<ColorApiClientInfo>();
@@ -53,7 +51,7 @@ export function InfoPanel({
         bg: 'blackAlpha.50',
       }}
     >
-      <Accordion w="full" fontSize="md" rounded="md" allowToggle index={index}>
+      <Accordion w="full" fontSize="md" rounded="md" allowToggle>
         <AccordionBox
           title={hasInfo ? info?.name?.value : undefined}
           status={status}

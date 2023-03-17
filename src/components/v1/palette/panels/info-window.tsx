@@ -13,7 +13,7 @@ import {
   useToast,
   VStack,
 } from '@chakra-ui/react';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
 import type { ColorDispatchValue } from '@/contexts';
 import type { Scales } from '@/contexts/v1/hooks/use-tinycolor';
@@ -40,16 +40,21 @@ import {
   TriadIcon,
 } from '../../icons';
 
-export function InfoWindow() {
+export function InfoWindow({ isActive }: { isActive: boolean }) {
   const { color, instance } = useColorState();
   const colorHandlers = useColorDispatch();
   const { isOpen, type } = useContentState();
   const { onClose } = useContentDispatch();
 
+  useEffect(() => {
+    if (!isOpen || !isActive) return;
+    return () => onClose();
+  }, [isActive, onClose, isOpen]);
+
   let contrastColor =
     instance.contrast === 'dark' ? 'blackAlpha' : 'whiteAlpha';
   return (
-    <Collapse in={isOpen} animateOpacity unmountOnExit>
+    <Collapse in={isActive && isOpen} animateOpacity unmountOnExit>
       {isOpen ? (
         <VStack
           width={72}
@@ -479,7 +484,7 @@ export function MonochromeScale({
             onCopy: () => {
               toast({
                 title: 'Copied',
-                description: `${_c} copied to clipboard (FDouble-click to select)`,
+                description: `${_c} copied to clipboard (Double-click to select)`,
                 status: 'success',
                 duration: 2000,
               });

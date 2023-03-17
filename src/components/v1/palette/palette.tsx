@@ -3,12 +3,7 @@ import { Flex, useDisclosure } from '@chakra-ui/react';
 import { useCallback, useState } from 'react';
 
 import { Swatch } from '@/components';
-import {
-  ColorProvider,
-  ContentProvider,
-  DisclosureProvider,
-  usePaletteState,
-} from '@/contexts';
+import { ColorProvider, ContentProvider, usePaletteState } from '@/contexts';
 import { isDev } from '@/utils';
 import ColorLab from 'lib/color';
 import { CommandPalette } from '../_wip/command-palette';
@@ -50,9 +45,7 @@ export function Palette() {
           ? palette.map((swatch, index) => (
               <ColorProvider key={index} color={swatch} index={index}>
                 <ContentProvider>
-                  <DisclosureProvider>
-                    <Swatch index={index} />
-                  </DisclosureProvider>
+                  <Swatch index={index} />
                 </ContentProvider>
               </ColorProvider>
             ))

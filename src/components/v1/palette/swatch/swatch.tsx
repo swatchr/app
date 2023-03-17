@@ -8,11 +8,7 @@ import {
 import { motion, useAnimation } from 'framer-motion';
 import { useCallback, useEffect, useState } from 'react';
 
-import {
-  useColorDispatch,
-  useColorState,
-  useDisclosureDispatch,
-} from '@/contexts';
+import { useColorDispatch, useColorState } from '@/contexts';
 import { useMounted } from '@/hooks/use-mounted';
 import { useThemeColors } from 'chakra.ui';
 import { ColorPickerWrapper, EditableHexInput, SwatchMenu } from '.';
@@ -30,7 +26,6 @@ export function Swatch({ index }: { index: number }) {
   const { text: themeTexts } = useThemeColors();
   const text = colorState.instance.getBestContrastColor(themeTexts);
 
-  const { isActive } = useDisclosureDispatch(); // used for info panel
   const mounted = useMounted();
   const {
     isOpen: swatchMenuIsOpen,
@@ -79,7 +74,7 @@ export function Swatch({ index }: { index: number }) {
         colorHandlers.paletteHandlers.activateSwatch(-1);
         swatchMenuOnClose();
       }}
-      color={text} // all of the icons and text inherit the text color
+      color={text} // all of the icons and text inherit this text color
     >
       <SlideFade in={mounted} offsetX={-96} reverse unmountOnExit>
         <Center
@@ -128,14 +123,10 @@ export function Swatch({ index }: { index: number }) {
           </Center>
         </Center>
       </SlideFade>
-      <InfoPanel
-        {...colorState}
-        index={isActive('info') ? 0 : undefined}
-        showIcon={swatchMenuIsOpen}
-      />
+      <InfoPanel {...colorState} showIcon={swatchMenuIsOpen} />
       {colorState.isActive ? (
         <>
-          <InfoWindow />
+          <InfoWindow isActive={colorState.isActive} />
           <HistoryViewer colorHandlers={colorHandlers} />
         </>
       ) : null}
