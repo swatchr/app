@@ -18,12 +18,16 @@ export function LogoCredits() {
   const [showCredits, setShowCredits] = useState(false);
   const { isOpen, onClose, onOpen } = useDisclosure();
   return (
-    <Box position="absolute" bottom={12} right={12} cursor="pointer">
+    <Box
+      position="absolute"
+      bottom={12}
+      right={12}
+      cursor={isDev ? 'pointer' : 'initial'}
+    >
       <Icon
         as={LogoIconNew}
-        boxSize={14}
+        boxSize={10}
         filter="drop-shadow(0.1rem 0.1rem 0.1rem #333)"
-        // onClick={() => setShowCredits(true)}
         onClick={onOpen}
       />
       {isDev && isOpen ? (
