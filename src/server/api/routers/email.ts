@@ -2,6 +2,8 @@ import { renderToStaticMarkup } from 'react-dom/server';
 import { z } from 'zod';
 
 import { createTRPCRouter, publicProcedure } from '@/server/api/trpc';
+
+import { analytics } from 'lib/analytics';
 import EmailService from 'lib/nodemailer';
 import {
   adminFeedbackEmail,
@@ -27,13 +29,24 @@ export const emailRouter = createTRPCRouter({
             email: input.email,
             html: renderToStaticMarkup(emailHTML),
           });
+          analytics.track('feedback-confirmation-email', {
+            category: 'email',
+            label: 'feedback:confirmation:sent',
+            value: 1,
+            ...input,
+          });
         }
         const adminEmailHTML = adminFeedbackEmail(input);
         await emailService.sendAdminEmail({
           subject: input.subject,
           html: renderToStaticMarkup(adminEmailHTML),
         });
-
+        analytics.track('admin-feedback-notify', {
+          category: 'email',
+          label: 'admin:feedback:notified',
+          value: 1,
+          ...input,
+        });
         return {
           status: 'success',
           message: 'Emails sent successfully',
@@ -51,6 +64,12 @@ export const emailRouter = createTRPCRouter({
         await emailService.sendTransactionalEmail({
           ...input,
           html: renderToStaticMarkup(emailHTML),
+        });
+        analytics.track('transaction-email', {
+          category: 'email',
+          label: 'transaction:sent',
+          value: 1,
+          ...input,
         });
 
         return {

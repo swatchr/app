@@ -1,4 +1,4 @@
-import { Box, Button, Heading, Link, Text } from '@chakra-ui/react';
+import { Box, Heading, Text } from '@chakra-ui/react';
 
 import { partialMaskEmail } from '@/utils';
 import { EmailWrapper } from './email-wrapper';
@@ -39,7 +39,8 @@ export function adminFeedbackEmail({
         <Heading as="h1" size="xl" mb={4}>
           New Feedback Submitted
         </Heading>
-        {email ? <Text mb={4}>from: {partialMaskEmail(email)}</Text> : null}
+        {/* partialMaskEmail(email) */}
+        {email ? <Text mb={4}>from: {email}</Text> : null}
         {subject}
       </Box>
     </EmailWrapper>
