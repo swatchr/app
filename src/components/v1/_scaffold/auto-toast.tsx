@@ -35,7 +35,7 @@ export const AutoToast: FC<{
   status: ToastStatusOptions;
   message: string;
   icon?: ReactNode;
-  children: ReactNode;
+  children: JSX.Element;
 }> = (props) => {
   const toast = useToast();
 
