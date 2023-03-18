@@ -5,7 +5,6 @@ import {
   IconButton,
   Tooltip,
   useColorMode,
-  useToast,
 } from '@chakra-ui/react';
 
 import { SaveIcon } from '@/components';
@@ -26,7 +25,6 @@ export function HeaderIconStack({
   showColorBlindness: () => void;
 }) {
   const { savePalette } = usePaletteDispatch();
-  const toast = useToast();
   const { colorMode, toggleColorMode } = useColorMode();
 
   const contrast =
@@ -41,12 +39,6 @@ export function HeaderIconStack({
 
   const handleSave = () => {
     savePalette();
-    toast({
-      title: 'Palette Saved',
-      description: 'Your palette has been saved to local storage.',
-      status: 'success',
-      duration: 3000,
-    });
   };
 
   return (
