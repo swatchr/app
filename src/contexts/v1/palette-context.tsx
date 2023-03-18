@@ -10,6 +10,7 @@ import {
 import { useKeyboardShortcut } from '@/hooks';
 import {
   insertAtIndex,
+  publish,
   removeFromArrayAtIndex,
   stringifyPalette,
   updateArrayAtIndex,
@@ -59,7 +60,22 @@ export const PaletteProvider: React.FC<PaletteProviderProps> = ({
 }) => {
   const { data: session, status } = useSession();
 
-  const mutation = api.palette.save.useMutation();
+  const mutation = api.palette.save.useMutation({
+    onSuccess: (data) => {
+      publish('show-toast', {
+        title: 'Palette saved',
+        description: 'Your palette has been saved to your account.',
+        status: 'success',
+      });
+    },
+    onError: (error) => {
+      publish('show-toast', {
+        title: 'Error saving palette',
+        description: 'There was an error saving your palette.',
+        status: 'error',
+      });
+    },
+  });
   const colorMutation = api.color.save.useMutation();
 
   const initialState: PaletteStateValue = {
