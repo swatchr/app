@@ -9,7 +9,7 @@ import {
   Link,
 } from '@chakra-ui/react';
 
-import { LogoIconNew } from '../../icons/swatchr/logo-icon-new';
+import { LogoIcon } from '../../icons/swatchr/logo-icon';
 
 export const PrivacyPolicy = () => {
   return (
@@ -94,7 +94,9 @@ export const PrivacyPolicy = () => {
         .
       </chakra.p>
       <Center mt={12}>
-        <Icon as={LogoIconNew} boxSize="2rem" />
+        <Box boxSize={16}>
+          <Icon as={LogoIcon} />
+        </Box>
       </Center>
     </Container>
   );
