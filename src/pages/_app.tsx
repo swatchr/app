@@ -39,14 +39,15 @@ const MyApp: AppType<{ session: Session | null }> = ({
             <AutoToast
               status={status}
               message={String(error) ?? String(success)}
-            />
-            {auth ? (
-              <AuthGate>
+            >
+              {auth ? (
+                <AuthGate>
+                  <Component {...pageProps} />
+                </AuthGate>
+              ) : (
                 <Component {...pageProps} />
-              </AuthGate>
-            ) : (
-              <Component {...pageProps} />
-            )}
+              )}
+            </AutoToast>
           </ChakraWrapper>
         </SessionProvider>
         <Analytics />
