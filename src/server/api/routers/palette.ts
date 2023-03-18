@@ -51,10 +51,17 @@ export const paletteRouter = createTRPCRouter({
       }
     }),
   update: protectedProcedure
-    .input(z.object({ serial: z.string(), data: z.unknown() }))
-    .mutation(async ({ ctx, input: { serial, data } }) => {
+    .input(
+      z.object({
+        id: z.string().optional(),
+        serial: z.string().optional(),
+        data: z.unknown(),
+      })
+    )
+    .mutation(async ({ ctx, input: { id, serial, data } }) => {
       try {
         return palettesModel.update({
+          id,
           serial,
           data: data as Prisma.PaletteUpdateInput,
           session: ctx.session,
@@ -79,4 +86,13 @@ export const paletteRouter = createTRPCRouter({
         trpcPrismaErrorHandler(error);
       }
     }),
+  // test: publicProcedure
+  //   .input(z.object({ palette: z.array(z.string()) }))
+  //   .query(async ({ ctx, input }) => {
+  //     try {
+  //       return palettesModel.validatePaletteColors(input.palette);
+  //     } catch (error) {
+  //       trpcPrismaErrorHandler(error);
+  //     }
+  //   }),
 });

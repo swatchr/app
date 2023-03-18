@@ -123,6 +123,9 @@ model Palette {
     Owned     Owned[]
     Forks     Fork[]
     Favorited Favorite[]
+
+    @@unique([serial, name])
+    @@index([serial, status])
 }
 
 model Owned {

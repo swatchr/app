@@ -20,12 +20,81 @@ export class Palette {
     });
   }
 
+  async validatePaletteColors(palette: string[]) {
+    if (!palette?.length) throw new Error('Invalid Palette');
+
+    const colors = await Promise.all(
+      palette
+        .map(async (hex) => {
+          const strippedHex = validateAndConvertHexColor(hex);
+          if (!strippedHex) {
+            throw new Error(`Invalid Hex Code ${strippedHex}=${hex}`);
+          }
+
+          let colorExists: Prisma.PromiseReturnType<
+            typeof colorInstance.hexExists
+          > = await colorInstance.hexExists(strippedHex);
+
+          let newColor: Prisma.PromiseReturnType<
+            typeof colorInstance.createColor
+          > = {} as Prisma.PromiseReturnType<typeof colorInstance.createColor>;
+          if (!colorExists) {
+            newColor = await colorInstance.createColor({ hex: strippedHex });
+          }
+
+          return colorExists ?? newColor;
+        })
+        .filter(Boolean)
+    );
+
+    // make sure all colors still exist
+    if (!colors.length || colors.length !== palette.length) {
+      throw new Error('Invalid Palette');
+    }
+
+    return colors;
+  }
+
   async paletteExists(palette: string[], status: string = 'public') {
     const color = await this.prisma.palette.findFirst({
       where: { serial: stringifyPalette(palette), status },
       include: { Owned: true, Forks: true },
     });
     return color;
+  }
+
+  async validateSerialPalette(palette: string) {
+    if (!palette || typeof palette !== 'string') {
+      throw new Error('Invalid Palette');
+    }
+
+    console.log('🚀 | file: palette.model.ts:67 | Palette | palette:', palette);
+    const paletteExists = await this.prisma.palette.findFirst({
+      where: { serial: palette },
+      include: { Owned: true, Forks: true },
+    });
+    if (paletteExists)
+      return {
+        result: true,
+        message: 'palette-exists',
+        palette: paletteExists,
+      };
+
+    const validPalette = palette.split('-').map((hex) => '#' + hex);
+    console.log(
+      '🚀 | file: palette.model.ts:80 | Palette | validPalette:',
+      validPalette
+    );
+    const colors = await this.validatePaletteColors(validPalette);
+
+    if (!colors.length || colors.length !== validPalette.length) {
+      return { result: false, message: 'invalid-colors' };
+    }
+    return {
+      result: true,
+      message: 'colors-validated',
+      length: colors.length,
+    };
   }
 
   async createPalette({
@@ -64,29 +133,7 @@ export class Palette {
       });
     }
 
-    // make sure each of the colors in the palette exist, if not create them
-    const colors = await Promise.all(
-      palette
-        .map(async (hex) => {
-          const strippedHex = validateAndConvertHexColor(hex);
-          if (!strippedHex)
-            throw new Error(`Invalid Hex Code ${strippedHex}=${hex}`);
-
-          let colorExists: Prisma.PromiseReturnType<
-            typeof colorInstance.hexExists
-          > = await colorInstance.hexExists(strippedHex);
-
-          let newColor: Prisma.PromiseReturnType<
-            typeof colorInstance.createColor
-          > = {} as Prisma.PromiseReturnType<typeof colorInstance.createColor>;
-          if (!colorExists) {
-            newColor = await colorInstance.createColor({ hex: strippedHex });
-          }
-
-          return colorExists ?? newColor;
-        })
-        .filter(Boolean)
-    );
+    const colors = await this.validatePaletteColors(palette);
 
     // make sure all colors still exist
     if (!colors.length || colors.length !== palette.length) {
@@ -140,6 +187,21 @@ export class Palette {
   }) {
     if (!id && !serial) throw new Error('Invalid Palette');
     if (!data) throw new Error('Invalid Palette');
+    if (!session) throw new Error('Not Authorized');
+
+    // check if palette exists
+    const validation = await this.validateSerialPalette(String(serial));
+
+    if (!validation.result) throw new Error('Invalid Palette');
+    if (validation.message === 'palette-exists') {
+      const existing = validation.palette;
+      // check if user is the owner of the palette
+      if (!isOwner(existing?.Owned[0]!.profileId!, session)) {
+        throw new Error('Not Authorized');
+      }
+    }
+
+    // update palette
     const palette = await this.prisma.palette.update({
       where: Object.assign({}, id ? { id } : { serial }),
       data,
