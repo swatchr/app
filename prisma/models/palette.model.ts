@@ -5,6 +5,7 @@ import type { InnerTRPCContext } from '@/server';
 import type { Color as PrismaColor, Prisma } from '@prisma/client';
 
 import { stringifyPalette, validateAndConvertHexColor } from '@/utils';
+import { isOwner } from 'lib/next-auth/services/permissions';
 import { shortname } from '../../lib/unique-names-generator';
 import { Color } from './color.model';
 
@@ -45,8 +46,8 @@ export class Palette {
     if (paletteExists) {
       if (
         // check if current user is the owner, if so return palette otherwise fork palette
-        paletteExists.Owned.filter(
-          ({ profileId }) => profileId === session?.user.profileId
+        paletteExists.Owned.filter(({ profileId }) =>
+          isOwner(profileId, session)
         )
       ) {
         return paletteExists;
@@ -102,7 +103,9 @@ export class Palette {
           connect: (colors as PrismaColor[]).map((color) => ({ id: color.id })),
         },
         Owned: {
-          create: { profileId: session?.user.profileId },
+          create: {
+            profileId: session?.user.profileId,
+          },
         },
       },
     });
@@ -128,12 +131,15 @@ export class Palette {
     id,
     serial,
     data,
+    session,
   }: {
     id?: string;
     serial?: string;
     data: Prisma.PaletteUpdateInput;
+    session: InnerTRPCContext['session'];
   }) {
     if (!id && !serial) throw new Error('Invalid Palette');
+    if (!data) throw new Error('Invalid Palette');
     const palette = await this.prisma.palette.update({
       where: Object.assign({}, id ? { id } : { serial }),
       data,

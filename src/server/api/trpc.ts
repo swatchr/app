@@ -14,10 +14,17 @@
  *
  * These allow you to access things when processing a request, like the database, the session, etc.
  */
-import { type CreateNextContextOptions } from '@trpc/server/adapters/next';
+import { initTRPC, TRPCError } from '@trpc/server';
+import superjson from 'superjson';
+
+import type { inferAsyncReturnType } from '@trpc/server';
+import type { CreateNextContextOptions } from '@trpc/server/adapters/next';
+import type { NextApiRequest } from 'next';
+import type { Session } from 'next-auth';
 
 import { getServerAuthSession } from '@/server/auth';
 import { prisma } from '@/server/db';
+import type { Profile, Role, User } from '@prisma/client';
 
 type CreateContextOptions = {
   session: Session | null;
@@ -53,7 +60,6 @@ export const createTRPCContext = async (opts: CreateNextContextOptions) => {
 
   // Get the session from the server using the getServerSession wrapper function
   const session = await getServerAuthSession({ req, res });
-
   return createInnerTRPCContext({
     session: session,
     req,
@@ -65,13 +71,8 @@ export const createTRPCContext = async (opts: CreateNextContextOptions) => {
  *
  * This is where the tRPC API is initialized, connecting the context and transformer.
  */
-import { initTRPC, TRPCError } from '@trpc/server';
-import superjson from 'superjson';
 
-import type { inferAsyncReturnType } from '@trpc/server';
 import { ROLES } from 'lib/prisma/utils';
-import type { NextApiRequest } from 'next';
-import type { Session } from 'next-auth';
 
 const t = initTRPC.context<typeof createTRPCContext>().create({
   transformer: superjson,
@@ -105,30 +106,34 @@ export const publicProcedure = t.procedure;
 
 /** Reusable middleware that enforces users are logged in before running the procedure. */
 const enforceUserIsAuthed = t.middleware(({ ctx, next }) => {
-  if (!ctx.session || !ctx.session.user) {
+  if (!ctx.session || !ctx.session.user || !ctx.session.user.profileId) {
     throw new TRPCError({ code: 'UNAUTHORIZED' });
   }
   return next({
     ctx: {
       // infers the `session` as non-nullable
-      session: { ...ctx.session, user: ctx.session.user },
+      // session: { ...ctx.session, user: ctx.session.user },
+      session: ctx.session,
     },
   });
 });
 
 /** Reusable middleware that enforces users are logged in before running the procedure. */
 const enforceUserIsAdmin = t.middleware(({ ctx, next }) => {
-  if (!ctx.session || !ctx.session.user || !ctx.session.user.profileId) {
-    throw new TRPCError({ code: 'UNAUTHORIZED' });
-  }
-
-  if (ctx.session.user.role !== ROLES.ADMIN) {
+  if (
+    !ctx.session ||
+    !ctx.session.user ||
+    !ctx.session.user.profileId ||
+    !ctx.session.user.role ||
+    ctx.session.user.role !== Number(ROLES.ADMIN)
+  ) {
     throw new TRPCError({ code: 'UNAUTHORIZED' });
   }
 
   return next({
     ctx: {
-      session: { ...ctx.session, user: ctx.session.user },
+      // session: { ...ctx.session, user: ctx.session.user },
+      session: ctx.session,
     },
   });
 });

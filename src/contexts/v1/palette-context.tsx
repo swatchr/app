@@ -137,7 +137,6 @@ export const PaletteProvider: React.FC<PaletteProviderProps> = ({
     if (session?.user?.profileId) {
       // profile is missing from session
       mutation.mutate({
-        session: session,
         palette,
         // @TODO: impelment palette name
       });

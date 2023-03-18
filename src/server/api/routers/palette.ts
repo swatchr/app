@@ -9,7 +9,6 @@ import {
   protectedProcedure,
   publicProcedure,
 } from '@/server/api/trpc';
-import { authSessionSchema } from '@/server/auth';
 import { trpcPrismaErrorHandler } from '@/utils/error';
 import { Palette } from 'prisma/models/palette.model';
 
@@ -19,22 +18,21 @@ export const paletteRouter = createTRPCRouter({
   save: protectedProcedure
     .input(
       z.object({
-        session: authSessionSchema,
         palette: z.array(z.string()),
         name: z.string().optional(),
         status: z.string().default('public'),
       })
     )
     .mutation(async ({ ctx, input }) => {
-      const { session, ...restInput } = input;
-      try {
-        return await palettesModel.createPalette({
-          session: (session as Session) ?? ctx.session,
-          ...restInput,
-        });
-      } catch (error) {
-        trpcPrismaErrorHandler(error);
-      }
+      if (ctx.session.user.profileId)
+        try {
+          return await palettesModel.createPalette({
+            session: ctx.session,
+            ...input,
+          });
+        } catch (error) {
+          trpcPrismaErrorHandler(error);
+        }
     }),
   get: publicProcedure
     .input(
@@ -59,6 +57,7 @@ export const paletteRouter = createTRPCRouter({
         return palettesModel.update({
           serial,
           data: data as Prisma.PaletteUpdateInput,
+          session: ctx.session,
         });
       } catch (error) {
         trpcPrismaErrorHandler(error);
