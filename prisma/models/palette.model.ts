@@ -110,9 +110,11 @@ export class Palette {
       where: Object.assign({}, id ? { id } : { serial }),
       include: { Owned: true, Forks: true },
     });
+
     if (!palette?.id) throw new Error('Palette not found');
-    if (!isOwner(palette.Owned[0]!.profileId, session))
+    if (!isOwner(palette.Owned[0]!.profileId, session)) {
       throw new Error('Not Authorized');
+    }
     return palette;
   }
 
@@ -153,7 +155,11 @@ export class Palette {
 
     if (!newPalette?.id) throw new Error('Invalid Palette');
 
-    return newPalette;
+    return {
+      status: 'success',
+      message: 'Palette Created',
+      palette: newPalette,
+    };
   }
 
   async get({ id, serial }: { id?: string; serial?: string }) {
@@ -175,9 +181,9 @@ export class Palette {
     serial?: string;
     data: Prisma.PaletteUpdateInput;
   }) {
+    console.log('starting prisma update', data);
     if (!serial) throw new Error('Invalid Palette');
     if (!data) throw new Error('Invalid Palette');
-
     // update palette
     const palette = await this.prisma.palette.update({
       where: { serial },
@@ -186,7 +192,11 @@ export class Palette {
 
     if (!palette?.id) throw new Error('Palette not found');
 
-    return palette;
+    return {
+      status: 'success',
+      message: 'Palette Updated',
+      palette,
+    };
   }
 
   async delete({ serial }: { serial?: string }) {
@@ -197,6 +207,10 @@ export class Palette {
 
     if (!palette?.id) throw new Error('Palette not found');
 
-    return palette;
+    return {
+      status: 'success',
+      message: 'Palette Deleted',
+      palette,
+    };
   }
 }

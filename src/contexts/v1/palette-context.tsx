@@ -16,6 +16,7 @@ import {
   updateArrayAtIndex,
 } from '@/utils';
 import { api } from '@/utils/api';
+import { useToast } from '@chakra-ui/react';
 import ColorLab from 'lib/color';
 import { useSession } from 'next-auth/react';
 
@@ -58,25 +59,38 @@ export const PaletteProvider: React.FC<PaletteProviderProps> = ({
   colorParams,
   children,
 }) => {
+  const toast = useToast();
   const { data: session, status } = useSession();
 
   const mutation = api.palette.save.useMutation({
     onSuccess: (data) => {
-      publish('show-toast', {
-        title: 'Palette saved',
-        description: 'Your palette has been saved to your account.',
+      const hasUpdates = data?.message.includes('updated');
+      toast({
+        title: data?.message,
+        description: `Your palette has been ${
+          hasUpdates ? 'updated' : 'saved'
+        }.`,
         status: 'success',
       });
     },
     onError: (error) => {
-      publish('show-toast', {
+      console.error('🚀 | file: palette-context.tsx:89 | error:', error);
+      toast({
         title: 'Error saving palette',
         description: 'There was an error saving your palette.',
         status: 'error',
       });
     },
   });
-  const colorMutation = api.color.save.useMutation();
+  const colorMutation = api.color.save.useMutation({
+    // we don't need to notify the user of color creation
+    onSuccess: (data) => {
+      console.log('🚀 | file: palette-context.tsx:89 | color created:', data);
+    },
+    onError: (error) => {
+      console.error('🚀 | file: palette-context.tsx:89 | error:', error);
+    },
+  });
 
   const initialState: PaletteStateValue = {
     palettes: [['#BADA55']],

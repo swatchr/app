@@ -45,10 +45,15 @@ export const paletteRouter = createTRPCRouter({
 
         if (!validation.result) throw new Error(validation.message);
         if (validation.result && validation.message === 'palette-exists') {
-          return await palettesModel.update({
+          const palette = await palettesModel.update({
             serial: stringifyPalette(input.palette),
-            data: input.data as Prisma.PaletteUpdateInput,
+            data: (input.data as Prisma.PaletteUpdateInput) ?? {},
           });
+          return {
+            message: 'Palette Updated',
+            palette,
+            status: 'success',
+          };
         }
 
         return await palettesModel.createPalette({
@@ -89,16 +94,20 @@ export const paletteRouter = createTRPCRouter({
     )
     .mutation(async ({ ctx, input: { serial, data } }) => {
       try {
+        console.log('starting mutation checks');
         if (!ctx.session.user.profileId) throw new Error('Not Authorized');
         if (!serial) throw new Error('Invalid Palette');
+        console.log('completed mutation checks');
       } catch (error) {
         handleServerError(error);
       }
       try {
+        console.log('validating palette owner');
         await palettesModel.validatePaletteOwner({
           session: ctx.session,
           serial,
         });
+        console.log('updating palette');
         return palettesModel.update({
           serial,
           data: data as Prisma.PaletteUpdateInput,
