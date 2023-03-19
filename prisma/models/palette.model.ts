@@ -1,4 +1,5 @@
 import { PrismaClient } from '@prisma/client';
+import { TRPCError } from '@trpc/server';
 import { z } from 'zod';
 
 import type { InnerTRPCContext } from '@/server';
@@ -7,6 +8,7 @@ import type { Color as PrismaColor, Prisma } from '@prisma/client';
 import { stringifyPalette, validateAndConvertHexColor } from '@/utils';
 import { isOwner } from 'lib/next-auth/services/permissions';
 import { shortname } from '../../lib/unique-names-generator';
+import { handleServerError } from '../../src/server/api/utils/index';
 import { Color } from './color.model';
 
 // type PaletteStatus = 'public' | 'private' | 'unlisted' | 'deleted';
@@ -127,7 +129,11 @@ export class Palette {
     palette: string[];
     data: Prisma.PaletteCreateInput;
   }) {
-    if (!palette?.length) throw new Error('Invalid Palette');
+    if (!palette?.length)
+      throw new TRPCError({
+        code: 'BAD_REQUEST',
+        message: 'Invalid Palette',
+      });
 
     // make sure all colors exist if not they are created or errors thrown
     const colors = await this.validatePaletteColors(palette);
@@ -162,10 +168,18 @@ export class Palette {
     };
   }
 
-  async get({ id, serial }: { id?: string; serial?: string }) {
-    if (!id && !serial) throw new Error('Invalid Palette');
+  async get({
+    id,
+    serial,
+    name,
+  }: {
+    id?: string;
+    serial?: string;
+    name?: string;
+  }) {
+    if (!id && !serial && !name) throw new Error('Invalid Palette');
     const palette = await this.prisma.palette.findUnique({
-      where: Object.assign({}, id ? { id } : { serial }),
+      where: Object.assign({}, id ? { id } : serial ? { serial } : { name }),
       include: { Colors: true, Owned: true, Forks: true },
     });
 
@@ -181,9 +195,8 @@ export class Palette {
     serial?: string;
     data: Prisma.PaletteUpdateInput;
   }) {
-    console.log('starting prisma update', data);
-    if (!serial) throw new Error('Invalid Palette');
-    if (!data) throw new Error('Invalid Palette');
+    if (!serial && !data) throw new Error('Invalid Palette');
+
     // update palette
     const palette = await this.prisma.palette.update({
       where: { serial },

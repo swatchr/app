@@ -1,3 +1,4 @@
+import { TRPCError } from '@trpc/server';
 import { z } from 'zod';
 
 import type { Prisma } from '@prisma/client';
@@ -12,8 +13,8 @@ import {
 import { stringifyPalette } from '@/utils';
 import { trpcPrismaErrorHandler } from '@/utils/error';
 import { isOwner } from 'lib/next-auth/services/permissions';
+import { shortname } from 'lib/unique-names-generator';
 import { Palette } from 'prisma/models/palette.model';
-import { shortname } from '../../../../lib/unique-names-generator';
 import { handleServerError } from '../utils/index';
 
 const palettesModel = new Palette();
@@ -36,7 +37,7 @@ export const paletteRouter = createTRPCRouter({
         if (!ctx.session.user.profileId) throw new Error('Not Authorized');
         if (!input.palette?.length) throw new Error('Invalid Palette');
       } catch (error) {
-        handleServerError(error);
+        handleServerError(error, 'BAD_REQUEST');
       }
       try {
         const validation = await palettesModel.validateSerialPalette(
@@ -71,14 +72,22 @@ export const paletteRouter = createTRPCRouter({
     }),
   get: publicProcedure
     .input(
-      z.object({ id: z.string().optional(), serial: z.string().optional() })
+      z.object({
+        id: z.string().optional(),
+        serial: z.string().optional(),
+        name: z.string().optional(),
+      })
     )
     .query(async ({ ctx, input }) => {
       try {
         return await palettesModel.get(
           Object.assign(
             {},
-            input?.id ? { id: input.id! } : { serial: input.serial! }
+            input?.id
+              ? { id: input.id! }
+              : input?.serial
+              ? { serial: input.serial! }
+              : { name: input.name }
           )
         );
       } catch (error) {
@@ -94,20 +103,16 @@ export const paletteRouter = createTRPCRouter({
     )
     .mutation(async ({ ctx, input: { serial, data } }) => {
       try {
-        console.log('starting mutation checks');
         if (!ctx.session.user.profileId) throw new Error('Not Authorized');
         if (!serial) throw new Error('Invalid Palette');
-        console.log('completed mutation checks');
       } catch (error) {
-        handleServerError(error);
+        handleServerError(error, 'BAD_REQUEST');
       }
       try {
-        console.log('validating palette owner');
         await palettesModel.validatePaletteOwner({
           session: ctx.session,
           serial,
         });
-        console.log('updating palette');
         return palettesModel.update({
           serial,
           data: data as Prisma.PaletteUpdateInput,
@@ -123,7 +128,7 @@ export const paletteRouter = createTRPCRouter({
         if (!ctx.session.user.profileId) throw new Error('Not Authorized');
         if (!input.serial) throw new Error('Invalid Palette');
       } catch (error) {
-        handleServerError(error);
+        handleServerError(error, 'BAD_REQUEST');
       }
       try {
         await palettesModel.validatePaletteOwner({

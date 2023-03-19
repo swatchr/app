@@ -73,11 +73,12 @@ export const createTRPCContext = async (opts: CreateNextContextOptions) => {
  */
 
 import { ROLES } from 'lib/prisma/utils';
+import { formatTRPCError } from './utils';
 
 const t = initTRPC.context<typeof createTRPCContext>().create({
   transformer: superjson,
-  errorFormatter({ shape }) {
-    return shape;
+  errorFormatter({ shape, error }) {
+    return formatTRPCError(error, shape);
   },
 });
 

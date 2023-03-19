@@ -97,7 +97,11 @@ export const fetchTheColorApi = async (hex: string, endpoint = 'scheme') => {
 
     return res.json();
   } catch (e) {
-    return handleServerError(e, 'There was an issue with fetching data');
+    return handleServerError(
+      e,
+      'INTERNAL_SERVER_ERROR',
+      'There was an issue with fetching data'
+    );
   }
 };
 

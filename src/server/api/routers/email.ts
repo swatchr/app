@@ -52,7 +52,11 @@ export const emailRouter = createTRPCRouter({
           message: 'Emails sent successfully',
         };
       } catch (e) {
-        return handleServerError(e, 'There was an error sending emails');
+        return handleServerError(
+          e,
+          'INTERNAL_SERVER_ERROR',
+          'There was an error sending emails'
+        );
       }
     }),
   verify: publicProcedure
@@ -77,7 +81,11 @@ export const emailRouter = createTRPCRouter({
           message: 'Emails sent successfully',
         };
       } catch (e) {
-        return handleServerError(e, 'There was an error sending the email');
+        return handleServerError(
+          e,
+          'INTERNAL_SERVER_ERROR',
+          'There was an error sending the email'
+        );
       }
     }),
 });
