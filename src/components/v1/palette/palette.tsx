@@ -14,9 +14,11 @@ import { useCallback, useRef, useState } from 'react';
 
 import { Swatch } from '@/components';
 import { ColorProvider, ContentProvider, usePaletteState } from '@/contexts';
-import { isDev, stringifyPalette } from '@/utils';
+import { useDebounce } from '@/hooks';
+import { isDev, slugify, stringifyPalette } from '@/utils';
 import { api } from '@/utils/api';
 import ColorLab from 'lib/color';
+import { useSession } from 'next-auth/react';
 import { CommandPalette } from '../_wip/command-palette';
 import { LogoCredits } from '../_wip/logo-credits';
 import { ColorBlindnessSimulator } from './color-blindness-simulator';
@@ -43,7 +45,7 @@ export function Palette() {
 
   return (
     <>
-      {/* @TODO: WIP: finish commandPalette logic */}
+      {/* @TODO: WIP: finish command Palette logic */}
       {isDev ? <CommandPalette /> : null}
       <HeaderIconStack
         palette={palette}
@@ -53,9 +55,14 @@ export function Palette() {
       />
       <ExportPanel isOpen={isOpen} onClose={onClose} />
       {showCB ? (
-        <ColorBlindnessSimulator contrast={contrast} palette={palette} />
+        <ColorBlindnessSimulator palette={palette} contrast={contrast} />
       ) : null}
-      <PaletteNameInput palette={palette} text={controlsText} />
+      {palette.length && (
+        <PaletteNameInput
+          serial={stringifyPalette(palette)}
+          text={controlsText}
+        />
+      )}
       <Flex className="swatches" m={0} p={0} gap={0}>
         {palette && palette.length
           ? palette.map((swatch, index) => (
@@ -73,19 +80,16 @@ export function Palette() {
   );
 }
 
-function PaletteNameInput({
-  palette,
-  text,
-}: {
-  palette: string[];
-  text: string;
-}) {
+function PaletteNameInput({ serial, text }: { serial: string; text: string }) {
   const toast = useToast();
+  const { status } = useSession();
 
   const editableInput = useRef<HTMLInputElement | null>(null);
   const [value, setValue] = useState<string | undefined>();
+
   const mutation = api.palette.update.useMutation({
     onSuccess(data) {
+      setValue(data?.palette.name);
       toast({
         title: 'Palette name updated',
         description: `Palette name updated to ${data?.palette.name}`,
@@ -93,24 +97,25 @@ function PaletteNameInput({
       });
     },
     onError(error) {
-      console.error('🚀 | file: palette.tsx:43 | error:', error);
+      console.log('🚀 | file: palette.tsx:43 | error:', error);
       toast({
         title: 'Error updating palette name',
-        description: 'Error updating palette name',
+        description: error.message,
         status: 'error',
       });
+      setValue(value);
     },
   });
   const { data } = api.palette.get.useQuery(
+    { serial },
     {
-      serial: stringifyPalette(palette),
-    },
-    {
+      enabled: !!serial,
       onSuccess(data) {
         setValue(data?.name);
       },
     }
   );
+
   return (
     <Box
       position="absolute"
@@ -127,16 +132,16 @@ function PaletteNameInput({
         value={value}
         placeholder={value}
         size="sm"
-        onChange={(value) => setValue(value)}
+        isDisabled={status !== 'authenticated'}
+        onChange={(val: string) => setValue(val)}
         onSubmit={(value) => {
-          mutation.mutateAsync({
+          mutation.mutate({
             serial: data?.serial!,
             data: {
-              name: value,
+              name: slugify(value),
             },
           });
         }}
-
         // @TODO: WIP: add regex pattern and slugify name
       >
         <EditablePreview>{data?.name}</EditablePreview>
@@ -144,7 +149,12 @@ function PaletteNameInput({
           <VisuallyHidden>
             <chakra.label htmlFor="name">Palette Name</chakra.label>
           </VisuallyHidden>
-          <EditableInput color="gray.300" type="text" name="name" />
+          <EditableInput
+            color={text}
+            type="text"
+            name="name"
+            onBlur={(e) => e.preventDefault()}
+          />
         </InputGroup>
       </Editable>
     </Box>
