@@ -1,5 +1,6 @@
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/data-proxy';
 import * as trpc from '@trpc/server';
+import { TRPC_ERROR_CODE_KEY } from '@trpc/server/rpc';
 
 export function trpcPrismaErrorHandler1(error: any) {
   if (error instanceof PrismaClientKnownRequestError) {
@@ -60,6 +61,10 @@ type ErrorMessage = {
 };
 
 export const ERROR_MESSAGES: Record<string, ErrorMessage> = {
+  P2001: {
+    code: 'NOT_FOUND',
+    message: '🗄 Record NOT_FOUND.',
+  },
   P2002: {
     code: 'CONFLICT',
     message: '🗄 Record Already Exists.',
