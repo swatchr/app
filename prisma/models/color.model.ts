@@ -56,7 +56,7 @@ export class Color {
     const color = await this.prisma.color.findUnique({
       where: { hex: strippedHex },
       include: include
-        ? { Palette: true, Tags: true, Favorite: true }
+        ? { Palettes: true, Tags: true, Favorited: true }
         : undefined,
     });
 
