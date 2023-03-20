@@ -28,6 +28,7 @@ export function LogoCredits() {
         <Icon as={LogoIcon} onClick={onOpen} />
       </Box>
       {isDev && isOpen ? (
+        // {true ? (
         <Sidebar open={true} onClose={onClose}>
           <SidebarTests />
         </Sidebar>
