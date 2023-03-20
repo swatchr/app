@@ -51,37 +51,15 @@ export const paletteRouter = createTRPCRouter({
           throw throwBadRequestError('Invalid colors');
         }
 
-        const existingPalette = await ctx.prisma.palette.findUnique({
+        return await ctx.prisma.palette.upsert({
           where: { serial: stringifyPalette(input.palette) },
-          include: { Colors: true, Owned: true },
-        });
-
-        if (existingPalette) {
-          if (!isOwner(existingPalette.Owned[0]!.profileId!, ctx.session)) {
-            throw throwAuthorizationError();
-          }
-
-          return await ctx.prisma.palette.update({
-            where: { id: existingPalette.id },
-            data: {
-              ...input.data,
-              Colors: {
-                connect: (colors as PrismaColor[]).map((color) => ({
-                  id: color.id,
-                })),
-              },
-            },
-          });
-        }
-
-        return await ctx.prisma.palette.create({
-          data: {
+          create: {
             serial: stringifyPalette(input.palette),
             name: input.data?.name || shortname(),
             status: input.data?.status || 'public',
             Colors: {
-              connect: (colors as PrismaColor[]).map((color) => ({
-                id: color.id,
+              connect: colors.map((c) => ({
+                id: (c as PrismaColor).id,
               })),
             },
             Owned: {
@@ -90,34 +68,15 @@ export const paletteRouter = createTRPCRouter({
               },
             },
           },
+          update: {
+            ...input.data,
+            Colors: {
+              connect: (colors as PrismaColor[]).map((color) => ({
+                id: color.id,
+              })),
+            },
+          },
         });
-
-        // return await ctx.prisma.palette.upsert({
-        //   where: { serial: stringifyPalette(input.palette) },
-        //   create: {
-        //     serial: stringifyPalette(input.palette),
-        //     name: input.data?.name || shortname(),
-        //     status: input.data?.status || 'public',
-        //     Colors: {
-        //       connect: (colors as PrismaColor[]).map((color) => ({
-        //         id: color.id,
-        //       })),
-        //     },
-        //     Owned: {
-        //       create: {
-        //         profileId: ctx.session?.user.profileId,
-        //       },
-        //     },
-        //   },
-        //   update: {
-        //     ...input.data,
-        //     Colors: {
-        //       connect: (colors as PrismaColor[]).map((color) => ({
-        //         id: color.id,
-        //       })),
-        //     },
-        //   },
-        // });
       } catch (error) {
         trpcPrismaErrorHandler(error);
       }
