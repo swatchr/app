@@ -1,9 +1,10 @@
 import { TRPCError } from '@trpc/server';
 import { z } from 'zod';
 
-import type { Prisma } from '@prisma/client';
+import type { Color as PrismaColor, Prisma } from '@prisma/client';
 import type { Session } from 'next-auth';
 
+import { colorApiSchema, fetchTheColorApi } from '@/server/api/routers/color';
 import {
   adminProcedure,
   createTRPCRouter,
@@ -11,7 +12,13 @@ import {
   publicProcedure,
 } from '@/server/api/trpc';
 import { stringifyPalette } from '@/utils';
-import { trpcPrismaErrorHandler } from '@/utils/error';
+import {
+  throwAuthorizationError,
+  throwBadRequestError,
+  trpcPrismaErrorHandler,
+  trpcPrismaErrorHandler1,
+} from '@/utils/error';
+import ColorLab from 'lib/color';
 import { isOwner } from 'lib/next-auth/services/permissions';
 import { shortname } from 'lib/unique-names-generator';
 import { Palette } from 'prisma/models/palette.model';
@@ -33,39 +40,84 @@ export const paletteRouter = createTRPCRouter({
       })
     )
     .mutation(async ({ ctx, input }) => {
-      try {
-        if (!ctx.session.user.profileId) throw new Error('Not Authorized');
-        if (!input.palette?.length) throw new Error('Invalid Palette');
-      } catch (error) {
-        handleServerError(error, 'BAD_REQUEST');
-      }
-      try {
-        const validation = await palettesModel.validateSerialPalette(
-          stringifyPalette(input.palette)
-        );
+      if (!ctx?.session.user.profileId) throw throwAuthorizationError();
+      if (!input.palette?.length) throw throwBadRequestError();
 
-        if (!validation.result) throw new Error(validation.message);
-        if (validation.result && validation.message === 'palette-exists') {
-          const palette = await palettesModel.update({
-            serial: stringifyPalette(input.palette),
-            data: (input.data as Prisma.PaletteUpdateInput) ?? {},
-          });
-          return {
-            message: 'Palette Updated',
-            palette,
-            status: 'success',
-          };
+      try {
+        if (!input?.palette?.length) throw throwBadRequestError();
+
+        const colors = await palettesModel.validatePaletteColors(input.palette);
+        if (!colors?.length || colors.length !== input.palette.length) {
+          throw throwBadRequestError('Invalid colors');
         }
 
-        return await palettesModel.createPalette({
-          session: ctx.session,
-          palette: input.palette,
+        const existingPalette = await ctx.prisma.palette.findUnique({
+          where: { serial: stringifyPalette(input.palette) },
+          include: { Colors: true, Owned: true },
+        });
+
+        if (existingPalette) {
+          if (!isOwner(existingPalette.Owned[0]!.profileId!, ctx.session)) {
+            throw throwAuthorizationError();
+          }
+
+          return await ctx.prisma.palette.update({
+            where: { id: existingPalette.id },
+            data: {
+              ...input.data,
+              Colors: {
+                connect: (colors as PrismaColor[]).map((color) => ({
+                  id: color.id,
+                })),
+              },
+            },
+          });
+        }
+
+        return await ctx.prisma.palette.create({
           data: {
-            ...input.data,
             serial: stringifyPalette(input.palette),
             name: input.data?.name || shortname(),
+            status: input.data?.status || 'public',
+            Colors: {
+              connect: (colors as PrismaColor[]).map((color) => ({
+                id: color.id,
+              })),
+            },
+            Owned: {
+              create: {
+                profileId: ctx.session?.user.profileId,
+              },
+            },
           },
         });
+
+        // return await ctx.prisma.palette.upsert({
+        //   where: { serial: stringifyPalette(input.palette) },
+        //   create: {
+        //     serial: stringifyPalette(input.palette),
+        //     name: input.data?.name || shortname(),
+        //     status: input.data?.status || 'public',
+        //     Colors: {
+        //       connect: (colors as PrismaColor[]).map((color) => ({
+        //         id: color.id,
+        //       })),
+        //     },
+        //     Owned: {
+        //       create: {
+        //         profileId: ctx.session?.user.profileId,
+        //       },
+        //     },
+        //   },
+        //   update: {
+        //     ...input.data,
+        //     Colors: {
+        //       connect: (colors as PrismaColor[]).map((color) => ({
+        //         id: color.id,
+        //       })),
+        //     },
+        //   },
+        // });
       } catch (error) {
         trpcPrismaErrorHandler(error);
       }
@@ -79,6 +131,9 @@ export const paletteRouter = createTRPCRouter({
       })
     )
     .query(async ({ ctx, input }) => {
+      if (!input?.id && !input?.serial && !input?.name) {
+        throw throwBadRequestError();
+      }
       try {
         return await palettesModel.get(
           Object.assign(
@@ -102,12 +157,9 @@ export const paletteRouter = createTRPCRouter({
       })
     )
     .mutation(async ({ ctx, input: { serial, data } }) => {
-      try {
-        if (!ctx.session.user.profileId) throw new Error('Not Authorized');
-        if (!serial) throw new Error('Invalid Palette');
-      } catch (error) {
-        handleServerError(error, 'BAD_REQUEST');
-      }
+      if (!ctx.session.user.profileId) throw throwAuthorizationError();
+      if (!serial) throw throwBadRequestError();
+
       try {
         await palettesModel.validatePaletteOwner({
           session: ctx.session,
@@ -124,12 +176,9 @@ export const paletteRouter = createTRPCRouter({
   delete: protectedProcedure
     .input(z.object({ serial: z.string() }))
     .mutation(async ({ ctx, input }) => {
-      try {
-        if (!ctx.session.user.profileId) throw new Error('Not Authorized');
-        if (!input.serial) throw new Error('Invalid Palette');
-      } catch (error) {
-        handleServerError(error, 'BAD_REQUEST');
-      }
+      if (!ctx.session.user.profileId) throw throwAuthorizationError();
+      if (!input.serial) throw throwBadRequestError();
+
       try {
         await palettesModel.validatePaletteOwner({
           session: ctx.session,

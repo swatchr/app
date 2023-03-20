@@ -85,7 +85,7 @@ function PaletteNameInput({ serial, text }: { serial: string; text: string }) {
   const { status } = useSession();
 
   const editableInput = useRef<HTMLInputElement | null>(null);
-  const [value, setValue] = useState<string | undefined>();
+  const [value, setValue] = useState<string | undefined>(undefined);
 
   const mutation = api.palette.update.useMutation({
     onSuccess(data) {
@@ -97,13 +97,16 @@ function PaletteNameInput({ serial, text }: { serial: string; text: string }) {
       });
     },
     onError(error) {
-      console.log('🚀 | file: palette.tsx:43 | error:', error);
+      console.log(
+        '🚀 | file: palette.tsx:43 | error:',
+        JSON.parse(error.message)
+      );
       toast({
         title: 'Error updating palette name',
         description: error.message,
         status: 'error',
       });
-      setValue(value);
+      setValue(data?.name);
     },
   });
   const { data } = api.palette.get.useQuery(
@@ -129,9 +132,10 @@ function PaletteNameInput({ serial, text }: { serial: string; text: string }) {
       <Editable
         ref={editableInput}
         tabIndex={0}
-        value={value}
-        placeholder={value}
         size="sm"
+        // _placeholder={{ color: 'black' }}
+        value={value}
+        placeholder={data?.name}
         isDisabled={status !== 'authenticated'}
         onChange={(val: string) => setValue(val)}
         onSubmit={(value) => {
@@ -144,7 +148,7 @@ function PaletteNameInput({ serial, text }: { serial: string; text: string }) {
         }}
         // @TODO: WIP: add regex pattern and slugify name
       >
-        <EditablePreview>{data?.name}</EditablePreview>
+        <EditablePreview>{value}</EditablePreview>
         <InputGroup>
           <VisuallyHidden>
             <chakra.label htmlFor="name">Palette Name</chakra.label>
@@ -154,6 +158,7 @@ function PaletteNameInput({ serial, text }: { serial: string; text: string }) {
             type="text"
             name="name"
             onBlur={(e) => e.preventDefault()}
+            _selection={{ color: 'white', bg: 'green.500' }}
           />
         </InputGroup>
       </Editable>

@@ -64,17 +64,14 @@ export const PaletteProvider: React.FC<PaletteProviderProps> = ({
 
   const mutation = api.palette.save.useMutation({
     onSuccess: (data) => {
-      const hasUpdates = data?.message.includes('updated');
       toast({
-        title: data?.message,
-        description: `Your palette has been ${
-          hasUpdates ? 'updated' : 'saved'
-        }.`,
+        title: 'Palette Saved',
+        description: 'Your palette has been saved.',
         status: 'success',
       });
     },
     onError: (error) => {
-      console.error('🚀 | file: palette-context.tsx:89 | error:', error);
+      console.warn('🚀 | file: palette-context.tsx:89 | error:', error);
       toast({
         title: 'Error saving palette',
         description: 'There was an error saving your palette.',

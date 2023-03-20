@@ -5,10 +5,10 @@ import { z } from 'zod';
 import type { InnerTRPCContext } from '@/server';
 import type { Color as PrismaColor, Prisma } from '@prisma/client';
 
+import { handleServerError } from '@/server/api/utils/index';
 import { stringifyPalette, validateAndConvertHexColor } from '@/utils';
 import { isOwner } from 'lib/next-auth/services/permissions';
-import { shortname } from '../../lib/unique-names-generator';
-import { handleServerError } from '../../src/server/api/utils/index';
+import { shortname } from 'lib/unique-names-generator';
 import { Color } from './color.model';
 
 // type PaletteStatus = 'public' | 'private' | 'unlisted' | 'deleted';
@@ -37,14 +37,15 @@ export class Palette {
             typeof colorInstance.hexExists
           > = await colorInstance.hexExists(strippedHex);
 
-          let newColor: Prisma.PromiseReturnType<
-            typeof colorInstance.createColor
-          > = {} as Prisma.PromiseReturnType<typeof colorInstance.createColor>;
+          // let newColor: Prisma.PromiseReturnType<
+          //   typeof colorInstance.createColor
+          // > = {} as Prisma.PromiseReturnType<typeof colorInstance.createColor>;
+
           if (!colorExists) {
-            newColor = await colorInstance.createColor({ hex: strippedHex });
+            return await colorInstance.createColor({ hex: strippedHex });
           }
 
-          return colorExists ?? newColor;
+          return colorExists;
         })
         .filter(Boolean)
     );
@@ -77,7 +78,10 @@ export class Palette {
       throw new Error('Invalid Palette');
     }
 
+    console.log('validating serial palette');
+
     const paletteExists = await this.serialPaletteExists(palette);
+
     if (paletteExists)
       return {
         result: true,
@@ -95,6 +99,7 @@ export class Palette {
       result: true,
       message: 'colors-validated',
       length: colors.length,
+      colors,
     };
   }
 
@@ -114,7 +119,7 @@ export class Palette {
     });
 
     if (!palette?.id) throw new Error('Palette not found');
-    if (!isOwner(palette.Owned[0]!.profileId, session)) {
+    if (!isOwner(palette.Owned[0]!.profileId!, session)) {
       throw new Error('Not Authorized');
     }
     return palette;
