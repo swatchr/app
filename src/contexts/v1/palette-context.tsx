@@ -66,12 +66,11 @@ export const PaletteProvider: React.FC<PaletteProviderProps> = ({
     onSuccess: (data) => {
       toast({
         title: 'Palette Saved',
-        description: 'Your palette has been saved.',
+        description: `Your palette ${data?.serial ?? ''} has been saved.`,
         status: 'success',
       });
     },
     onError: (error) => {
-      console.warn('🚀 | file: palette-context.tsx:89 | error:', error);
       toast({
         title: 'Error saving palette',
         description: 'There was an error saving your palette.',
@@ -79,19 +78,11 @@ export const PaletteProvider: React.FC<PaletteProviderProps> = ({
       });
     },
   });
-  const colorMutation = api.color.save.useMutation({
-    // we don't need to notify the user of color creation
-    onSuccess: (data) => {
-      console.log('🚀 | file: palette-context.tsx:89 | color created:', data);
-    },
-    onError: (error) => {
-      console.error('🚀 | file: palette-context.tsx:89 | error:', error);
-    },
-  });
+  const colorMutation = api.color.save.useMutation();
 
   const initialState: PaletteStateValue = {
-    palettes: [['#BADA55']],
-    palette: ['#BADA55'],
+    palettes: [[]],
+    palette: [],
     activePaletteIndex: 0,
     activeSwatchIndex: -1,
   };
@@ -126,7 +117,9 @@ export const PaletteProvider: React.FC<PaletteProviderProps> = ({
   useEffect(() => {
     if (colorParams.length) {
       setState({ palettes: [colorParams] });
+      return;
     }
+    setState({ palettes: [['#BADA55']] });
   }, [colorParams]);
 
   const activateSwatch = useCallback(
