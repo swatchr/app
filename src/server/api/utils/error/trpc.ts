@@ -76,7 +76,7 @@ export function throwBadRequestError(
   message: string | null = null,
   error?: unknown
 ) {
-  message ??= 'Your request is invalid';
+  message ??= 'Invalid Request';
   throw new TRPCError({
     code: 'BAD_REQUEST',
     message,

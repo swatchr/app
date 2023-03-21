@@ -7,13 +7,14 @@ import { BaseLayout, Palette } from '@/components';
 import { PaletteProvider } from '@/contexts';
 import { isClient, parsePalette, publish } from '@/utils';
 import { FullScreenLoader } from 'chakra.ui';
+import { shortname } from 'lib/unique-names-generator';
 
 const Home: NextPage = () => {
   return (
     <BaseLayout title="Swatchr" description="Color Palette Manager">
       <PaletteWrapper>
         {(colorParams) => (
-          <PaletteProvider colorParams={colorParams}>
+          <PaletteProvider colorParams={colorParams} paletteName={shortname()}>
             <Palette />
           </PaletteProvider>
         )}

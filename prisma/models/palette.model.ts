@@ -68,7 +68,9 @@ export class Palette {
       include: { Colors: true, Owned: true, Forks: true },
     });
 
-    if (!palette) throw throwBadRequestError();
+    if (!palette) {
+      return null;
+    }
 
     return palette;
   }

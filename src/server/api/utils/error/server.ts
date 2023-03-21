@@ -114,5 +114,7 @@ export function trpcPrismaErrorHandler(error: any) {
     const errorMessage = ERROR_MESSAGES[error.code] || ERROR_MESSAGES.default;
     throw new trpc.TRPCError(errorMessage!);
   }
-  console.error('NOT PRISMA ERROR', error);
+  if (error instanceof TRPCError) {
+    throw error;
+  }
 }

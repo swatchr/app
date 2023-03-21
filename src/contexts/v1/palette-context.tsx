@@ -21,12 +21,14 @@ import {
 import { api } from '@/utils/api';
 import { useToast } from '@chakra-ui/react';
 import ColorLab from 'lib/color';
+import { shortname } from 'lib/unique-names-generator';
 import { useSession } from 'next-auth/react';
 
 export type Swatch = string;
 export type Palette = Swatch[];
 
 interface PaletteProviderProps {
+  paletteName: string;
   colorParams: Swatch[] | undefined;
   children?: React.ReactNode;
 }
@@ -34,6 +36,9 @@ interface PaletteProviderProps {
 interface PaletteStateValue {
   palettes: Palette[];
   palette: Palette;
+  info: {
+    name: string;
+  };
   activePaletteIndex: number;
   activeSwatchIndex: number;
 }
@@ -59,6 +64,7 @@ export const PaletteDispatchContext = createContext<PaletteDispatchValue>(
 );
 
 export const PaletteProvider: React.FC<PaletteProviderProps> = ({
+  paletteName,
   colorParams,
   children,
 }) => {
@@ -86,12 +92,13 @@ export const PaletteProvider: React.FC<PaletteProviderProps> = ({
   const initialState: PaletteStateValue = {
     palettes: [[]],
     palette: [],
+    info: { name: '' },
     activePaletteIndex: 0,
     activeSwatchIndex: -1,
   };
 
   const [
-    { palettes, palette, activePaletteIndex, activeSwatchIndex },
+    { palettes, palette, info, activePaletteIndex, activeSwatchIndex },
     setState,
   ] = useReducer(
     (prev: PaletteStateValue, next: Partial<PaletteStateValue>) => {
@@ -120,7 +127,7 @@ export const PaletteProvider: React.FC<PaletteProviderProps> = ({
   useEffect(() => {
     // @NOTE: load from URL / Delayed Load from Local Storage / Default Palette
     if (colorParams?.length) {
-      setState({ palettes: [colorParams] });
+      setState({ palettes: [colorParams], info: { name: paletteName } });
       publish('show-toast', {
         id: 'custom-url-palette-loaded',
         title: 'Loaded custom palette',
@@ -129,9 +136,13 @@ export const PaletteProvider: React.FC<PaletteProviderProps> = ({
       return;
     } else if (isClient) {
       const serializedPalette = localStorage.getItem('palette');
+      const _paletteName = localStorage.getItem('palette-name');
       const palette = parsePalette(serializedPalette!);
       if (palette.length) {
-        setState({ palettes: [palette] });
+        setState({
+          palettes: [palette],
+          info: { name: _paletteName ?? shortname() },
+        });
         publish('show-toast', {
           id: 'local-storage-loaded',
           title: 'Loaded previously saved palette.',
@@ -141,7 +152,7 @@ export const PaletteProvider: React.FC<PaletteProviderProps> = ({
       }
     }
     setState({ palettes: [['#BADA55']] });
-  }, [colorParams]);
+  }, [colorParams, paletteName]);
 
   const activateSwatch = useCallback(
     (index: number) => {
@@ -173,14 +184,17 @@ export const PaletteProvider: React.FC<PaletteProviderProps> = ({
   const savePalette = useCallback(() => {
     const serializedPalette = stringifyPalette(palette);
     localStorage.setItem('palette', serializedPalette);
+    localStorage.setItem('palette-name', info?.name);
 
     if (session?.user?.profileId) {
       mutation.mutate({
         palette,
-        // @TODO: impelment palette name
+        data: {
+          name: info.name ?? shortname(),
+        },
       });
     }
-  }, [palette, mutation, session]);
+  }, [palette, info.name, session?.user?.profileId, mutation]);
 
   const addSwatch = useCallback(
     (swatchIndex: number) => {
@@ -247,11 +261,12 @@ export const PaletteProvider: React.FC<PaletteProviderProps> = ({
       value={useMemo(
         () => ({
           palettes,
+          info,
           activePaletteIndex,
           activeSwatchIndex,
           palette,
         }),
-        [palettes, activePaletteIndex, activeSwatchIndex, palette]
+        [palettes, info, activePaletteIndex, activeSwatchIndex, palette]
       )}
     >
       <PaletteDispatchContext.Provider

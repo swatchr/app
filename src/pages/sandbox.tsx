@@ -7,6 +7,7 @@ import { BaseLayout, Palette } from '@/components';
 import { PaletteProvider } from '@/contexts';
 import { parsePalette } from '@/utils';
 import { FullScreenLoader } from 'chakra.ui';
+import { shortname } from 'lib/unique-names-generator';
 
 const Home: NextPage = () => {
   const router = useRouter();
@@ -18,6 +19,7 @@ const Home: NextPage = () => {
         <FullScreenLoader color="green" />
       ) : (
         <PaletteProvider
+          paletteName={shortname()}
           colorParams={
             router?.query?.colors
               ? parsePalette(router.query?.colors as string)

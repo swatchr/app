@@ -85,7 +85,10 @@ function PaletteNameInput({ serial, text }: { serial: string; text: string }) {
   const { status } = useSession();
 
   const editableInput = useRef<HTMLInputElement | null>(null);
-  const [value, setValue] = useState<string | undefined>(undefined);
+  const {
+    info: { name },
+  } = usePaletteState();
+  const [value, setValue] = useState<string | undefined>(name);
 
   const mutation = api.palette.update.useMutation({
     onSuccess(data) {
@@ -111,6 +114,16 @@ function PaletteNameInput({ serial, text }: { serial: string; text: string }) {
       enabled: !!serial,
       onSuccess(data) {
         setValue(data?.name);
+        localStorage.setItem('paletteName', data?.name!);
+      },
+      onError(error) {
+        toast({
+          title: error.data?.code,
+          description: `Could not fetch palette name: ${
+            isDev && error.message
+          }`,
+          status: 'warning',
+        });
       },
     }
   );
@@ -129,7 +142,6 @@ function PaletteNameInput({ serial, text }: { serial: string; text: string }) {
         ref={editableInput}
         tabIndex={0}
         size="sm"
-        // _placeholder={{ color: 'black' }}
         value={value}
         placeholder={data?.name}
         isDisabled={status !== 'authenticated'}
@@ -143,7 +155,6 @@ function PaletteNameInput({ serial, text }: { serial: string; text: string }) {
             },
           });
         }}
-        // @TODO: WIP: add regex pattern and slugify name
       >
         <EditablePreview>{value}</EditablePreview>
         <InputGroup>
@@ -154,6 +165,7 @@ function PaletteNameInput({ serial, text }: { serial: string; text: string }) {
             color={text}
             type="text"
             name="name"
+            pattern={'^[a-zA-Zs-]+$'}
             onBlur={(e) => e.preventDefault()}
             _selection={{ color: 'white', bg: 'green.500' }}
           />
