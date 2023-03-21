@@ -10,9 +10,13 @@ import {
 import { useKeyboardShortcut } from '@/hooks';
 import {
   insertAtIndex,
+  isClient,
+  parsePalette,
+  publish,
   removeFromArrayAtIndex,
   stringifyPalette,
   updateArrayAtIndex,
+  wait,
 } from '@/utils';
 import { api } from '@/utils/api';
 import { useToast } from '@chakra-ui/react';
@@ -23,7 +27,7 @@ export type Swatch = string;
 export type Palette = Swatch[];
 
 interface PaletteProviderProps {
-  colorParams: Swatch[];
+  colorParams: Swatch[] | undefined;
   children?: React.ReactNode;
 }
 
@@ -114,13 +118,29 @@ export const PaletteProvider: React.FC<PaletteProviderProps> = ({
   );
 
   useEffect(() => {
-    if (colorParams.length) {
+    // @NOTE: load from URL / Delayed Load from Local Storage / Default Palette
+    if (colorParams?.length) {
       setState({ palettes: [colorParams] });
+      publish('show-toast', {
+        id: 'custom-url-palette-loaded',
+        title: 'Loaded custom palette',
+        description: stringifyPalette(colorParams ?? []),
+      });
       return;
+    } else if (isClient) {
+      const serializedPalette = localStorage.getItem('palette');
+      const palette = parsePalette(serializedPalette!);
+      if (palette.length) {
+        setState({ palettes: [palette] });
+        publish('show-toast', {
+          id: 'local-storage-loaded',
+          title: 'Loaded previously saved palette.',
+          description: stringifyPalette(palette ?? []),
+        });
+        return;
+      }
     }
-
-    const timer = setTimeout(() => setState({ palettes: [['#BADA55']] }), 100);
-    return () => clearTimeout(timer);
+    setState({ palettes: [['#BADA55']] });
   }, [colorParams]);
 
   const activateSwatch = useCallback(

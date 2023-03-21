@@ -72,6 +72,15 @@ const PaletteWrapper = ({ children }: PaletteWrapperProps): JSX.Element => {
     }
   }, [router.query]);
 
+  useEffect(() => {
+    if (colorParams.length) return;
+    const timer = setTimeout(
+      () => !colorParams.length && setColorParams(['#BADA55']),
+      300
+    );
+    return () => clearTimeout(timer);
+  }, [colorParams.length]);
+
   return isLoading ? (
     <FullScreenLoader color="green" />
   ) : (
