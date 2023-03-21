@@ -10,7 +10,6 @@ import {
 import { useKeyboardShortcut } from '@/hooks';
 import {
   insertAtIndex,
-  publish,
   removeFromArrayAtIndex,
   stringifyPalette,
   updateArrayAtIndex,
@@ -119,7 +118,9 @@ export const PaletteProvider: React.FC<PaletteProviderProps> = ({
       setState({ palettes: [colorParams] });
       return;
     }
-    setState({ palettes: [['#BADA55']] });
+
+    const timer = setTimeout(() => setState({ palettes: [['#BADA55']] }), 100);
+    return () => clearTimeout(timer);
   }, [colorParams]);
 
   const activateSwatch = useCallback(
