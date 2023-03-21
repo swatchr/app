@@ -11,18 +11,18 @@ import {
   protectedProcedure,
   publicProcedure,
 } from '@/server/api/trpc';
-import { stringifyPalette } from '@/utils';
 import {
   throwAuthorizationError,
   throwBadRequestError,
   trpcPrismaErrorHandler,
   trpcPrismaErrorHandler1,
-} from '@/utils/error';
+} from '@/server/api/utils/error';
+import { stringifyPalette } from '@/utils';
 import ColorLab from 'lib/color';
 import { isOwner } from 'lib/next-auth/services/permissions';
 import { shortname } from 'lib/unique-names-generator';
 import { Palette } from 'prisma/models/palette.model';
-import { handleServerError } from '../utils/index';
+import { handleServerError } from '../utils/error/server';
 
 const palettesModel = new Palette();
 

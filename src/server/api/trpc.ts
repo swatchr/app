@@ -72,8 +72,8 @@ export const createTRPCContext = async (opts: CreateNextContextOptions) => {
  * This is where the tRPC API is initialized, connecting the context and transformer.
  */
 
+import { formatTRPCError } from '@/server/api/utils/error/server';
 import { ROLES } from 'lib/prisma/utils';
-import { formatTRPCError } from './utils';
 
 const t = initTRPC.context<typeof createTRPCContext>().create({
   transformer: superjson,

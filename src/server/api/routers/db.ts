@@ -1,4 +1,4 @@
-import { trpcPrismaErrorHandler } from '@/utils/error';
+import { trpcPrismaErrorHandler } from '@/server/api/utils/error';
 import { adminProcedure, createTRPCRouter, publicProcedure } from '../trpc';
 
 export const dbRouter = createTRPCRouter({

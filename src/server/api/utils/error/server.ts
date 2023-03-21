@@ -1,6 +1,36 @@
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/data-proxy';
 import * as trpc from '@trpc/server';
-import { TRPC_ERROR_CODE_KEY } from '@trpc/server/rpc';
+import { TRPCError } from '@trpc/server';
+import { ZodError } from 'zod';
+
+import type { DefaultErrorShape } from '@trpc/server';
+
+export const formatTRPCError = (error: TRPCError, shape: DefaultErrorShape) => {
+  return {
+    ...shape,
+    data: {
+      ...shape.data,
+      zodError:
+        error.code === 'BAD_REQUEST' && error.cause instanceof ZodError
+          ? error.cause.flatten()
+          : null,
+    },
+  };
+};
+
+export const handleServerError = (
+  e: Error | any,
+  code: TRPCError['code'],
+  msg?: string
+) => {
+  const defaultMsg = 'An unexpected error occurred, please try again later.';
+  console.error(defaultMsg, e);
+  throw new TRPCError({
+    code: code ?? 'INTERNAL_SERVER_ERROR',
+    message: msg || e?.message || defaultMsg,
+    cause: e,
+  });
+};
 
 export function trpcPrismaErrorHandler1(error: any) {
   if (error instanceof PrismaClientKnownRequestError) {

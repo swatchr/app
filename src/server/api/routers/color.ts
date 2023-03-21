@@ -8,11 +8,11 @@ import {
   protectedProcedure,
   publicProcedure,
 } from '@/server/api/trpc';
+import { trpcPrismaErrorHandler } from '@/server/api/utils/error';
 import { validateAndConvertHexColor } from '@/utils';
-import { trpcPrismaErrorHandler } from '@/utils/error';
 import ColorLab from 'lib/color';
 import { Color } from 'prisma/models/color.model';
-import { handleServerError } from '../utils';
+import { handleServerError } from '../utils/error/server';
 
 export const baseApiSchema = z.object({
   rgb: z.object({

@@ -1,7 +1,7 @@
 import { z } from 'zod';
 
 import { env } from '@/env.mjs';
-import { trpcPrismaErrorHandler } from '@/utils/error';
+import { trpcPrismaErrorHandler } from '@/server/api/utils/error';
 import { TRPCError } from '@trpc/server';
 import { hashPassword } from 'lib/next-auth/services';
 import { createTRPCRouter, protectedProcedure, publicProcedure } from '../trpc';
