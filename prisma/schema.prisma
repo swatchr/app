@@ -118,10 +118,10 @@ model Owned {
     updatedAt DateTime @updatedAt
     Profile   Profile? @relation(fields: [profileId], references: [id])
     profileId String? // @db.Text
-    Palette   Palette  @relation(fields: [paletteId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-    paletteId String // @db.Text
+    Palette   Palette  @relation(fields: [serial], references: [serial], onDelete: Cascade, onUpdate: Cascade)
+    serial    String   @unique // @db.Text
 
-    @@unique([profileId, paletteId])
+    @@unique([profileId, serial])
 }
 
 model Color {

@@ -158,7 +158,7 @@ export const colorRouter = createTRPCRouter({
     .mutation(async ({ input }) => {
       try {
         const client = new Color();
-        const color = await client.createColor({ hex: input.hex });
+        const color = await client.fetchColor({ hex: input.hex });
         return color;
       } catch (error) {
         trpcPrismaErrorHandler(error);

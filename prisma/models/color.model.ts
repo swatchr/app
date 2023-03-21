@@ -3,9 +3,11 @@ import { PrismaClient } from '@prisma/client';
 import type { ColorApiSchema } from '@/server/api/routers/color';
 import type { Prisma } from '@prisma/client';
 
+import { checkRequestParams } from '@/server';
 import { colorApiSchema, fetchTheColorApi } from '@/server/api/routers/color';
 import { validateAndConvertHexColor } from '@/utils';
 import ColorLab from 'lib/color';
+import { throwBadRequestError } from '../../src/server/api/utils/error/trpc';
 
 export class Color {
   prisma: PrismaClient;
@@ -20,7 +22,7 @@ export class Color {
     return color;
   }
 
-  async createColor({ hex }: { hex: string }) {
+  async fetchColor({ hex }: { hex: string }) {
     const strippedHex = validateAndConvertHexColor(hex);
     if (!strippedHex) throw new Error('Invalid Hex Code');
 
@@ -31,6 +33,7 @@ export class Color {
     const data = colorApiSchema.parse(res);
     if (!data.hex.clean) throw new Error('there was an issue');
     const color = new ColorLab(data.hex.clean);
+
     return (
       data.hex.clean &&
       this.prisma.color.create({
@@ -51,17 +54,17 @@ export class Color {
 
   async get({ hex, include }: { hex: string; include?: boolean }) {
     const strippedHex = validateAndConvertHexColor(hex);
-    if (!strippedHex) throw new Error('Invalid Hex Code');
+    checkRequestParams([!strippedHex]);
 
     const color = await this.prisma.color.findUnique({
-      where: { hex: strippedHex },
+      where: { hex: strippedHex! },
       include: include
         ? { Palettes: true, Tags: true, Favorited: true }
         : undefined,
     });
 
     if (!color?.id) {
-      const newColor = await this.createColor({ hex: strippedHex });
+      const newColor = await this.fetchColor({ hex: strippedHex! });
       return newColor;
     }
     return color;
@@ -74,10 +77,10 @@ export class Color {
     palette: string[];
     include?: boolean;
   }) {
-    if (!palette) throw new Error('No Palette Provided');
+    checkRequestParams([!palette]);
     const strippedPalette = palette.map((hex) => {
       const strippedHex = validateAndConvertHexColor(hex);
-      if (!strippedHex) throw new Error('Invalid Hex Code');
+      if (!strippedHex) throw throwBadRequestError();
       return strippedHex;
     });
 
@@ -93,11 +96,11 @@ export class Color {
     hex: string;
     data: Prisma.ColorUpdateInput;
   }) {
-    if (!data) throw new Error('No Data Provided');
+    checkRequestParams([!data, !data.hex]);
     const strippedHex = validateAndConvertHexColor(hex);
-    if (!strippedHex) throw new Error('Invalid Hex Code');
+    if (!strippedHex) throw throwBadRequestError();
     const hexExists = await this.hexExists(strippedHex);
-    if (!hexExists) throw new Error('Color Does Not Exist');
+    if (!hexExists) throw throwBadRequestError();
 
     return this.prisma.color.update({
       where: { hex: strippedHex },
@@ -106,10 +109,11 @@ export class Color {
   }
 
   async deleteHex({ hex }: { hex: string }) {
+    checkRequestParams([!hex]);
     const strippedHex = validateAndConvertHexColor(hex);
-    if (!strippedHex) throw new Error('Invalid Hex Code');
+    if (!strippedHex) throw throwBadRequestError();
     const hexExists = await this.hexExists(strippedHex);
-    if (!hexExists) throw new Error('Color Does Not Exist');
+    if (!hexExists) throw throwBadRequestError();
 
     return this.prisma.color.delete({
       where: { hex: strippedHex },
@@ -117,7 +121,7 @@ export class Color {
   }
 
   async deleteAll({ isAdmin = false }: { isAdmin?: boolean }) {
-    if (!isAdmin) throw new Error('Unauthorized Operation');
+    if (!isAdmin) throw throwBadRequestError();
     return this.prisma.color.deleteMany();
   }
 }

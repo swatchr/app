@@ -1,17 +1,12 @@
 import { PrismaClient } from '@prisma/client';
-import { TRPCError } from '@trpc/server';
-import { z } from 'zod';
 
-import type { InnerTRPCContext } from '@/server';
 import type { Color as PrismaColor, Prisma } from '@prisma/client';
 
-import { handleServerError } from '@/server/api/utils/index';
+import { checkRequestParams } from '@/server';
+import { throwBadRequestError } from '@/server/api/utils/error/trpc';
 import { stringifyPalette, validateAndConvertHexColor } from '@/utils';
-import { isOwner } from 'lib/next-auth/services/permissions';
-import { shortname } from 'lib/unique-names-generator';
 import { Color } from './color.model';
 
-// type PaletteStatus = 'public' | 'private' | 'unlisted' | 'deleted';
 const colorInstance = new Color();
 
 export class Palette {
@@ -23,7 +18,7 @@ export class Palette {
   }
 
   async validatePaletteColors(palette: string[]) {
-    if (!palette?.length) throw new Error('Invalid Palette');
+    if (!palette?.length) throw throwBadRequestError();
 
     const colors = await Promise.all(
       palette
@@ -37,140 +32,21 @@ export class Palette {
             typeof colorInstance.hexExists
           > = await colorInstance.hexExists(strippedHex);
 
-          // let newColor: Prisma.PromiseReturnType<
-          //   typeof colorInstance.createColor
-          // > = {} as Prisma.PromiseReturnType<typeof colorInstance.createColor>;
-
           if (!colorExists) {
-            return await colorInstance.createColor({ hex: strippedHex });
+            return await colorInstance.fetchColor({ hex: strippedHex });
           }
 
-          return colorExists;
+          return colorExists as PrismaColor;
         })
         .filter(Boolean)
     );
 
     // make sure all colors still exist
     if (!colors.length || colors.length !== palette.length) {
-      throw new Error('Invalid Palette');
+      // throw new Error('Invalid Palette');
+      throw throwBadRequestError();
     }
-
     return colors;
-  }
-
-  async serialPaletteExists(palette: string) {
-    const p = await this.prisma.palette.findFirst({
-      where: { serial: palette },
-      include: { Owned: true, Forks: true },
-    });
-    return p;
-  }
-  async paletteExists(palette: string[], status: string = 'public') {
-    const p = await this.prisma.palette.findFirst({
-      where: { serial: stringifyPalette(palette), status },
-      include: { Owned: true, Forks: true },
-    });
-    return p;
-  }
-
-  async validateSerialPalette(palette: string) {
-    if (!palette || typeof palette !== 'string') {
-      throw new Error('Invalid Palette');
-    }
-
-    console.log('validating serial palette');
-
-    const paletteExists = await this.serialPaletteExists(palette);
-
-    if (paletteExists)
-      return {
-        result: true,
-        message: 'palette-exists',
-        palette: paletteExists,
-      };
-
-    const validPalette = palette.split('-').map((hex) => '#' + hex);
-    const colors = await this.validatePaletteColors(validPalette);
-
-    if (!colors.length || colors.length !== validPalette.length) {
-      return { result: false, message: 'invalid-colors' };
-    }
-    return {
-      result: true,
-      message: 'colors-validated',
-      length: colors.length,
-      colors,
-    };
-  }
-
-  async validatePaletteOwner({
-    session,
-    id,
-    serial,
-  }: {
-    session: InnerTRPCContext['session'];
-    id?: string;
-    serial?: string;
-  }) {
-    if (!id && !serial) throw new Error('Invalid Palette');
-    const palette = await this.prisma.palette.findFirst({
-      where: Object.assign({}, id ? { id } : { serial }),
-      include: { Owned: true, Forks: true },
-    });
-
-    if (!palette?.id) throw new Error('Palette not found');
-    if (!isOwner(palette.Owned[0]!.profileId!, session)) {
-      throw new Error('Not Authorized');
-    }
-    return palette;
-  }
-
-  async createPalette({
-    session,
-    palette,
-    data,
-  }: {
-    session: InnerTRPCContext['session'];
-    palette: string[];
-    data: Prisma.PaletteCreateInput;
-  }) {
-    if (!palette?.length)
-      throw new TRPCError({
-        code: 'BAD_REQUEST',
-        message: 'Invalid Palette',
-      });
-
-    // make sure all colors exist if not they are created or errors thrown
-    const colors = await this.validatePaletteColors(palette);
-
-    // if all colors exist then create the new palette and make user the owner
-    let newPalette = await this.prisma.palette.create({
-      data: Object.assign(
-        {},
-        // { ...data },
-        data ?? { status: 'public', name: shortname() },
-        {
-          Colors: {
-            connect: (colors as PrismaColor[]).map((color) => ({
-              id: color.id,
-            })),
-          },
-          Owned: {
-            create: {
-              profileId: session?.user.profileId,
-            },
-          },
-        }
-      ),
-    });
-
-    if (!newPalette?.id) throw new Error('Invalid Palette');
-
-    return {
-      status: 'success',
-      message: 'Palette Created',
-      palette: newPalette,
-    };
   }
 
   async get({
@@ -182,53 +58,117 @@ export class Palette {
     serial?: string;
     name?: string;
   }) {
-    if (!id && !serial && !name) throw new Error('Invalid Palette');
+    checkRequestParams([!id && !serial && !name]);
+
     const palette = await this.prisma.palette.findUnique({
-      where: Object.assign({}, id ? { id } : serial ? { serial } : { name }),
+      where: Object.assign(
+        {},
+        id ? { id: id } : serial ? { serial: serial } : { name: name }
+      ),
       include: { Colors: true, Owned: true, Forks: true },
     });
 
-    if (!palette?.id) throw new Error('Palette not found');
+    if (!palette) throw throwBadRequestError();
 
     return palette;
+  }
+
+  async createOrUpdate({
+    palette,
+    data,
+    profileId,
+  }: {
+    palette: string[];
+    data: {
+      name: string;
+      serial: string;
+      status: string;
+    };
+    profileId: string;
+  }) {
+    checkRequestParams([
+      !profileId,
+      !palette?.length,
+      !data,
+      !data.name && !data.status && !data.serial,
+    ]);
+
+    const colors = await this.validatePaletteColors(palette);
+
+    return await this.prisma.palette.upsert({
+      where: { serial: stringifyPalette(palette) },
+      create: {
+        serial: stringifyPalette(palette),
+        name: data.name,
+        status: data.status,
+        Colors: {
+          connect: colors.map((c) => ({
+            id: (c as PrismaColor).id,
+          })),
+        },
+        Owned: {
+          create: {
+            profileId,
+          },
+        },
+      },
+      update: {
+        ...data,
+        Colors: {
+          connect: (colors as PrismaColor[]).map((color) => ({
+            id: color.id,
+          })),
+        },
+      },
+    });
   }
 
   async update({
     serial,
     data,
+    profileId,
   }: {
-    serial?: string;
-    data: Prisma.PaletteUpdateInput;
-  }) {
-    if (!serial && !data) throw new Error('Invalid Palette');
-
-    // update palette
-    const palette = await this.prisma.palette.update({
-      where: { serial },
-      data,
-    });
-
-    if (!palette?.id) throw new Error('Palette not found');
-
-    return {
-      status: 'success',
-      message: 'Palette Updated',
-      palette,
+    serial: string;
+    data: {
+      name?: string;
+      status?: string;
     };
+    profileId: string;
+  }) {
+    checkRequestParams([
+      !serial,
+      !profileId,
+      !data,
+      !data.name && !data.status,
+    ]);
+
+    return await this.prisma.owned.update({
+      where: {
+        profileId_serial: {
+          profileId: profileId,
+          serial,
+        },
+      },
+      data: {
+        Palette: {
+          update: data, // currently we're not allowing serial to be updated
+        },
+      },
+      include: { Palette: true },
+    });
   }
 
-  async delete({ serial }: { serial?: string }) {
-    if (!serial) throw new Error('Invalid Palette');
-    const palette = await this.prisma.palette.delete({
-      where: { serial },
+  async delete({ serial, profileId }: { serial: string; profileId: string }) {
+    checkRequestParams([!serial, !profileId]);
+
+    return await this.prisma.owned.delete({
+      where: {
+        profileId_serial: {
+          profileId: profileId,
+          serial,
+        },
+      },
+      include: { Palette: true },
     });
-
-    if (!palette?.id) throw new Error('Palette not found');
-
-    return {
-      status: 'success',
-      message: 'Palette Deleted',
-      palette,
-    };
   }
 }
