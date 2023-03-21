@@ -108,7 +108,6 @@ export const PaletteProvider: React.FC<PaletteProviderProps> = ({
           prev.activePaletteIndex,
           () => next.palette!
         );
-        // next.activeSwatchIndex = next.palette.length - 1;
       } else if (next?.palettes?.length) {
         next.palette = next.palettes[prev.activePaletteIndex];
         next.activePaletteIndex = next.palettes.length - 1;
@@ -162,7 +161,6 @@ export const PaletteProvider: React.FC<PaletteProviderProps> = ({
     localStorage.setItem('palette', serializedPalette);
 
     if (session?.user?.profileId) {
-      // profile is missing from session
       mutation.mutate({
         palette,
         // @TODO: impelment palette name

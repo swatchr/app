@@ -89,18 +89,14 @@ function PaletteNameInput({ serial, text }: { serial: string; text: string }) {
 
   const mutation = api.palette.update.useMutation({
     onSuccess(data) {
-      setValue(data?.palette.name);
+      setValue(data?.Palette.name);
       toast({
         title: 'Palette name updated',
-        description: `Palette name updated to ${data?.palette.name}`,
+        description: `Palette (serial: ${data?.Palette.serial}) name updated to ${data?.Palette.name}`,
         status: 'success',
       });
     },
     onError(error) {
-      console.log(
-        '🚀 | file: palette.tsx:43 | error:',
-        JSON.parse(error.message)
-      );
       toast({
         title: 'Error updating palette name',
         description: error.message,
@@ -143,6 +139,7 @@ function PaletteNameInput({ serial, text }: { serial: string; text: string }) {
             serial: data?.serial!,
             data: {
               name: slugify(value),
+              status: data?.status,
             },
           });
         }}
