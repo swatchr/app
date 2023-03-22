@@ -8,11 +8,11 @@ import {
   protectedProcedure,
   publicProcedure,
 } from '@/server/api/trpc';
+import { trpcPrismaErrorHandler } from '@/server/api/utils/error';
 import { validateAndConvertHexColor } from '@/utils';
-import { trpcPrismaErrorHandler } from '@/utils/error';
 import ColorLab from 'lib/color';
 import { Color } from 'prisma/models/color.model';
-import { handleServerError } from '../utils';
+import { handleServerError } from '../utils/error/server';
 
 export const baseApiSchema = z.object({
   rgb: z.object({
@@ -64,7 +64,7 @@ export async function createColor(ctx: TRPCContext, hex: string) {
   const color = new ColorLab(data.hex.clean);
   return (
     data.hex.clean &&
-    ctx.prisma.color.create({
+    (await ctx.prisma.color.create({
       data: {
         hex: data.hex.clean,
         rgb: data.rgb.value,
@@ -76,12 +76,12 @@ export async function createColor(ctx: TRPCContext, hex: string) {
         complement: color.complement,
         text: color.contrast === 'light' ? '#000' : '#fff',
       },
-    })
+    }))
   );
 }
 
 export type ColorApiReturn = ReturnType<typeof createColor>;
-
+export type FetchTheColorAPIReturn = ReturnType<typeof fetchTheColorApi>;
 export const fetchTheColorApi = async (hex: string, endpoint = 'scheme') => {
   const mode = 'analogic-complement';
   const count = 10;
@@ -97,7 +97,11 @@ export const fetchTheColorApi = async (hex: string, endpoint = 'scheme') => {
 
     return res.json();
   } catch (e) {
-    return handleServerError(e, 'There was an issue with fetching data');
+    return handleServerError(
+      e,
+      'INTERNAL_SERVER_ERROR',
+      'There was an issue with fetching data'
+    );
   }
 };
 
@@ -114,6 +118,7 @@ export const colorRouter = createTRPCRouter({
         trpcPrismaErrorHandler(error);
       }
     }),
+
   colorAPI: publicProcedure
     .input(z.object({ hex: z.string(), endpoint: z.string().optional() }))
     .query(async ({ input }) => {
@@ -126,13 +131,28 @@ export const colorRouter = createTRPCRouter({
         trpcPrismaErrorHandler(error);
       }
     }),
+  create: publicProcedure
+    .input(z.object({ hex: z.string() }))
+    .query(async ({ ctx, input }) => {
+      const hex = validateAndConvertHexColor(input.hex);
+      if (!hex) throw new Error(`not valid hex | input: ${input.hex}`);
+      try {
+        const _color = new Color();
+        const color = await _color.fetchColor({ hex });
+        return color;
+      } catch (error) {
+        trpcPrismaErrorHandler(error);
+      }
+    }),
   get: publicProcedure
     .input(z.object({ hex: z.string() }))
     .query(async ({ ctx, input }) => {
       try {
         const client = new Color();
-        const color = await client.get({ hex: input.hex! });
-        return color;
+        // @TOOD: remove this when we have all the colors persisted in the db
+        // const color = await client.get({ hex: input.hex });
+        const color = await client.fetchColor({ hex: input.hex });
+        return color ?? null;
       } catch (error) {
         trpcPrismaErrorHandler(error);
         return;
@@ -154,7 +174,7 @@ export const colorRouter = createTRPCRouter({
     .mutation(async ({ input }) => {
       try {
         const client = new Color();
-        const color = await client.createColor({ hex: input.hex });
+        const color = await client.fetchColor({ hex: input.hex });
         return color;
       } catch (error) {
         trpcPrismaErrorHandler(error);

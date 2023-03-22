@@ -35,7 +35,8 @@ export const AutoToast: FC<{
   status: ToastStatusOptions;
   message: string;
   icon?: ReactNode;
-}> = (props): null => {
+  children: JSX.Element;
+}> = (props) => {
   const toast = useToast();
 
   // falsy values get stringified so we have to check for an actual message
@@ -80,5 +81,5 @@ export const AutoToast: FC<{
     () => null;
   }, [hasMessage, props.message, props.status, toast]);
 
-  return null;
+  return props.children;
 };

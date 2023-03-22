@@ -8,11 +8,41 @@ import { HEX_COLOR_WITHOUT_HASH_REGEX_STRING } from '@/utils/constants';
 export function SidebarTests() {
   return (
     <>
+      <TestPaletteCreate />
       <TestColorCreate />
       <TestColorGet />
       <TestColorGetAll />
       <TestColorUpdate />
       <TestColorDelete />
+    </>
+  );
+}
+
+function TestPaletteCreate() {
+  const mutation = api.palette.save.useMutation();
+
+  return (
+    <>
+      <InputUser
+        showLabel
+        name="create-palette"
+        config={{
+          type: 'text',
+          name: 'state',
+          onSubmit: (e) => {
+            e.preventDefault();
+            const palette = mutation.mutate({
+              palette: e.currentTarget
+                .querySelector('input')
+                ?.value!?.trim()
+                .split(', ')
+                .map((hex) => '#' + hex),
+            });
+            console.log('🚀 | file: sidebar-tests.tsx:41 | palette:', palette);
+          },
+          placeholder: 'Enter comma separated hex colors without the "#"',
+        }}
+      />
     </>
   );
 }

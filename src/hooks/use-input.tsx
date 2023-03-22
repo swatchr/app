@@ -5,30 +5,56 @@ import {
   VisuallyHidden,
   VStack,
 } from '@chakra-ui/react';
-import { useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 
 import type { InputProps } from '@chakra-ui/react';
 
-function useInput(
+export function useInput<T>(
   inputName: string,
   options?: {
-    initialValue?: string;
+    initialValue?: T;
     onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
   }
 ) {
   const [value, setValue] = useState(options?.initialValue || '');
 
   // @FIXME: ADDING DEBOUNCE makes the logic break
-  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    options?.onChange ? options.onChange(event) : setValue(event.target.value);
-  };
+  const handleChange = useCallback(
+    (event: React.ChangeEvent<HTMLInputElement>) => {
+      options?.onChange
+        ? options.onChange(event)
+        : setValue(event.target.value);
+    },
+    [options]
+  );
 
-  return {
-    id: inputName,
-    name: inputName,
-    value,
-    onChange: options?.onChange ?? handleChange,
-  };
+  const reset = useCallback(() => {
+    if (options?.initialValue) return;
+    setValue(options?.initialValue!);
+  }, [options?.initialValue]);
+
+  const updateValue = useCallback(
+    (value: string) => {
+      setValue(value);
+    },
+    [setValue]
+  );
+
+  const input = useMemo(
+    () => ({
+      input: {
+        id: inputName,
+        name: inputName,
+        value,
+        onChange: options?.onChange ?? handleChange,
+      },
+      reset,
+      update: updateValue,
+    }),
+    [inputName, value, options?.onChange, handleChange, reset, updateValue]
+  );
+
+  return input;
 }
 
 export function InputUser({
@@ -42,7 +68,7 @@ export function InputUser({
   showLabel?: boolean;
 }) {
   const [focused, setFocused] = useState(false);
-  const inputProps = useInput(
+  const { input } = useInput<string>(
     name,
     config?.onChange
       ? { initialValue: config.value as string, onChange: config?.onChange }
@@ -55,10 +81,10 @@ export function InputUser({
       onSubmit={config?.onSubmit}
     >
       {showLabel ? (
-        <chakra.label htmlFor={inputProps.id}>{name}</chakra.label>
+        <chakra.label htmlFor={input.id}>{name}</chakra.label>
       ) : (
         <VisuallyHidden>
-          <chakra.label htmlFor={inputProps.id}>{name}</chakra.label>
+          <chakra.label htmlFor={input.id}>{name}</chakra.label>
         </VisuallyHidden>
       )}
       <Input
@@ -68,7 +94,7 @@ export function InputUser({
         _active={{ color: 'gray.700' }}
         onFocus={() => setFocused(true)}
         onBlur={() => setFocused(false)}
-        {...inputProps}
+        {...input}
         {...config}
       />
     </VStack>

@@ -11,12 +11,12 @@ import {
 } from '@chakra-ui/react';
 import { useState } from 'react';
 
-import type { ColorApiClientInfo, ColorApiScheme } from '@/server/api/types';
+import type { ColorApiClientInfo } from '@/server/api/types/color';
 import type ColorLab from 'lib/color';
 
 import { CopyIcon } from '@/components';
 import { useClipboard } from '@/hooks';
-import { createColorInfo } from '@/server/api/types';
+import { createColorInfo } from '@/server/api/types/color';
 import { api } from '@/utils/api';
 import { AccordionBox } from 'chakra.ui';
 
@@ -31,12 +31,18 @@ export function InfoPanel({
 }) {
   const [info, setInfo] = useState<ColorApiClientInfo>();
 
+  const utils = api.useContext();
+
+  // @TODO: replace with a color.get trpc request
   const { status, isLoading, isError } = api.color.schemeAPI.useQuery(
     { hex: color.replace('#', '') },
     {
       enabled: !!color,
-      onSuccess: (data: ColorApiScheme) => {
+      onSuccess: (data) => {
         setInfo(createColorInfo(data?.seed, instance));
+      },
+      onError(err) {
+        console.log('🚀 | file: info-panel.tsx:46 | err:', err);
       },
     }
   );
@@ -53,7 +59,8 @@ export function InfoPanel({
     >
       <Accordion w="full" fontSize="md" rounded="md" allowToggle>
         <AccordionBox
-          title={hasInfo ? info?.name?.value : undefined}
+          // title={hasInfo ? info?.name! : ''}
+          title={hasInfo ? info?.name?.value : ''}
           status={status}
           contrast={instance.contrast} // used for bg color
           w={72}
@@ -96,9 +103,9 @@ function InfoListItem({ field, item }: { field: string; item: any }) {
       _hover={{ bg: 'blackAlpha.200' }}
     >
       <chakra.span w="30%" fontSize="2xs">
-        {field === 'name' ? null : field + ':'}
+        {field === 'name' || field === 'id' ? null : field + ':'}
       </chakra.span>
-      {field === 'name' ? null : (
+      {field === 'name' || field === 'id' ? null : (
         <chakra.p key={field} w="full" flex={1} pl={2} fontSize="2xs">
           {item?.toString()}
         </chakra.p>

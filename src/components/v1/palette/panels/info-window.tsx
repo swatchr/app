@@ -10,10 +10,11 @@ import {
   Icon,
   IconButton,
   Tooltip,
+  useOutsideClick,
   useToast,
   VStack,
 } from '@chakra-ui/react';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 
 import type { ColorDispatchValue } from '@/contexts';
 import type { Scales } from '@/contexts/v1/hooks/use-tinycolor';
@@ -40,57 +41,64 @@ import {
   TriadIcon,
 } from '../../icons';
 
-export function InfoWindow({ isActive }: { isActive: boolean }) {
+export function SwatchWindow({ isActive }: { isActive: boolean }) {
   const { color, instance } = useColorState();
   const colorHandlers = useColorDispatch();
   const { isOpen, type } = useContentState();
   const { onClose } = useContentDispatch();
+  const ref = useRef<HTMLDivElement | null>(null);
+
+  useOutsideClick({
+    ref: ref,
+    handler: () => onClose(),
+  });
 
   useEffect(() => {
-    if (!isOpen || !isActive) return;
+    if (!isOpen) return;
     return () => onClose();
-  }, [isActive, onClose, isOpen]);
+  }, [onClose, isOpen]);
 
-  let contrastColor =
-    instance.contrast === 'dark' ? 'blackAlpha' : 'whiteAlpha';
-  return (
-    <Collapse in={isActive && isOpen} animateOpacity unmountOnExit>
-      {isOpen ? (
-        <VStack
-          width={72}
-          mt={1}
-          px={3}
-          mb={1}
-          rounded="md"
-          border={type === 'scales' ? 'none' : '1px'}
-          borderColor={`${contrastColor}.400`}
-        >
-          {type === 'scales' ? (
-            <MonochromeScale
-              color={color}
-              instance={instance}
-              onClose={onClose}
-              colorHandlers={colorHandlers}
-            />
-          ) : null}
-          {type === 'match' ? (
-            <ColorScales
-              instance={instance}
-              onClose={onClose}
-              colorHandlers={colorHandlers}
-            />
-          ) : null}
-          {type === 'combos' ? (
-            <ColorCombos
-              instance={instance}
-              onClose={onClose}
-              colorHandlers={colorHandlers}
-            />
-          ) : null}
-        </VStack>
-      ) : null}
-    </Collapse>
-  );
+  // let contrastColor =
+  //   instance.contrast === 'dark' ? 'blackAlpha' : 'whiteAlpha';
+
+  return isActive && isOpen ? (
+    // return true ? (
+    <Center
+      ref={ref}
+      boxSize={72}
+      bg={color}
+      zIndex={10}
+      position="absolute"
+      inset={0}
+      rounded="lg"
+      shadow="xl"
+    >
+      <VStack w="full" p={1} rounded="md">
+        {type === 'scales' ? (
+          <MonochromeScale
+            color={color}
+            instance={instance}
+            onClose={onClose}
+            colorHandlers={colorHandlers}
+          />
+        ) : null}
+        {type === 'match' ? (
+          <ColorScales
+            instance={instance}
+            onClose={onClose}
+            colorHandlers={colorHandlers}
+          />
+        ) : null}
+        {type === 'combos' ? (
+          <ColorCombos
+            instance={instance}
+            onClose={onClose}
+            colorHandlers={colorHandlers}
+          />
+        ) : null}
+      </VStack>
+    </Center>
+  ) : null;
 }
 
 export function ColorScales({
@@ -120,11 +128,13 @@ export function ColorScales({
   }, [colorHandlers?.tinycolor, mode]);
 
   return (
-    <Box w="full" py={1} mb={2} position="relative">
+    <VStack w="full" py={1} px={2} mb={2} position="relative" gap={8}>
       <HStack
+        w="full"
+        pb={2}
         justifyContent="space-between"
         borderBottom="1px"
-        borderColor="currentColor"
+        borderColor={contrastColor + '.300'}
       >
         <Icon as={PaletteIcon} opacity={0.6} fill={'currentColor'} />
         <chakra.p w="full" p={1} fontSize="sm" textAlign="center">
@@ -147,7 +157,14 @@ export function ColorScales({
           }}
         />
       </HStack>
-      <Box w="full" p={3} mt={2} bg={`${contrastColor}.300`} rounded="md">
+      <Box
+        w="full"
+        p={3}
+        mt={2}
+        bg={`${contrastColor}.300`}
+        rounded="md"
+        flex={1}
+      >
         <ScaledColorItems
           contrastColor={contrastColor}
           scales={scales}
@@ -156,13 +173,14 @@ export function ColorScales({
       </Box>
       <HStack
         as="ul"
-        mt={4}
+        mt={12}
         pt={3}
         borderTop="1px solid"
-        borderColor="currentColor"
+        borderColor={contrastColor + '.300'}
         gap={1.5}
+        justifyContent="center"
       >
-        <chakra.p fontSize="sm">Mode:</chakra.p>
+        {/* <chakra.p fontSize="sm">Mode:</chakra.p> */}
         {Object.keys(colorScaleIcons).map((currentMode) => {
           const CurrentIcon =
             colorScaleIcons[currentMode as keyof typeof colorScaleIcons];
@@ -178,8 +196,8 @@ export function ColorScales({
                   boxSize={10}
                   bg={`${contrastColor}.100`}
                   rounded="md"
-                  border={isSelected ? '1px' : 'initial'}
-                  borderColor={isSelected ? 'currentColor' : 'initial'}
+                  border={isSelected ? '2px' : 'initial'}
+                  borderColor={isSelected ? `${contrastColor}.300` : 'initial'}
                   cursor="pointer"
                   onClick={() => setMode(currentMode as Scales)}
                 />
@@ -188,7 +206,7 @@ export function ColorScales({
           );
         })}
       </HStack>
-    </Box>
+    </VStack>
   );
 }
 
@@ -454,24 +472,27 @@ export function MonochromeScale({
   const scales = useMemo(() => {
     return new ColorLab(color).generateColorScales('monochrome', 15);
   }, [color]);
+
+  const close = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.stopPropagation();
+    onClose();
+  };
   return (
-    <Box position="relative" w={72} h="100vh" py={1} mb={2}>
-      <Box position="relative" zIndex="10">
+    <Box position="relative" w="full" py={1} overflow="scroll">
+      <Box position="relative" mr={1} zIndex={10}>
         <IconButton
           position="absolute"
           right={0}
+          mt={1}
           aria-label=""
           icon={<SmallCloseIcon fill="gray.800" />}
           colorScheme={contrastColor}
-          onClick={onClose}
+          onClick={close}
           size="sm"
         />
       </Box>
       <Flex
         className="swatch-background"
-        position="absolute"
-        w={72}
-        h="100vh"
         direction="column"
         alignItems="center"
         fontSize="xs"
@@ -498,15 +519,26 @@ export function MonochromeScale({
               as={Button}
               bg={_c}
               w={'full'}
-              h={7}
+              h={5}
               color={contrast === 'dark' ? 'gray.800' : 'gray.200'}
+              rounded="none"
+              fontSize="xs"
               cursor="pointer"
               _hover={{
-                h: 12,
+                h: 6,
                 bg: _c,
               }}
               onClick={copy}
-              onDoubleClick={() => colorHandlers.history.handleChange(_c)}
+              onDoubleClick={(e) => {
+                e.stopPropagation();
+                colorHandlers.history.handleChange(_c);
+              }}
+              _first={{
+                borderTopRadius: 'md',
+              }}
+              _last={{
+                borderBottomRadius: 'md',
+              }}
             >
               {isCopied ? 'copied' : _c.toUpperCase()}
             </Center>
@@ -514,5 +546,59 @@ export function MonochromeScale({
         })}
       </Flex>
     </Box>
+  );
+}
+
+export function InfoWindow({ isActive }: { isActive: boolean }) {
+  // @NOTE: this component was deprecated in favor of the SwatchWindow component
+  const { color, instance } = useColorState();
+  const colorHandlers = useColorDispatch();
+  const { isOpen, type } = useContentState();
+  const { onClose } = useContentDispatch();
+
+  useEffect(() => {
+    if (!isOpen || !isActive) return;
+    return () => onClose();
+  }, [isActive, onClose, isOpen]);
+
+  let contrastColor =
+    instance.contrast === 'dark' ? 'blackAlpha' : 'whiteAlpha';
+  return (
+    <Collapse in={isActive && isOpen} animateOpacity unmountOnExit>
+      {isOpen ? (
+        <VStack
+          width={72}
+          mt={1}
+          px={3}
+          mb={1}
+          rounded="md"
+          border={type === 'scales' ? 'none' : '1px'}
+          borderColor={`${contrastColor}.400`}
+        >
+          {type === 'scales' ? (
+            <MonochromeScale
+              color={color}
+              instance={instance}
+              onClose={onClose}
+              colorHandlers={colorHandlers}
+            />
+          ) : null}
+          {type === 'match' ? (
+            <ColorScales
+              instance={instance}
+              onClose={onClose}
+              colorHandlers={colorHandlers}
+            />
+          ) : null}
+          {type === 'combos' ? (
+            <ColorCombos
+              instance={instance}
+              onClose={onClose}
+              colorHandlers={colorHandlers}
+            />
+          ) : null}
+        </VStack>
+      ) : null}
+    </Collapse>
   );
 }

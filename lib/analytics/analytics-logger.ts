@@ -1,6 +1,9 @@
-export function loggerPlugin() {
+export function loggerPlugin(config: { enabled: boolean }) {
   return {
     name: 'analytics-logger',
+    config: {
+      enabled: config.enabled,
+    },
     initialize: () => console.log('📊 loading ALogger'),
     loaded: () => true,
     ready: () => console.log('📊 ready: ALogger'),

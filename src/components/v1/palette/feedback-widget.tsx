@@ -3,6 +3,7 @@ import {
   chakra,
   Checkbox,
   FormControl,
+  forwardRef,
   HStack,
   IconButton,
   Input,
@@ -25,18 +26,21 @@ type FeedbackState = {
   email: string | undefined;
   updates: 1 | 0;
 };
-function CustomFeedbackTrigger({ ...props }: ButtonProps) {
-  return (
-    <Tooltip label="Feedback">
-      <IconButton
-        aria-label="Feedback"
-        icon={<FeedbackIcon boxSize={'1.2rem'} fill="currentColor" />}
-        size="md"
-        {...props}
-      />
-    </Tooltip>
-  );
-}
+const CustomFeedbackTrigger: React.FC<ButtonProps> = forwardRef(
+  (props, ref) => {
+    return (
+      <Tooltip label="Feedback">
+        <IconButton
+          ref={ref}
+          aria-label="Feedback"
+          icon={<FeedbackIcon boxSize={'1.2rem'} fill="currentColor" />}
+          size="md"
+          {...props}
+        />
+      </Tooltip>
+    );
+  }
+);
 function WidgetStatesWrapper({ children }: { children: React.ReactNode }) {
   return (
     <VStack
@@ -123,8 +127,9 @@ export function FeedbackWidget({ isDisabled }: { isDisabled: boolean }) {
           </chakra.p>
         ),
       }}
-      mt={12}
-      ml={-24}
+      // mt={12}
+      // ml={-24}
+      // offset={[-12, 0]}
     >
       {mutation.status === 'error' ? (
         <WidgetStatesWrapper>

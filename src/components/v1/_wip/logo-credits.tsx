@@ -11,7 +11,7 @@ import { useState } from 'react';
 
 import { isDev } from '@/utils';
 import { Drawer, Sidebar } from 'chakra.ui';
-import { LogoIconNew } from '../icons/swatchr/logo-icon-new';
+import { LogoIcon } from '../icons/swatchr/logo-icon';
 import { SidebarTests } from './sidebar-tests';
 
 export function LogoCredits() {
@@ -20,17 +20,15 @@ export function LogoCredits() {
   return (
     <Box
       position="absolute"
-      bottom={12}
-      right={12}
+      top={10}
+      left={14}
       cursor={isDev ? 'pointer' : 'initial'}
     >
-      <Icon
-        as={LogoIconNew}
-        boxSize={10}
-        filter="drop-shadow(0.1rem 0.1rem 0.1rem #333)"
-        onClick={onOpen}
-      />
+      <Box boxSize={10}>
+        <Icon as={LogoIcon} onClick={onOpen} />
+      </Box>
       {isDev && isOpen ? (
+        // {true ? (
         <Sidebar open={true} onClose={onClose}>
           <SidebarTests />
         </Sidebar>

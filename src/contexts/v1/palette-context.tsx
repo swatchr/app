@@ -9,26 +9,39 @@ import {
 
 import { useKeyboardShortcut } from '@/hooks';
 import {
+  disableQuery,
   insertAtIndex,
+  isClient,
+  parsePalette,
+  publish,
   removeFromArrayAtIndex,
   stringifyPalette,
   updateArrayAtIndex,
+  wait,
 } from '@/utils';
 import { api } from '@/utils/api';
+import { useToast } from '@chakra-ui/react';
 import ColorLab from 'lib/color';
+import { shortname } from 'lib/unique-names-generator';
 import { useSession } from 'next-auth/react';
 
 export type Swatch = string;
 export type Palette = Swatch[];
 
 interface PaletteProviderProps {
-  colorParams: Swatch[];
+  paletteName: string;
+  colorParams: Swatch[] | undefined;
   children?: React.ReactNode;
 }
 
 interface PaletteStateValue {
   palettes: Palette[];
   palette: Palette;
+  info: {
+    id?: string;
+    name?: string;
+    status?: 'public' | 'private' | string;
+  };
   activePaletteIndex: number;
   activeSwatchIndex: number;
 }
@@ -54,26 +67,48 @@ export const PaletteDispatchContext = createContext<PaletteDispatchValue>(
 );
 
 export const PaletteProvider: React.FC<PaletteProviderProps> = ({
+  paletteName,
   colorParams,
   children,
 }) => {
+  const toast = useToast();
   const { data: session, status } = useSession();
 
-  const mutation = api.palette.save.useMutation();
+  const mutation = api.palette.save.useMutation({
+    onSuccess: (data) => {
+      toast({
+        title: 'Palette Saved',
+        description: `Your palette ${data?.serial ?? ''} has been saved.`,
+        status: 'success',
+      });
+    },
+    onError: (error) => {
+      toast({
+        title: 'Error saving palette',
+        description: 'There was an error saving your palette.',
+        status: 'error',
+      });
+    },
+  });
   const colorMutation = api.color.save.useMutation();
 
   const initialState: PaletteStateValue = {
-    palettes: [['#BADA55']],
-    palette: ['#BADA55'],
+    palettes: [[]],
+    palette: [],
+    info: { id: '', name: '', status: 'public' },
     activePaletteIndex: 0,
     activeSwatchIndex: -1,
   };
 
   const [
-    { palettes, palette, activePaletteIndex, activeSwatchIndex },
+    { palettes, palette, info, activePaletteIndex, activeSwatchIndex },
     setState,
   ] = useReducer(
     (prev: PaletteStateValue, next: Partial<PaletteStateValue>) => {
+      if (next.info) {
+        next.info = Object.assign({}, prev.info, next.info);
+      }
+
       // @NOTE: reconcile palettes with palette / vice-versa - on state updates
       if (next?.palette?.length) {
         next.palettes = updateArrayAtIndex(
@@ -81,7 +116,6 @@ export const PaletteProvider: React.FC<PaletteProviderProps> = ({
           prev.activePaletteIndex,
           () => next.palette!
         );
-        // next.activeSwatchIndex = next.palette.length - 1;
       } else if (next?.palettes?.length) {
         next.palette = next.palettes[prev.activePaletteIndex];
         next.activePaletteIndex = next.palettes.length - 1;
@@ -97,11 +131,55 @@ export const PaletteProvider: React.FC<PaletteProviderProps> = ({
     initialState
   );
 
-  useEffect(() => {
-    if (colorParams.length) {
-      setState({ palettes: [colorParams] });
+  api.palette.get.useQuery(
+    {
+      serial: stringifyPalette(palette),
+    },
+    {
+      enabled: !!palette.length,
+      initialData: info,
+      staleTime: 1000 * 60 * 60 * 24, // 24 hours
+      ...disableQuery,
+      onSuccess: (data) => {
+        setState({
+          info: { id: data?.id!, name: data?.name!, status: data?.status! },
+        });
+      },
+      onError: (error) => {
+        console.log('palette.get', error.message, error.data?.code);
+      },
     }
-  }, [colorParams]);
+  );
+
+  useEffect(() => {
+    // @NOTE: load from URL / Delayed Load from Local Storage / Default Palette
+    if (colorParams?.length) {
+      setState({ palettes: [colorParams], info: { name: paletteName } });
+      publish('show-toast', {
+        id: 'custom-url-palette-loaded',
+        title: 'Loaded custom palette',
+        description: stringifyPalette(colorParams ?? []),
+      });
+      return;
+    } else if (isClient) {
+      const serializedPalette = localStorage.getItem('palette');
+      const _paletteName = localStorage.getItem('palette-name');
+      const palette = parsePalette(serializedPalette!);
+      if (palette.length) {
+        setState({
+          palettes: [palette],
+          info: { name: _paletteName ?? shortname() },
+        });
+        publish('show-toast', {
+          id: 'local-storage-loaded',
+          title: 'Loaded previously saved palette.',
+          description: stringifyPalette(palette ?? []),
+        });
+        return;
+      }
+    }
+    setState({ palettes: [['#BADA55']] });
+  }, [colorParams, paletteName]);
 
   const activateSwatch = useCallback(
     (index: number) => {
@@ -133,16 +211,17 @@ export const PaletteProvider: React.FC<PaletteProviderProps> = ({
   const savePalette = useCallback(() => {
     const serializedPalette = stringifyPalette(palette);
     localStorage.setItem('palette', serializedPalette);
+    localStorage.setItem('palette-name', info?.name!);
 
     if (session?.user?.profileId) {
-      // profile is missing from session
       mutation.mutate({
-        session: session,
         palette,
-        // @TODO: impelment palette name
+        data: {
+          name: info.name ?? shortname(),
+        },
       });
     }
-  }, [palette, mutation, session]);
+  }, [palette, info.name, session?.user?.profileId, mutation]);
 
   const addSwatch = useCallback(
     (swatchIndex: number) => {
@@ -209,11 +288,12 @@ export const PaletteProvider: React.FC<PaletteProviderProps> = ({
       value={useMemo(
         () => ({
           palettes,
+          info,
           activePaletteIndex,
           activeSwatchIndex,
           palette,
         }),
-        [palettes, activePaletteIndex, activeSwatchIndex, palette]
+        [palettes, info, activePaletteIndex, activeSwatchIndex, palette]
       )}
     >
       <PaletteDispatchContext.Provider

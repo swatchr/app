@@ -47,6 +47,14 @@ model Session {
     user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
+model VerificationToken {
+    identifier String
+    token      String   @unique
+    expires    DateTime
+
+    @@unique([identifier, token])
+}
+
 model User {
     id            String    @id @default(cuid())
     name          String?
@@ -56,22 +64,22 @@ model User {
     password      String?
     accounts      Account[]
     sessions      Session[]
-    Role          Role?     @relation(fields: [role], references: [level], onDelete: SetDefault)
-    role          Int?      @default(0)
-    Profile       Profile?  @relation(fields: [profileId], references: [id], onDelete: Cascade)
-    profileId     String?   @unique @default(cuid())
+    Role          Role      @relation(fields: [role], references: [level], onDelete: SetDefault)
+    role          Int       @default(0)
+    Profile       Profile   @relation(fields: [profileId], references: [id], onDelete: Cascade)
+    profileId     String    @unique @default(cuid())
 
     @@unique([email, name])
     @@unique([email, profileId])
     @@unique([id, profileId])
 }
 
-model VerificationToken {
-    identifier String
-    token      String   @unique
-    expires    DateTime
+model Role {
+    id    String @id @default(cuid())
+    type  String @unique @default("ANON")
+    level Int    @unique @default(0)
 
-    @@unique([identifier, token])
+    User User[]
 }
 
 model Profile {
@@ -84,14 +92,36 @@ model Profile {
     Forks     Fork[]
     Owned     Owned[]
     Favorites Favorite[]
-    user      User?
+    User      User?
 }
 
-model Role {
-    id    String @id @default(cuid())
-    type  String @unique @default("ANON")
-    level Int    @unique @default(0)
-    user  User[]
+model Palette {
+    id        String     @id @default(cuid())
+    createdAt DateTime   @default(now())
+    updatedAt DateTime   @updatedAt
+    serial    String     @unique // @db.Text
+    name      String     @unique // @db.Text
+    status    String     @default("public")
+    Tags      Tag[]
+    Owned     Owned[]
+    Forks     Fork[]
+    Favorited Favorite[]
+    Colors    Color[]
+
+    @@unique([serial, name])
+    @@index([serial, status])
+}
+
+model Owned {
+    id        String   @id @default(cuid())
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+    Profile   Profile? @relation(fields: [profileId], references: [id])
+    profileId String? // @db.Text
+    Palette   Palette  @relation(fields: [serial], references: [serial], onDelete: Cascade, onUpdate: Cascade)
+    serial    String   @unique // @db.Text
+
+    @@unique([profileId, serial])
 }
 
 model Color {
@@ -105,36 +135,9 @@ model Color {
     contrast   String?
     complement String?
     text       String?
-    Palette    Palette?   @relation(fields: [paletteId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-    paletteId  String?
     Tags       Tag[]
-    Favorite   Favorite[]
-}
-
-model Palette {
-    id        String     @id @default(cuid())
-    createdAt DateTime   @default(now())
-    updatedAt DateTime   @updatedAt
-    serial    String     @unique // @db.Text
-    name      String     @unique // @db.Text
-    status    String     @default("public")
-    Colors    Color[]
-    Tags      Tag[]
-    Owned     Owned[]
-    Forks     Fork[]
-    Favorited Favorite[]
-}
-
-model Owned {
-    id        String   @id @default(cuid())
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
-    Profile   Profile? @relation(fields: [profileId], references: [id])
-    profileId String? // @db.Text
-    Palette   Palette  @relation(fields: [paletteId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-    paletteId String // @db.Text
-
-    @@unique([profileId, paletteId])
+    Favorited  Favorite[]
+    Palettes   Palette[]
 }
 
 model Fork {

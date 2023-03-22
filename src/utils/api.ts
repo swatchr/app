@@ -9,9 +9,11 @@ import { createTRPCNext } from '@trpc/next';
 import superjson from 'superjson';
 
 import type { AppRouter } from '@/server/api/root';
+import type { inferReactQueryProcedureOptions } from '@trpc/react-query';
 import type { inferRouterInputs, inferRouterOutputs } from '@trpc/server';
 import type { NextPageContext } from 'next';
 
+import { trpcClientErrorHandler } from '@/server/api/utils';
 import { DEFAULT_STALE_TIME, ONE_DAY_MS } from './constants';
 
 const getBaseUrl = () => {
@@ -78,8 +80,24 @@ export type RouterInputs = inferRouterInputs<AppRouter>;
  */
 export type RouterOutputs = inferRouterOutputs<AppRouter>;
 
+export type ReactQueryOptions = inferReactQueryProcedureOptions<AppRouter>;
+
 const queryClientConfig = {
-  defaultOptions: { queries: { staleTime: DEFAULT_STALE_TIME } },
+  defaultOptions: {
+    queries: {
+      staleTime: DEFAULT_STALE_TIME,
+      onError: trpcClientErrorHandler,
+      onSuccess: (data: unknown) => {
+        console.log('query client default success', data);
+      },
+    },
+    mutations: {
+      onError: trpcClientErrorHandler,
+      onSuccess: (data: unknown) => {
+        console.log('mutation client default success', data);
+      },
+    },
+  },
 };
 
 const cacheHeaders = {

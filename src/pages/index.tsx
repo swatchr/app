@@ -1,54 +1,53 @@
 import { useRouter } from 'next/router';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 
-import { type NextPage } from 'next';
+import type { NextPage } from 'next';
 
 import { BaseLayout, Palette } from '@/components';
 import { PaletteProvider } from '@/contexts';
-import { isClient, parsePalette, publish } from '@/utils';
+import { parsePalette } from '@/utils';
+import { FullScreenLoader } from 'chakra.ui';
+import { shortname } from 'lib/unique-names-generator';
 
 const Home: NextPage = () => {
   const router = useRouter();
-  const [colorParams, setColorParams] = useState<string[]>([]);
+  const { isLoading } = useIsLoading(true, 200);
 
-  useEffect(() => {
-    if (!router.query?.colors) return;
-    let colors = parsePalette(router.query?.colors as string);
-
-    if (colors.length) {
-      setColorParams(colors);
-      publish('show-toast', {
-        id: 'custom-url-palette-loaded',
-        title: 'Loaded custom palette',
-        description: JSON.stringify(colors),
-      });
-    }
-  }, [router.query]);
-
-  useEffect(() => {
-    if (!isClient || router.query?.colors) return;
-    const localPalette = localStorage.getItem('palette');
-    if (localPalette) {
-      const palette = parsePalette(localPalette);
-
-      if (palette?.length) {
-        // if (window.confirm('Load saved palette?')) {}
-        setColorParams(palette);
-        publish('show-toast', {
-          id: 'local-storage-palette-loaded',
-          title: 'Loaded saved palette',
-          description: JSON.stringify(palette),
-        });
-      }
-    }
-  }, [router.query?.colors]);
   return (
     <BaseLayout title="Swatchr" description="Color Palette Manager">
-      <PaletteProvider colorParams={colorParams}>
-        <Palette />
-      </PaletteProvider>
+      {isLoading ? (
+        <FullScreenLoader color="green" />
+      ) : (
+        <PaletteProvider
+          paletteName={shortname()}
+          colorParams={
+            router?.query?.colors
+              ? parsePalette(router.query?.colors as string)
+              : undefined
+          }
+        >
+          <Palette />
+        </PaletteProvider>
+      )}
     </BaseLayout>
   );
 };
 
 export default Home;
+
+function useIsLoading(initialValue: boolean, resetInterval: number) {
+  const [isLoading, setIsLoading] = useState(initialValue);
+  const toggleLoading = useCallback(
+    () => setIsLoading(!isLoading),
+    [isLoading]
+  );
+
+  useEffect(() => {
+    if (isLoading && resetInterval) {
+      const timer = setTimeout(() => setIsLoading(false), resetInterval);
+      return () => clearTimeout(timer);
+    }
+  }, [isLoading, resetInterval]);
+
+  return { isLoading, toggleLoading, setIsLoading };
+}

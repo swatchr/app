@@ -28,7 +28,7 @@ export const components: Record<string, StyleConfig> = {
   },
   Bar: {
     baseStyle: {
-      posiition: 'fixed',
+      position: 'fixed',
       w: 'full',
       px: 8,
       py: 14,

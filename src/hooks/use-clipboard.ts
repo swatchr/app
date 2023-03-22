@@ -9,11 +9,19 @@ export function useClipboard({
 }) {
   const [isCopied, setIsCopied] = useState(false);
 
-  const copy = useCallback(() => {
-    navigator.clipboard.writeText(text);
-    setIsCopied(true);
-    onCopy?.();
-  }, [text, onCopy]);
+  const copy = useCallback(
+    (
+      e: React.MouseEvent<
+        HTMLDivElement | HTMLButtonElement | HTMLTextAreaElement
+      >
+    ) => {
+      e.stopPropagation();
+      navigator.clipboard.writeText(text);
+      setIsCopied(true);
+      onCopy?.();
+    },
+    [text, onCopy]
+  );
 
   useEffect(() => {
     if (!isCopied) return;

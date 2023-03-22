@@ -1,4 +1,4 @@
-import { isClient, isDev } from '@/utils';
+import { isClient, isDev, isProd } from '@/utils';
 import mixpanelPlugin from '@analytics/mixpanel';
 import Analytics, { type AnalyticsInstance } from 'analytics';
 import doNotTrack from 'analytics-plugin-do-not-track';
@@ -27,7 +27,7 @@ export const analytics = Analytics({
           enabled: !!process.env.NEXT_PUBLIC_MIXPANEL_TOKEN,
         })
       : doNotTrack(),
-    loggerPlugin(),
+    loggerPlugin({ enabled: false && !isProd }),
   ],
 });
 

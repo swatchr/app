@@ -35,7 +35,7 @@ type CustomPopoverProps = {
     props?: IconButtonProps;
   };
   customButton?: {
-    Component: ({ ...props }: ButtonProps) => JSX.Element;
+    Component: React.FC<ButtonProps>;
     props?: ButtonProps;
   };
   image?: {

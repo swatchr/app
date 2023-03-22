@@ -1,4 +1,3 @@
-import { PrismaClient, type User } from '@prisma/client';
 import type { NextAuthOptions } from 'next-auth';
 
 import { analytics } from '../../analytics';

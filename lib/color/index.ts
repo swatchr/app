@@ -69,6 +69,14 @@ class ColorLab {
     return color ? tinycolor(color).toHsl() : this.color.toHsl();
   }
 
+  toHsvString(color?: string): string {
+    return color ? tinycolor(color).toHsvString() : this.color.toHsvString();
+  }
+
+  toRgbString(color?: string): string {
+    return color ? tinycolor(color).toRgbString() : this.color.toRgbString();
+  }
+
   toCmykString(hex?: string): string {
     // Remove # character if present
     hex = hex?.replace('#', '');

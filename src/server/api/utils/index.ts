@@ -1,8 +1,3 @@
-export const handleServerError = (e: Error | any, msg?: string) => {
-  console.error('Something went wrong', e);
-  return {
-    status: 'error',
-    message: msg || 'Something went wrong',
-    error: JSON.stringify(e),
-  };
-};
+export * from './check-request';
+export * from './error/client';
+export * from './error/trpc';

@@ -18,6 +18,7 @@ export const session: CallbacksOptions['session'] = ({
   if (session.user) {
     session.user.id = user.id;
     session.user.profileId = user?.profileId;
+    session.user.emailVerified = user?.emailVerified;
     session.user.role = user?.role || 0; // make user anonymous if they don't have a role
     if (!session?.accessToken) {
       session.accessToken = token?.accessToken;
