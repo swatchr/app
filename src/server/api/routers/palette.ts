@@ -5,11 +5,7 @@ import {
   protectedProcedure,
   publicProcedure,
 } from '@/server/api/trpc';
-import {
-  throwAuthorizationError,
-  throwBadRequestError,
-  trpcPrismaErrorHandler,
-} from '@/server/api/utils/error';
+import { trpcPrismaErrorHandler } from '@/server/api/utils/error';
 import { stringifyPalette } from '@/utils';
 import { shortname } from 'lib/unique-names-generator';
 import { Palette } from 'prisma/models/palette.model';
@@ -67,7 +63,7 @@ export const paletteRouter = createTRPCRouter({
         trpcPrismaErrorHandler(error);
       }
     }),
-  update: protectedProcedure
+  update: protectedProcedure // unused in favor of save
     .input(paletteUpdateInputSchema)
     .mutation(async ({ ctx, input: { serial, data } }) => {
       try {
