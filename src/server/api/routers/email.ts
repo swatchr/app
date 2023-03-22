@@ -10,7 +10,7 @@ import {
   feedbackEmail,
   verificationEmail,
 } from 'lib/nodemailer/emails';
-import { handleServerError } from '../utils';
+import { handleServerError } from '../utils/error';
 
 export const emailRouter = createTRPCRouter({
   feedback: publicProcedure
