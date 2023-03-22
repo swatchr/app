@@ -9,14 +9,14 @@ import {
   Icon,
   useToast,
 } from '@chakra-ui/react';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 
-import type { Color } from '@prisma/client';
+import type { ColorApiClientInfo } from '@/server/api/types/color';
 import type ColorLab from 'lib/color';
 
 import { CopyIcon } from '@/components';
 import { useClipboard } from '@/hooks';
-import { ONE_MIN_MS } from '@/utils';
+import { createColorInfo } from '@/server/api/types/color';
 import { api } from '@/utils/api';
 import { AccordionBox } from 'chakra.ui';
 
@@ -29,30 +29,23 @@ export function InfoPanel({
   instance: ColorLab;
   showIcon: boolean;
 }) {
-  const [info, setInfo] = useState<Color>();
+  const [info, setInfo] = useState<ColorApiClientInfo>();
 
   const utils = api.useContext();
 
   // @TODO: replace with a color.get trpc request
-  const { status, isLoading, isError, refetch } = api.color.create.useQuery(
+  const { status, isLoading, isError } = api.color.schemeAPI.useQuery(
     { hex: color.replace('#', '') },
     {
       enabled: !!color,
-      // refetchInterval: 1000 * 60 * 60 * 24, // 24 hours
-      staleTime: 10 * ONE_MIN_MS, // 10mins hours
-      onSuccess: (data: Color) => {
-        setInfo(data);
+      onSuccess: (data) => {
+        setInfo(createColorInfo(data?.seed, instance));
       },
       onError(err) {
         console.log('🚀 | file: info-panel.tsx:46 | err:', err);
       },
     }
   );
-
-  useEffect(() => {
-    utils.color.create.invalidate();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [color]);
 
   const hasInfo = info && !isLoading && !isError;
 
@@ -67,7 +60,7 @@ export function InfoPanel({
       <Accordion w="full" fontSize="md" rounded="md" allowToggle>
         <AccordionBox
           // title={hasInfo ? info?.name! : ''}
-          title={info?.name!}
+          title={hasInfo ? info?.name?.value : ''}
           status={status}
           contrast={instance.contrast} // used for bg color
           w={72}

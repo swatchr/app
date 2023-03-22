@@ -64,7 +64,7 @@ export async function createColor(ctx: TRPCContext, hex: string) {
   const color = new ColorLab(data.hex.clean);
   return (
     data.hex.clean &&
-    ctx.prisma.color.create({
+    (await ctx.prisma.color.create({
       data: {
         hex: data.hex.clean,
         rgb: data.rgb.value,
@@ -76,12 +76,12 @@ export async function createColor(ctx: TRPCContext, hex: string) {
         complement: color.complement,
         text: color.contrast === 'light' ? '#000' : '#fff',
       },
-    })
+    }))
   );
 }
 
 export type ColorApiReturn = ReturnType<typeof createColor>;
-
+export type FetchTheColorAPIReturn = ReturnType<typeof fetchTheColorApi>;
 export const fetchTheColorApi = async (hex: string, endpoint = 'scheme') => {
   const mode = 'analogic-complement';
   const count = 10;
