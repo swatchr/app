@@ -7,9 +7,7 @@ import { throwBadRequestError } from './error/trpc';
  * @param {Array<boolean>} conditions
  */
 export function checkRequestParams(conditions: Array<boolean>): void {
-  const isAllConditionsTrue = conditions.every(
-    (condition) => !!condition === true
-  );
+  const isAllConditionsTrue = conditions.every((condition) => !!condition);
 
   if (!isAllConditionsTrue) {
     throw throwBadRequestError();

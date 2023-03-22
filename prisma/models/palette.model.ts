@@ -58,7 +58,7 @@ export class Palette {
     serial?: string;
     name?: string;
   }) {
-    checkRequestParams([!id && !serial && !name]);
+    checkRequestParams([!!id && !!(serial || name)]);
 
     const palette = await this.prisma.palette.findUnique({
       where: Object.assign(
@@ -89,10 +89,10 @@ export class Palette {
     profileId: string;
   }) {
     checkRequestParams([
-      !profileId,
-      !palette?.length,
-      !data,
-      !data.name && !data.status && !data.serial,
+      !!profileId,
+      !!palette?.length,
+      !!data,
+      !!data.name && !!(data.status || data.serial),
     ]);
 
     const colors = await this.validatePaletteColors(palette);
@@ -138,13 +138,15 @@ export class Palette {
     profileId: string;
   }) {
     checkRequestParams([
-      !serial,
-      !profileId,
-      !data,
-      !data.name && !data.status,
+      !!serial,
+      !!profileId,
+      !!data,
+      !!(data.name || data.status),
     ]);
 
-    return await this.prisma.owned.update({
+    console.log('args', serial, data, profileId);
+
+    const owned = await this.prisma.owned.update({
       where: {
         profileId_serial: {
           profileId: profileId,
@@ -153,15 +155,21 @@ export class Palette {
       },
       data: {
         Palette: {
-          update: data, // currently we're not allowing serial to be updated
+          // update: Object.assign({}, data), // currently we're not allowing serial to be updated
+          update: {
+            name: data.name,
+          },
         },
       },
       include: { Palette: true },
     });
+    if (!owned) throw new Error('Could not be updated');
+
+    return owned ?? null;
   }
 
   async delete({ serial, profileId }: { serial: string; profileId: string }) {
-    checkRequestParams([!serial, !profileId]);
+    checkRequestParams([!!serial, !!profileId]);
 
     return await this.prisma.owned.delete({
       where: {

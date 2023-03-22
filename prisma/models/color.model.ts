@@ -78,7 +78,7 @@ export class Color {
     palette: string[];
     include?: boolean;
   }) {
-    checkRequestParams([!palette]);
+    checkRequestParams([!!palette]);
     const strippedPalette = palette.map((hex) => {
       const strippedHex = validateAndConvertHexColor(hex);
       if (!strippedHex) throw throwBadRequestError();
@@ -97,7 +97,7 @@ export class Color {
     hex: string;
     data: Prisma.ColorUpdateInput;
   }) {
-    checkRequestParams([!data, !data.hex]);
+    checkRequestParams([!!data, !!data.hex]);
     const strippedHex = validateAndConvertHexColor(hex);
     if (!strippedHex) throw throwBadRequestError();
     const hexExists = await this.hexExists(strippedHex);
@@ -110,7 +110,7 @@ export class Color {
   }
 
   async deleteHex({ hex }: { hex: string }) {
-    checkRequestParams([!hex]);
+    checkRequestParams([!!hex]);
     const strippedHex = validateAndConvertHexColor(hex);
     if (!strippedHex) throw throwBadRequestError();
     const hexExists = await this.hexExists(strippedHex);
