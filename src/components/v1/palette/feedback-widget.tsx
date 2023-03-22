@@ -127,8 +127,9 @@ export function FeedbackWidget({ isDisabled }: { isDisabled: boolean }) {
           </chakra.p>
         ),
       }}
-      mt={12}
-      ml={-24}
+      // mt={12}
+      // ml={-24}
+      // offset={[-12, 0]}
     >
       {mutation.status === 'error' ? (
         <WidgetStatesWrapper>

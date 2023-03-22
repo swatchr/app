@@ -1,13 +1,12 @@
 import { PrismaClient } from '@prisma/client';
 
-import type { ColorApiSchema } from '@/server/api/routers/color';
-import type { Prisma } from '@prisma/client';
+import type { Color as PrismaColor, Prisma } from '@prisma/client';
 
 import { checkRequestParams } from '@/server';
 import { colorApiSchema, fetchTheColorApi } from '@/server/api/routers/color';
+import { throwBadRequestError } from '@/server/api/utils/error/trpc';
 import { validateAndConvertHexColor } from '@/utils';
 import ColorLab from 'lib/color';
-import { throwBadRequestError } from '../../src/server/api/utils/error/trpc';
 
 export class Color {
   prisma: PrismaClient;
@@ -24,37 +23,39 @@ export class Color {
 
   async fetchColor({ hex }: { hex: string }) {
     const strippedHex = validateAndConvertHexColor(hex);
-    if (!strippedHex) throw new Error('Invalid Hex Code');
+    if (!strippedHex) return null;
 
     const colorExists = await this.hexExists(strippedHex);
-    if (colorExists) return colorExists;
+
+    if (colorExists) return colorExists as PrismaColor;
 
     const res = await fetchTheColorApi(hex, 'id');
+    if (!res) return null;
     const data = colorApiSchema.parse(res);
-    if (!data.hex.clean) throw new Error('there was an issue');
+    if (!data.hex.clean) return null;
+
     const color = new ColorLab(data.hex.clean);
 
-    return (
-      data.hex.clean &&
-      this.prisma.color.create({
-        data: {
-          hex: data.hex.clean,
-          rgb: data.rgb.value,
-          hsl: data.hsl.value,
-          hsv: data.hsv.value,
-          cmyk: data.cmyk.value,
-          name: data.name.value,
-          contrast: data.contrast.value,
-          complement: color.complement,
-          text: color.contrast === 'light' ? '#000' : '#fff',
-        },
-      })
-    );
+    return data.hex.clean
+      ? this.prisma.color.create({
+          data: {
+            hex: data.hex.clean,
+            rgb: data.rgb.value,
+            hsl: data.hsl.value,
+            hsv: data.hsv.value,
+            cmyk: data.cmyk.value,
+            name: data.name.value,
+            contrast: data.contrast.value,
+            complement: color.complement,
+            text: color.contrast === 'light' ? '#000' : '#fff',
+          },
+        })
+      : null;
   }
 
   async get({ hex, include }: { hex: string; include?: boolean }) {
     const strippedHex = validateAndConvertHexColor(hex);
-    checkRequestParams([!strippedHex]);
+    checkRequestParams([!!strippedHex]);
 
     const color = await this.prisma.color.findUnique({
       where: { hex: strippedHex! },

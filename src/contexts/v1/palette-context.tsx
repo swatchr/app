@@ -9,6 +9,7 @@ import {
 
 import { useKeyboardShortcut } from '@/hooks';
 import {
+  disableQuery,
   insertAtIndex,
   isClient,
   parsePalette,
@@ -37,7 +38,9 @@ interface PaletteStateValue {
   palettes: Palette[];
   palette: Palette;
   info: {
-    name: string;
+    id?: string;
+    name?: string;
+    status?: 'public' | 'private' | string;
   };
   activePaletteIndex: number;
   activeSwatchIndex: number;
@@ -92,7 +95,7 @@ export const PaletteProvider: React.FC<PaletteProviderProps> = ({
   const initialState: PaletteStateValue = {
     palettes: [[]],
     palette: [],
-    info: { name: '' },
+    info: { id: '', name: '', status: 'public' },
     activePaletteIndex: 0,
     activeSwatchIndex: -1,
   };
@@ -102,6 +105,10 @@ export const PaletteProvider: React.FC<PaletteProviderProps> = ({
     setState,
   ] = useReducer(
     (prev: PaletteStateValue, next: Partial<PaletteStateValue>) => {
+      if (next.info) {
+        next.info = Object.assign({}, prev.info, next.info);
+      }
+
       // @NOTE: reconcile palettes with palette / vice-versa - on state updates
       if (next?.palette?.length) {
         next.palettes = updateArrayAtIndex(
@@ -122,6 +129,26 @@ export const PaletteProvider: React.FC<PaletteProviderProps> = ({
       return { ...prev, ...next };
     },
     initialState
+  );
+
+  api.palette.get.useQuery(
+    {
+      serial: stringifyPalette(palette),
+    },
+    {
+      enabled: !!palette.length,
+      initialData: info,
+      staleTime: 1000 * 60 * 60 * 24, // 24 hours
+      ...disableQuery,
+      onSuccess: (data) => {
+        setState({
+          info: { id: data?.id!, name: data?.name!, status: data?.status! },
+        });
+      },
+      onError: (error) => {
+        console.log('palette.get', error.message, error.data?.code);
+      },
+    }
   );
 
   useEffect(() => {
@@ -184,7 +211,7 @@ export const PaletteProvider: React.FC<PaletteProviderProps> = ({
   const savePalette = useCallback(() => {
     const serializedPalette = stringifyPalette(palette);
     localStorage.setItem('palette', serializedPalette);
-    localStorage.setItem('palette-name', info?.name);
+    localStorage.setItem('palette-name', info?.name!);
 
     if (session?.user?.profileId) {
       mutation.mutate({

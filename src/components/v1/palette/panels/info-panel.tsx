@@ -9,14 +9,14 @@ import {
   Icon,
   useToast,
 } from '@chakra-ui/react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
-import type { ColorApiClientInfo, ColorApiScheme } from '@/server/api/types';
+import type { Color } from '@prisma/client';
 import type ColorLab from 'lib/color';
 
 import { CopyIcon } from '@/components';
 import { useClipboard } from '@/hooks';
-import { createColorInfo } from '@/server/api/types';
+import { ONE_MIN_MS } from '@/utils';
 import { api } from '@/utils/api';
 import { AccordionBox } from 'chakra.ui';
 
@@ -29,17 +29,30 @@ export function InfoPanel({
   instance: ColorLab;
   showIcon: boolean;
 }) {
-  const [info, setInfo] = useState<ColorApiClientInfo>();
+  const [info, setInfo] = useState<Color>();
 
-  const { status, isLoading, isError } = api.color.schemeAPI.useQuery(
+  const utils = api.useContext();
+
+  // @TODO: replace with a color.get trpc request
+  const { status, isLoading, isError, refetch } = api.color.create.useQuery(
     { hex: color.replace('#', '') },
     {
       enabled: !!color,
-      onSuccess: (data: ColorApiScheme) => {
-        setInfo(createColorInfo(data?.seed, instance));
+      // refetchInterval: 1000 * 60 * 60 * 24, // 24 hours
+      staleTime: 10 * ONE_MIN_MS, // 10mins hours
+      onSuccess: (data: Color) => {
+        setInfo(data);
+      },
+      onError(err) {
+        console.log('🚀 | file: info-panel.tsx:46 | err:', err);
       },
     }
   );
+
+  useEffect(() => {
+    utils.color.create.invalidate();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [color]);
 
   const hasInfo = info && !isLoading && !isError;
 
@@ -53,7 +66,8 @@ export function InfoPanel({
     >
       <Accordion w="full" fontSize="md" rounded="md" allowToggle>
         <AccordionBox
-          title={hasInfo ? info?.name?.value : undefined}
+          // title={hasInfo ? info?.name! : ''}
+          title={info?.name!}
           status={status}
           contrast={instance.contrast} // used for bg color
           w={72}
@@ -96,9 +110,9 @@ function InfoListItem({ field, item }: { field: string; item: any }) {
       _hover={{ bg: 'blackAlpha.200' }}
     >
       <chakra.span w="30%" fontSize="2xs">
-        {field === 'name' ? null : field + ':'}
+        {field === 'name' || field === 'id' ? null : field + ':'}
       </chakra.span>
-      {field === 'name' ? null : (
+      {field === 'name' || field === 'id' ? null : (
         <chakra.p key={field} w="full" flex={1} pl={2} fontSize="2xs">
           {item?.toString()}
         </chakra.p>

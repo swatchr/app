@@ -15,7 +15,7 @@ import { useCallback, useRef, useState } from 'react';
 import { Swatch } from '@/components';
 import { ColorProvider, ContentProvider, usePaletteState } from '@/contexts';
 import { useDebounce } from '@/hooks';
-import { isDev, slugify, stringifyPalette } from '@/utils';
+import { disableQuery, isDev, slugify, stringifyPalette } from '@/utils';
 import { api } from '@/utils/api';
 import ColorLab from 'lib/color';
 import { useSession } from 'next-auth/react';
@@ -86,7 +86,8 @@ function PaletteNameInput({ serial, text }: { serial: string; text: string }) {
 
   const editableInput = useRef<HTMLInputElement | null>(null);
   const {
-    info: { name },
+    palette,
+    info: { name, status: paletteStatus },
   } = usePaletteState();
   const [value, setValue] = useState<string | undefined>(name);
 
@@ -105,28 +106,9 @@ function PaletteNameInput({ serial, text }: { serial: string; text: string }) {
         description: error.message,
         status: 'error',
       });
-      setValue(data?.name);
+      setValue(name);
     },
   });
-  const { data } = api.palette.get.useQuery(
-    { serial },
-    {
-      enabled: !!serial,
-      onSuccess(data) {
-        setValue(data?.name);
-        localStorage.setItem('paletteName', data?.name!);
-      },
-      onError(error) {
-        toast({
-          title: error.data?.code,
-          description: `Could not fetch palette name: ${
-            isDev && error.message
-          }`,
-          status: 'warning',
-        });
-      },
-    }
-  );
 
   return (
     <Box
@@ -143,15 +125,15 @@ function PaletteNameInput({ serial, text }: { serial: string; text: string }) {
         tabIndex={0}
         size="sm"
         value={value}
-        placeholder={data?.name}
+        placeholder={name}
         isDisabled={status !== 'authenticated'}
         onChange={(val: string) => setValue(val)}
         onSubmit={(value) => {
           mutation.mutate({
-            serial: data?.serial!,
+            serial: stringifyPalette(palette),
             data: {
               name: slugify(value),
-              status: data?.status,
+              status: paletteStatus,
             },
           });
         }}

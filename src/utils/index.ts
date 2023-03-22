@@ -8,5 +8,6 @@ export * from './form';
 export * from './lodash';
 export * from './next';
 export * from './react';
+export * from './react-query';
 export * from './seo';
 export * from './swatchr';

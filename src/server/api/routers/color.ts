@@ -118,6 +118,7 @@ export const colorRouter = createTRPCRouter({
         trpcPrismaErrorHandler(error);
       }
     }),
+
   colorAPI: publicProcedure
     .input(z.object({ hex: z.string(), endpoint: z.string().optional() }))
     .query(async ({ input }) => {
@@ -130,13 +131,28 @@ export const colorRouter = createTRPCRouter({
         trpcPrismaErrorHandler(error);
       }
     }),
+  create: publicProcedure
+    .input(z.object({ hex: z.string() }))
+    .query(async ({ ctx, input }) => {
+      const hex = validateAndConvertHexColor(input.hex);
+      if (!hex) throw new Error(`not valid hex | input: ${input.hex}`);
+      try {
+        const _color = new Color();
+        const color = await _color.fetchColor({ hex });
+        return color;
+      } catch (error) {
+        trpcPrismaErrorHandler(error);
+      }
+    }),
   get: publicProcedure
     .input(z.object({ hex: z.string() }))
     .query(async ({ ctx, input }) => {
       try {
         const client = new Color();
-        const color = await client.get({ hex: input.hex! });
-        return color;
+        // @TOOD: remove this when we have all the colors persisted in the db
+        // const color = await client.get({ hex: input.hex });
+        const color = await client.fetchColor({ hex: input.hex });
+        return color ?? null;
       } catch (error) {
         trpcPrismaErrorHandler(error);
         return;
