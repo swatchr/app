@@ -1,6 +1,8 @@
-import { Box, Center, chakra } from '@chakra-ui/react';
+import { CloseIcon } from '@chakra-ui/icons';
+import { Box, Center, chakra, IconButton, Slide } from '@chakra-ui/react';
 import { SkipNavContent } from '@chakra-ui/skip-nav';
 import { NextSeo } from 'next-seo';
+import { useState } from 'react';
 
 import type { FC } from 'react';
 
@@ -18,6 +20,8 @@ export const BaseLayout: FC<BaseLayoutProps> = ({
   description = '',
   children,
 }) => {
+  const [showDisclaimer, setShowDisclaimer] = useState(true);
+
   return (
     <>
       <NextSeo {...SEOConfig(title, description)} />
@@ -28,11 +32,33 @@ export const BaseLayout: FC<BaseLayoutProps> = ({
           color="black"
           position="absolute"
           top={0}
+          py={1}
           zIndex={10}
+          as={Slide}
+          in={showDisclaimer}
+          direction="top"
+          unmountOnExit
+          // @ts-expect-error transition is not properly typed
+          transition={{ delay: 2000 }}
+          shadow="sm"
         >
           Public Alpha Preview | &nbsp;
-          <chakra.span fontWeight={600}>NOTE: </chakra.span>&nbsp; Data
-          persistence is not guaranteed during preview period.
+          <chakra.span fontWeight={600}>DISCLAIMER: </chakra.span>&nbsp; User
+          data is not persisted during preview period.
+          <IconButton
+            position="absolute"
+            right={6}
+            aria-label="Close"
+            icon={<CloseIcon />}
+            size="xs"
+            variant="unstyled"
+            colorScheme="blackAlpha"
+            color="black"
+            onClick={() => {
+              setShowDisclaimer(false);
+            }}
+            float="right"
+          />
         </Center>
         <SkipNavContent />
         <Box

@@ -7,12 +7,10 @@ import {
   IconButton,
   Input,
   InputGroup,
-  InputLeftElement,
   Spinner,
   Tooltip,
   useDisclosure,
   useToast,
-  VisuallyHidden,
 } from '@chakra-ui/react';
 import { useSession } from 'next-auth/react';
 import { useCallback, useEffect, useReducer, useState } from 'react';
@@ -198,7 +196,7 @@ function EditableInput({ text }: { text: string }) {
     <HStack
       as={'form'}
       position="absolute"
-      top={28}
+      top={32}
       right={6}
       p={2}
       maxW={56}
@@ -236,10 +234,16 @@ function EditableInput({ text }: { text: string }) {
         </Tooltip>
       ) : (
         <InputGroup>
-          <FormControl id="name" key="name">
-            <VisuallyHidden>
-              <chakra.label htmlFor="name">Palette Name</chakra.label>
-            </VisuallyHidden>
+          <FormControl id="name" key="name" mt={-8}>
+            <chakra.label
+              htmlFor="name"
+              visibility={focus ? 'initial' : 'hidden'}
+              fontSize="sm"
+              color={text}
+            >
+              palette name:
+            </chakra.label>
+
             <Input
               size="sm"
               pr={2}
@@ -273,7 +277,7 @@ function EditableInput({ text }: { text: string }) {
           size="sm"
           variant="unstyled"
           colorScheme="green"
-          isDisabled={status !== 'authenticated'}
+          isDisabled={true || status !== 'authenticated'}
           onClick={handleUpdateStatus}
         />
       </Tooltip>
