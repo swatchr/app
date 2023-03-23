@@ -5,9 +5,13 @@ import {
   VisuallyHidden,
   VStack,
 } from '@chakra-ui/react';
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useMemo, useReducer, useState } from 'react';
 
 import type { InputProps } from '@chakra-ui/react';
+
+type InputState = {
+  value: string | undefined;
+};
 
 export function useInput<T>(
   inputName: string,
@@ -16,29 +20,35 @@ export function useInput<T>(
     onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
   }
 ) {
-  const [value, setValue] = useState(options?.initialValue || '');
+  const [{ value }, setState] = useReducer(
+    (prev: InputState, next: Partial<InputState>) => {
+      return { ...prev, ...next };
+    },
+    {
+      value: options?.initialValue || '',
+    } as InputState
+  );
 
   // @FIXME: ADDING DEBOUNCE makes the logic break
   const handleChange = useCallback(
     (event: React.ChangeEvent<HTMLInputElement>) => {
       options?.onChange
         ? options.onChange(event)
-        : setValue(event.target.value);
+        : setState({
+            value: event.target.value,
+          });
     },
     [options]
   );
 
   const reset = useCallback(() => {
-    if (options?.initialValue) return;
-    setValue(options?.initialValue!);
+    if (!options?.initialValue) return;
+    setState({ value: String(options?.initialValue) });
   }, [options?.initialValue]);
 
-  const updateValue = useCallback(
-    (value: string) => {
-      setValue(value);
-    },
-    [setValue]
-  );
+  const updateValue = useCallback((value: string) => {
+    setState({ value: value });
+  }, []);
 
   const input = useMemo(
     () => ({

@@ -6,7 +6,7 @@ import Link from 'next/link';
 import { useEffect, useState } from 'react';
 
 import { isBrowser } from '@/utils';
-import { getConsent } from 'lib/analytics';
+import { analytics, getConsent } from 'lib/analytics';
 import { Banner } from './banner';
 
 const ChNextLink = chakra(Link);
@@ -33,6 +33,11 @@ export const CookieConsent = () => {
   const handleConsent = () => {
     if (isBrowser) document.body.style.overflow = 'visible';
     setConsent(true);
+    analytics.track('consent', {
+      category: 'consent-approval',
+      label: 'consent',
+      value: 1,
+    });
   };
 
   return mounted && !consent ? (
