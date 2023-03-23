@@ -2,6 +2,7 @@ import { useToast } from '@chakra-ui/react';
 import { useEffect, useRef } from 'react';
 
 import type { StringObj } from '@/types';
+import type { ToastProps } from '@chakra-ui/react';
 import type { FC, ReactNode } from 'react';
 
 import { getParams, subscribe, unsubscribe } from '@/utils';
@@ -42,29 +43,40 @@ export const AutoToast: FC<{
   // falsy values get stringified so we have to check for an actual message
   const falsyStrings = ['null', 'false', 'undefined', ''];
   const hasMessage = falsyStrings.every((str) => str !== props.message);
-  const toastIdRef = useRef(null);
+  const toastIdRef = useRef<string | null>(null);
 
   useEffect(() => {
     subscribe('show-toast', ({ detail }: any) => {
-      if (toastIdRef === detail?.id) return;
+      if (toastIdRef.current === detail?.id) {
+        toast.close(toastIdRef.current!);
+        return (toastIdRef.current = null);
+      }
+
+      const toastConfig: ToastProps = {
+        status: detail?.status || 'info',
+        title: detail?.title || 'Notification',
+        description: detail?.description || '',
+        duration: 6000,
+        isClosable: true,
+        position: 'top-right',
+      };
+
       if (!toastIdRef.current) {
         toastIdRef.current = detail?.id;
-        toast({
-          status: detail?.status || 'info',
-          title: detail?.title || 'Notification',
-          description: detail?.description || '',
-          duration: 6000,
-          isClosable: true,
-          position: 'top-right',
-        });
+        toast(toastConfig);
+      } else {
+        if (toastIdRef.current === detail?.id) return;
+        toast.close(toastIdRef.current);
+        toast(toastConfig);
       }
       return () => {
+        toast.closeAll();
         toastIdRef.current = null;
       };
     });
 
     return () => {
-      unsubscribe('show-toast', () => {});
+      unsubscribe('show-toast', () => null);
     };
   }, [toast]);
 
