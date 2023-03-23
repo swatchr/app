@@ -17,7 +17,6 @@ import {
   removeFromArrayAtIndex,
   stringifyPalette,
   updateArrayAtIndex,
-  wait,
 } from '@/utils';
 import { api } from '@/utils/api';
 import { useToast } from '@chakra-ui/react';
@@ -56,6 +55,8 @@ export interface PaletteDispatchValue {
   updateSwatch: (swatchIndex: number, newColor: string) => void;
   removeSwatch: (swatchIndex: number) => void;
   updatePalette: (palette: Palette) => void;
+  updatePaletteName: (name: string) => void;
+  updatePaletteStatus: () => void;
 }
 
 export const PaletteStateContext = createContext<PaletteStateValue>(
@@ -77,19 +78,24 @@ export const PaletteProvider: React.FC<PaletteProviderProps> = ({
   const mutation = api.palette.save.useMutation({
     onSuccess: (data) => {
       toast({
+        id: 'palette-saved',
         title: 'Palette Saved',
         description: `Your palette ${data?.serial ?? ''} has been saved.`,
         status: 'success',
       });
+      if (!isClient) return;
+      localStorage.setItem('palette-name', info.name!);
     },
     onError: (error) => {
       toast({
+        id: 'palette-save-error',
         title: 'Error saving palette',
         description: 'There was an error saving your palette.',
         status: 'error',
       });
     },
   });
+
   const colorMutation = api.color.save.useMutation();
 
   const initialState: PaletteStateValue = {
@@ -181,6 +187,16 @@ export const PaletteProvider: React.FC<PaletteProviderProps> = ({
     setState({ palettes: [['#BADA55']] });
   }, [colorParams, paletteName]);
 
+  useEffect(() => {
+    if (status !== 'authenticated') return;
+    console.log('mutating');
+    mutation.mutate({
+      palette,
+      data: info,
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [info]);
+
   const activateSwatch = useCallback(
     (index: number) => {
       setState({ activeSwatchIndex: index });
@@ -269,11 +285,22 @@ export const PaletteProvider: React.FC<PaletteProviderProps> = ({
   );
 
   const addNewSwatch = useCallback(() => {
+    console.log('adding swatch');
     addSwatch(activeSwatchIndex + 1);
   }, [activeSwatchIndex, addSwatch]);
   const removeCurrentSwatch = useCallback(() => {
     removeSwatch(activeSwatchIndex);
   }, [activeSwatchIndex, removeSwatch]);
+
+  const updatePaletteName = useCallback((name: string) => {
+    setState({ info: { name } });
+  }, []);
+
+  const updatePaletteStatus = useCallback(() => {
+    setState({
+      info: { status: info.status === 'public' ? 'private' : 'public' },
+    });
+  }, [info.status]);
 
   useKeyboardShortcut(['Shift', 'Control', '+'], addNewSwatch, {
     repeatOnHold: true,
@@ -308,6 +335,8 @@ export const PaletteProvider: React.FC<PaletteProviderProps> = ({
             updateSwatch,
             removeSwatch,
             updatePalette,
+            updatePaletteName,
+            updatePaletteStatus,
           }),
           [
             activatePalette,
@@ -319,6 +348,8 @@ export const PaletteProvider: React.FC<PaletteProviderProps> = ({
             updateSwatch,
             removeSwatch,
             updatePalette,
+            updatePaletteName,
+            updatePaletteStatus,
           ]
         )}
       >

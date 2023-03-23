@@ -1,5 +1,6 @@
 import {
   chakra,
+  Circle,
   Flex,
   FormControl,
   HStack,
@@ -14,14 +15,18 @@ import {
   VisuallyHidden,
 } from '@chakra-ui/react';
 import { useSession } from 'next-auth/react';
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useReducer, useState } from 'react';
 
 import { LockedIcon, Swatch, UnlockedIcon } from '@/components';
-import { ColorProvider, ContentProvider, usePaletteState } from '@/contexts';
+import {
+  ColorProvider,
+  ContentProvider,
+  usePaletteDispatch,
+  usePaletteState,
+} from '@/contexts';
 import { useKeyPress } from '@/hooks';
 import { useInput } from '@/hooks/use-input';
-import { isClient, isDev, slugify } from '@/utils';
-import { api } from '@/utils/api';
+import { isDev, publish, slugify } from '@/utils';
 import ColorLab from 'lib/color';
 import { CommandPalette } from '../_wip/command-palette';
 import { LogoCredits } from '../_wip/logo-credits';
@@ -79,98 +84,112 @@ export function Palette() {
   );
 }
 
+type FormStatus = {
+  isSubmitting: boolean;
+  hasSubmitted: boolean;
+  isPending: boolean;
+  focus: boolean;
+};
+
 function EditableInput({ text }: { text: string }) {
   const toast = useToast();
   const { status } = useSession();
 
   const {
-    palette,
+    // palette,
     info: { name, status: paletteStatus },
   } = usePaletteState();
 
-  const [focus, setFocus] = useState(false);
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const { updatePaletteName, updatePaletteStatus } = usePaletteDispatch();
 
-  const { input, reset, update } = useInput<string>('name', {
+  const { input, reset } = useInput<string>('name', {
     initialValue: name,
   });
 
-  const mutation = api.palette.save.useMutation({
-    onSuccess(data) {
-      setIsSubmitting(false);
-      setFocus(false);
-      update(data?.name!);
-      isClient && localStorage.setItem('palette-name', data?.name!);
-      toast({
-        title: 'Palette name updated',
-        description: `Palette ${data?.serial} name updated to ${data?.name}`,
-        status: 'success',
-      });
-    },
-    onError(error) {
-      setIsSubmitting(false);
-      setFocus(false);
-      update(name!);
-      toast({
-        title: 'Error updating palette name',
-        description: error.message,
-        status: 'error',
-      });
-    },
-  });
+  const [{ isSubmitting, hasSubmitted, isPending, focus }, setState] =
+    useReducer(
+      (prev: FormStatus, next: Partial<FormStatus>) => {
+        next.isPending = !!(input.value !== name && !next.hasSubmitted);
+        return { ...prev, ...next };
+      },
+      {
+        isSubmitting: false,
+        hasSubmitted: false,
+        isPending: false,
+        focus: false,
+      }
+    );
+
+  useEffect(() => {
+    if (input.value === name) return;
+    setState({ isPending: true });
+  }, [input.value, name]);
+
+  useEffect(() => {
+    if (!hasSubmitted) return;
+    setTimeout(() => {
+      setState({ hasSubmitted: false });
+      reset();
+    }, 2000);
+  }, [hasSubmitted, reset]);
+
+  const resetInputState = () =>
+    setState({
+      focus: false,
+      isSubmitting: false,
+      hasSubmitted: true,
+      isPending: false,
+    });
+
+  const setSubmitting = () =>
+    setState({
+      isSubmitting: true,
+      isPending: false,
+    });
 
   const handleFocusClick = () => {
-    setFocus(true);
+    setState({ focus: true });
   };
 
   const handleBlur = (e: React.FocusEvent | KeyboardEvent) => {
     e.preventDefault();
-    setFocus(false);
+    resetInputState();
     reset();
   };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    setSubmitting();
     if (!input?.value) return;
     if (input?.value?.toLowerCase() === name) {
       reset();
+      resetInputState();
       toast({
+        id: 'no-changes',
         title: 'No changes detected',
         description: `Palette name is already ${input?.value}`,
         status: 'info',
       });
       return;
     }
-    setIsSubmitting(true);
-    mutation.mutate({
-      palette,
-      data: { name: slugify(input?.value) },
-    });
+    updatePaletteName(slugify(input?.value!));
+    resetInputState();
+    // reset();
   };
 
   const handleUpdateStatus = (e: React.SyntheticEvent<HTMLButtonElement>) => {
+    e.preventDefault();
     if (status !== 'authenticated') {
       toast({
+        id: 'unauthorized-user',
         title: 'Unauthorized',
         description: 'Log in to perform this action',
         status: 'info',
         isClosable: true,
       });
+      return;
     }
-
-    const _status = paletteStatus === 'public' ? 'private' : 'public';
-
-    if (paletteStatus === 'public') {
-      mutation.mutate({
-        palette,
-        data: { status: _status, name: slugify(input?.value) },
-      });
-    } else {
-      mutation.mutate({
-        palette,
-        data: { status: _status, name: slugify(input?.value) },
-      });
-    }
+    updatePaletteStatus();
   };
 
   useKeyPress({ keys: ['Escape'], callback: handleBlur });
@@ -186,7 +205,22 @@ function EditableInput({ text }: { text: string }) {
       color={text}
       zIndex={1}
       onSubmit={handleSubmit}
+      alignItems="center"
+      tabIndex={0}
     >
+      {isSubmitting ? <Spinner size="xs" color="green" opacity={0.7} /> : null}
+      <Circle
+        size={2}
+        bg={
+          isPending
+            ? 'orange'
+            : isSubmitting
+            ? 'orange'
+            : hasSubmitted
+            ? 'green'
+            : 'gray'
+        }
+      />
       {!focus ? (
         <Tooltip label="Click to Edit" size="xs" placement="top">
           <chakra.p
@@ -195,6 +229,7 @@ function EditableInput({ text }: { text: string }) {
             cursor="text"
             onClick={handleFocusClick}
             fontSize="sm"
+            isTruncated={true}
           >
             {input.value}
           </chakra.p>
@@ -211,7 +246,6 @@ function EditableInput({ text }: { text: string }) {
               color={text}
               textAlign="right"
               rounded="md"
-              tabIndex={0}
               _placeholder={{ color: text }}
               _focusVisible={{ outline: 'green' }}
               _selection={{ color: 'white', bg: 'green.500' }}
@@ -219,19 +253,14 @@ function EditableInput({ text }: { text: string }) {
               type="text"
               placeholder={name}
               isDisabled={status !== 'authenticated' || isSubmitting}
-              pattern={'^[a-zA-Zs-]+$'}
+              pattern={'^[a-zA-Zs-]+$'} // alpha, dashes, spaces
               autoComplete="off"
               onBlur={handleBlur}
             />
-            <InputLeftElement>
-              {isSubmitting ? (
-                <Spinner size="xs" color="green" opacity={0.7} />
-              ) : null}
-            </InputLeftElement>
           </FormControl>
         </InputGroup>
       )}
-      <Tooltip label="Public Only" size="xs" placement="top">
+      <Tooltip label="Public Beta Only" size="xs" placement="top">
         <IconButton
           aria-label="Palette Privacy Status"
           icon={
@@ -244,7 +273,7 @@ function EditableInput({ text }: { text: string }) {
           size="sm"
           variant="unstyled"
           colorScheme="green"
-          isDisabled={true || status !== 'authenticated'}
+          isDisabled={status !== 'authenticated'}
           onClick={handleUpdateStatus}
         />
       </Tooltip>
