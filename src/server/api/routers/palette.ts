@@ -46,6 +46,17 @@ export const paletteRouter = createTRPCRouter({
       trpcPrismaErrorHandler(error);
     }
   }),
+  getAll: publicProcedure
+    .input(paletteGetInputSchema)
+    .query(async ({ input, ctx }) => {
+      try {
+        return await paletteModel.getAll({
+          profileId: ctx.session?.user.profileId!,
+        });
+      } catch (error) {
+        trpcPrismaErrorHandler(error);
+      }
+    }),
   save: protectedProcedure
     .input(paletteSaveInputSchema)
     .mutation(async ({ ctx, input }) => {

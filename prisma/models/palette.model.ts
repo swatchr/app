@@ -75,6 +75,21 @@ export class Palette {
     return palette;
   }
 
+  async getAll({ profileId }: { profileId: string }) {
+    checkRequestParams([!!profileId]);
+
+    const palette = await this.prisma.palette.findMany({
+      where: { Owned: { some: { profileId: profileId } } },
+      include: { Colors: true, Owned: true, Forks: true },
+    });
+
+    if (!palette) {
+      return null;
+    }
+
+    return palette;
+  }
+
   async createOrUpdate({
     palette,
     data,
