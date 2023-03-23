@@ -14,6 +14,7 @@ export function HistoryViewer({
 }) {
   const [show, setShow] = useState(false);
   const { text } = useThemeColors();
+  const { history } = colorHandlers;
 
   return (
     <VStack
@@ -65,6 +66,11 @@ export function HistoryViewer({
                 colorHandlers.history.historyIndex === i ? '1px solid' : 'none'
               }
               borderColor={borderColor}
+              cursor="pointer"
+              onDoubleClick={(e: React.MouseEvent<HTMLDivElement>) => {
+                e.stopPropagation();
+                colorHandlers.history.handleChange(color);
+              }}
             />
           );
         })}
