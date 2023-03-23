@@ -8,6 +8,7 @@ import { BaseLayout } from '@/components';
 import { parsePalette } from '@/utils';
 import { api } from '@/utils/api';
 import ColorLab from 'lib/color';
+import Link from 'next/link';
 
 // @TODO: build out profile page
 
@@ -68,34 +69,64 @@ export function PaletteMapper({
         {palettes?.length ? (
           palettes?.map((palette) => {
             return (
-              <Box key={palette.id} rounded="md" shadow="md">
-                <Flex borderTopRadius="md" overflow="hidden">
-                  {parsePalette(palette.serial).map((color) => {
-                    const _color = new ColorLab(color);
-                    return (
-                      <Center
-                        key={color}
-                        bg={color}
-                        color={_color.contrast === 'light' ? 'white' : 'black'}
-                        boxSize={20}
-                      >
-                        {color}
-                      </Center>
-                    );
-                  })}
-                </Flex>
-                <Box px={2} py={4}>
-                  <chakra.p color="gray.500" fontSize="sm">
-                    {palette.name}
-                  </chakra.p>
+              <Box
+                key={palette.id}
+                position="relative"
+                p={2}
+                border="1px"
+                rounded="md"
+              >
+                <Box
+                  as={Link}
+                  href={`/?colors=${palette.serial}&name=${palette.name}`}
+                  position="absolute"
+                  w="full"
+                  h="full"
+                  cursor="pointer"
+                  objectFit="cover"
+                  zIndex={0}
+                />
+                <Box rounded="md" shadow="md" zIndex={1}>
+                  <Flex borderTopRadius="md" overflow="hidden">
+                    {parsePalette(palette.serial).map((color) => {
+                      const _color = new ColorLab(color);
+                      return (
+                        <Center
+                          key={color}
+                          bg={color}
+                          color={
+                            _color.contrast === 'light' ? 'white' : 'black'
+                          }
+                          boxSize={20}
+                        >
+                          {color}
+                        </Center>
+                      );
+                    })}
+                  </Flex>
+                  <HStack
+                    px={2}
+                    py={4}
+                    justifyContent="space-between"
+                    color="gray.500"
+                  >
+                    <chakra.p color="gray.500" fontSize="sm">
+                      {palette.name}
+                    </chakra.p>
+                    <HStack>
+                      <chakra.p fontSize="xs">Forks:</chakra.p>
+                      <chakra.p fontSize="xs">{palette.Forks.length}</chakra.p>
+                    </HStack>
+                  </HStack>
                 </Box>
               </Box>
+              // </Box>
             );
           })
         ) : (
           <>
             <chakra.p color="gray.400" textAlign="center">
-              Palettes that you own will be listed here.
+              {fallback}
             </chakra.p>
           </>
         )}
