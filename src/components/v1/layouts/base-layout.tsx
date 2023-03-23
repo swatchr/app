@@ -1,4 +1,4 @@
-import { Box, chakra } from '@chakra-ui/react';
+import { Box, Center, chakra } from '@chakra-ui/react';
 import { SkipNavContent } from '@chakra-ui/skip-nav';
 import { NextSeo } from 'next-seo';
 
@@ -22,6 +22,18 @@ export const BaseLayout: FC<BaseLayoutProps> = ({
     <>
       <NextSeo {...SEOConfig(title, description)} />
       <chakra.main bg="bg">
+        <Center
+          w="full"
+          bg="#BADA55"
+          color="black"
+          position="absolute"
+          top={0}
+          zIndex={10}
+        >
+          Public Alpha Preview | &nbsp;
+          <chakra.span fontWeight={600}>NOTE: </chakra.span>&nbsp; Data
+          persistence is not guaranteed during preview period.
+        </Center>
         <SkipNavContent />
         <Box
           position="relative"
