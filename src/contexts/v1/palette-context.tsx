@@ -185,7 +185,10 @@ export const PaletteProvider: React.FC<PaletteProviderProps> = ({
         return;
       }
     }
-    setState({ palettes: [['#BADA55']] });
+    setState({
+      palettes: [['#BADA55']],
+      info: { name: paletteName ?? shortname() },
+    });
   }, [colorParams, paletteName]);
 
   useEffect(() => {

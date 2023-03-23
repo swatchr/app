@@ -4,6 +4,7 @@ export function stringifyPalette(palette: string[]): string {
 }
 
 export function parsePalette(palette: string): string[] {
+  if (typeof palette !== 'string') return [];
   const arr = palette.split('-').map((c) => '#' + c);
   return arr;
 }

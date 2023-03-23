@@ -13,19 +13,21 @@ const Home: NextPage = () => {
   const router = useRouter();
   const { isLoading } = useIsLoading(true, 200);
 
+  let colorParams = undefined;
+  let paletteName = shortname();
+  if (router?.query) {
+    colorParams = parsePalette(router.query?.colors as string);
+    if (router?.query.name) {
+      paletteName = String(router.query?.name);
+    }
+  }
+
   return (
     <BaseLayout title="Swatchr" description="Color Palette Manager">
       {isLoading ? (
         <FullScreenLoader color="green" />
       ) : (
-        <PaletteProvider
-          paletteName={shortname()}
-          colorParams={
-            router?.query?.colors
-              ? parsePalette(router.query?.colors as string)
-              : undefined
-          }
-        >
+        <PaletteProvider paletteName={paletteName} colorParams={colorParams}>
           <Palette />
         </PaletteProvider>
       )}
