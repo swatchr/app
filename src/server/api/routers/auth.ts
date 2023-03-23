@@ -2,6 +2,7 @@ import { z } from 'zod';
 
 import { env } from '@/env.mjs';
 import { trpcPrismaErrorHandler } from '@/server/api/utils/error';
+import { throwBadRequestError } from '@/server/api/utils/error/trpc';
 import { TRPCError } from '@trpc/server';
 import { hashPassword } from 'lib/next-auth/services';
 import { createTRPCRouter, protectedProcedure, publicProcedure } from '../trpc';
@@ -21,10 +22,7 @@ export const authRouter = createTRPCRouter({
       const { name, email, password: plainPassword } = input;
 
       if (!name || !email || !plainPassword) {
-        throw new TRPCError({
-          code: 'BAD_REQUEST',
-          message: 'missing input value(s)',
-        });
+        throw throwBadRequestError('missing input value(s)');
       }
 
       try {
@@ -51,10 +49,7 @@ export const authRouter = createTRPCRouter({
       const { email, password: plainPassword } = input;
 
       if (!email || !plainPassword) {
-        throw new TRPCError({
-          code: 'BAD_REQUEST',
-          message: 'missing input value(s)',
-        });
+        throw throwBadRequestError('missing input value(s)');
       }
 
       const csrf = await fetch(`${env.NEXTAUTH_URL}/api/auth/csrf`, {
@@ -87,10 +82,7 @@ export const authRouter = createTRPCRouter({
     .query(async ({ ctx, input }) => {
       const { email } = input;
       if (!email) {
-        throw new TRPCError({
-          code: 'BAD_REQUEST',
-          message: 'an email is required',
-        });
+        throw throwBadRequestError('An email is required.');
       }
 
       try {
@@ -104,7 +96,9 @@ export const authRouter = createTRPCRouter({
         return {
           isSuccess: true,
         };
-      } catch (error) {}
+      } catch (error) {
+        trpcPrismaErrorHandler(error);
+      }
     }),
   getSession: publicProcedure.query(({ ctx }) => {
     return ctx.session;
