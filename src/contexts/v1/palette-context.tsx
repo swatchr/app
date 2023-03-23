@@ -51,6 +51,7 @@ export interface PaletteDispatchValue {
   addPalette: () => void;
   savePalettes: () => void;
   savePalette: () => void;
+  restorePalette: () => void;
   addSwatch: (index: number) => void;
   updateSwatch: (swatchIndex: number, newColor: string) => void;
   removeSwatch: (swatchIndex: number) => void;
@@ -239,6 +240,23 @@ export const PaletteProvider: React.FC<PaletteProviderProps> = ({
     }
   }, [palette, info.name, session?.user?.profileId, mutation]);
 
+  const updatePalette = useCallback(
+    // used by framer-motion drag and drop to update the entire palette on reorder
+    (newPalette: Palette) => {
+      setState({ palette: newPalette });
+    },
+    [setState]
+  );
+
+  const restorePalette = useCallback(() => {
+    if (!isClient) return;
+    const serializedPalette = localStorage.getItem('palette');
+    const palette = parsePalette(serializedPalette!);
+    if (palette.length) {
+      setState({ palette });
+    }
+  }, [setState]);
+
   const addSwatch = useCallback(
     (swatchIndex: number) => {
       const newColor = new ColorLab('#BADA55').random();
@@ -274,14 +292,6 @@ export const PaletteProvider: React.FC<PaletteProviderProps> = ({
       setState({ palette: newPalette });
     },
     [setState, palette]
-  );
-
-  const updatePalette = useCallback(
-    // used by framer-motion drag and drop to update the entire palette on reorder
-    (newPalette: Palette) => {
-      setState({ palette: newPalette });
-    },
-    [setState]
   );
 
   const addNewSwatch = useCallback(() => {
@@ -331,6 +341,7 @@ export const PaletteProvider: React.FC<PaletteProviderProps> = ({
             addPalette,
             savePalette,
             savePalettes,
+            restorePalette,
             addSwatch,
             updateSwatch,
             removeSwatch,
@@ -344,6 +355,7 @@ export const PaletteProvider: React.FC<PaletteProviderProps> = ({
             addPalette,
             savePalette,
             savePalettes,
+            restorePalette,
             addSwatch,
             updateSwatch,
             removeSwatch,

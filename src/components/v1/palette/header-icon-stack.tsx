@@ -10,7 +10,7 @@ import {
 import { SaveIcon } from '@/components';
 import { usePaletteDispatch } from '@/contexts';
 import ColorLab from 'lib/color';
-import { ExportIcon, SunglassesIcon } from '../icons';
+import { ExportIcon, SunglassesIcon, UndoIcon } from '../icons';
 import { FeedbackWidget } from './feedback-widget';
 
 export function HeaderIconStack({
@@ -24,7 +24,7 @@ export function HeaderIconStack({
   showCB: boolean;
   showColorBlindness: () => void;
 }) {
-  const { savePalette } = usePaletteDispatch();
+  const { savePalette, restorePalette } = usePaletteDispatch();
   const { colorMode, toggleColorMode } = useColorMode();
 
   const contrast =
@@ -84,6 +84,13 @@ export function HeaderIconStack({
           icon={<ExportIcon boxSize={'1.35rem'} />}
           onClick={openModal}
           isDisabled={showCB}
+        />
+      </Tooltip>
+      <Tooltip label="Restore Palette">
+        <IconButton
+          aria-label="Restore Palette"
+          icon={<UndoIcon boxSize={'1.35rem'} />}
+          onClick={restorePalette}
         />
       </Tooltip>
       <Tooltip label="Save Palette (Local Storage)">
