@@ -65,9 +65,11 @@ export const BaseLayout: FC<BaseLayoutProps> = ({
           position="relative"
           w="full"
           color={'text'}
-          minHeight="100vh"
-          maxHeight="100vh"
-          overflowX="hidden"
+          // minHeight="100vh"
+          // maxHeight="100vh"
+          height="$100vh" // chakra box height trick:
+          // @SEE: https://twitter.com/pagebakers/status/1638973614296031232/photo/1
+          overflow="hidden"
         >
           {children}
         </Box>
