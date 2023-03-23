@@ -10,7 +10,6 @@ import {
   Spinner,
   Tooltip,
   useDisclosure,
-  useToast,
 } from '@chakra-ui/react';
 import { useSession } from 'next-auth/react';
 import { useCallback, useEffect, useReducer, useState } from 'react';
@@ -90,7 +89,6 @@ type FormStatus = {
 };
 
 function EditableInput({ text }: { text: string }) {
-  const toast = useToast();
   const { status } = useSession();
 
   const {
@@ -162,7 +160,7 @@ function EditableInput({ text }: { text: string }) {
     if (input?.value?.toLowerCase() === name) {
       reset();
       resetInputState();
-      toast({
+      publish('show-toast', {
         id: 'no-changes',
         title: 'No changes detected',
         description: `Palette name is already ${input?.value}`,
@@ -178,7 +176,7 @@ function EditableInput({ text }: { text: string }) {
   const handleUpdateStatus = (e: React.SyntheticEvent<HTMLButtonElement>) => {
     e.preventDefault();
     if (status !== 'authenticated') {
-      toast({
+      publish('show-toast', {
         id: 'unauthorized-user',
         title: 'Unauthorized',
         description: 'Log in to perform this action',

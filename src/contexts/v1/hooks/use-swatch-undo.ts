@@ -2,8 +2,7 @@ import { useCallback, useEffect, useReducer } from 'react';
 
 import { useDebounce } from '@/hooks';
 import { useKeyboardShortcut } from '@/hooks/use-keyboard-shortcut';
-import { isClient } from '@/utils';
-import { useToast } from '@chakra-ui/react';
+import { isClient, publish } from '@/utils';
 
 type SwatchUndoState = {
   history: string[];
@@ -42,13 +41,17 @@ export const useSwatchUndo = (
   const canUndo = currentIndex > 0;
   const canRedo = currentIndex < history.length - 1;
 
-  const toast = useToast();
   const notify = useCallback(
     (title: string) => {
       isActive &&
-        toast({ title, status: 'info', duration: 2000, isClosable: true });
+        publish('show-toast', {
+          title,
+          status: 'info',
+          duration: 2000,
+          isClosable: true,
+        });
     },
-    [isActive, toast]
+    [isActive]
   );
 
   useEffect(() => {

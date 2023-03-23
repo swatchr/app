@@ -9,7 +9,6 @@ import {
   Tabs,
   Textarea,
   useColorMode,
-  useToast,
 } from '@chakra-ui/react';
 
 import { usePaletteState } from '@/contexts';
@@ -17,6 +16,7 @@ import { useClipboard } from '@/hooks';
 import {
   cssStringifyPalette,
   objectStringifyPalette,
+  publish,
   scssStringifyPalette,
   sysUIStringifyPalette,
   tailwindStringifyPalette,
@@ -59,7 +59,6 @@ export function ExportPanel({
   isOpen: boolean;
   onClose: () => void;
 }) {
-  const toast = useToast();
   const { palette } = usePaletteState();
   const { colorMode } = useColorMode();
   const scheme = 'green';
@@ -94,7 +93,8 @@ export function ExportPanel({
             const { isCopied, copy } = useClipboard({
               text: item.stringify(palette),
               onCopy: () => {
-                toast({
+                publish('show-toast', {
+                  id: `export-${key}-copied`,
                   title: 'Copied to clipboard',
                   description: item.description || 'Sorry. Please try again',
                   status: 'success',

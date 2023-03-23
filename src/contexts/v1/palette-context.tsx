@@ -19,7 +19,6 @@ import {
   updateArrayAtIndex,
 } from '@/utils';
 import { api } from '@/utils/api';
-import { useToast } from '@chakra-ui/react';
 import ColorLab from 'lib/color';
 import { shortname } from 'lib/unique-names-generator';
 import { useSession } from 'next-auth/react';
@@ -74,7 +73,6 @@ export const PaletteProvider: React.FC<PaletteProviderProps> = ({
   colorParams,
   children,
 }) => {
-  const toast = useToast();
   const { data: session, status } = useSession();
 
   const mutation = api.palette.save.useMutation({
