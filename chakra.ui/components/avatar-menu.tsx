@@ -16,7 +16,10 @@ import { analytics } from 'lib/analytics';
 import { signIn, signOut, useSession } from 'next-auth/react';
 import Link from 'next/link';
 
-const defaultLinks = [{ label: 'home', href: '/' }];
+const defaultLinks = [
+  { label: 'home', href: '/' },
+  { label: 'profile', href: '/profile' },
+];
 const protectedRoutes = [{ label: 'admin', href: '/admin' }];
 
 const ChNextLink = chakra(Link);
