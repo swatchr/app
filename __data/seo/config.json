@@ -7,7 +7,7 @@
   "locale": "en_US",
   "images": [
     {
-      "url": "https://cdn.jsdelivr.net/gh/gaurangrshah/_shots@master/swatchr/swatchr-md.png",
+      "url": "https://cdn.jsdelivr.net/gh/swatchr/app@main/public/swatchr-md.png",
       "width": 738,
       "height": 800,
       "alt": "Swatchr Logo",
@@ -17,7 +17,7 @@
   "additionalLinkTags": [
     {
       "rel": "icon",
-      "href": "https://cdn.jsdelivr.net/gh/gaurangrshah/_shots@master/swatchr/swatchr-md.png"
+      "href": "https://cdn.jsdelivr.net/gh/swatchr/app@main/public/swatchr-md.png"
     },
     {
       "rel": "canonical",
