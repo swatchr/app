@@ -7,7 +7,6 @@ import {
   Flex,
   HStack,
   Icon,
-  useToast,
 } from '@chakra-ui/react';
 import { useState } from 'react';
 
@@ -17,6 +16,7 @@ import type ColorLab from 'lib/color';
 import { CopyIcon } from '@/components';
 import { useClipboard } from '@/hooks';
 import { createColorInfo } from '@/server/api/types/color';
+import { publish } from '@/utils';
 import { api } from '@/utils/api';
 import { AccordionBox } from 'chakra.ui';
 
@@ -30,8 +30,6 @@ export function InfoPanel({
   showIcon: boolean;
 }) {
   const [info, setInfo] = useState<ColorApiClientInfo>();
-
-  const utils = api.useContext();
 
   // @TODO: replace with a color.get trpc request
   const { status, isLoading, isError } = api.color.schemeAPI.useQuery(
@@ -80,12 +78,11 @@ export function InfoPanel({
 }
 
 function InfoListItem({ field, item }: { field: string; item: any }) {
-  const toast = useToast();
-
   const { isCopied, copy } = useClipboard({
     text: item?.toString() || 'Sorry. Please try again',
     onCopy: () => {
-      toast({
+      publish('show-toast', {
+        id: `copied-${field}`,
         title: 'Copied to clipboard',
         description: item?.toString() || 'Sorry. Please try again',
         status: 'success',

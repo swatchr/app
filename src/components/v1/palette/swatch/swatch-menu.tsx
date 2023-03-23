@@ -1,10 +1,11 @@
-import { SimpleGrid, useToast } from '@chakra-ui/react';
+import { SimpleGrid } from '@chakra-ui/react';
 import { AnimatePresence } from 'framer-motion';
 import { useCallback, useEffect, useState } from 'react';
 
 import type { useColorDispatch, useColorState } from '@/contexts';
 
 import { useKeyboardShortcut } from '@/hooks/use-keyboard-shortcut';
+import { publish } from '@/utils';
 import { Controls, FilterControls } from '../controls';
 
 export type SwatchMenuAreas = Record<
@@ -25,8 +26,6 @@ export const SwatchMenu: React.FC<{
   colorHandlers: ReturnType<typeof useColorDispatch>;
   reset: boolean;
 }> = ({ colorState, colorHandlers, reset }) => {
-  const toast = useToast();
-
   const [view, setView] = useState<'default' | 'filter'>(() => 'default');
 
   const toggleVIew = useCallback(() => {
@@ -48,14 +47,14 @@ export const SwatchMenu: React.FC<{
 
   useEffect(() => {
     if (view === 'filter') {
-      toast({
+      publish('show-toast', {
         title: 'HSL Filters Active',
         status: 'info',
         duration: 5000,
         isClosable: true,
       });
     }
-  }, [toast, view]);
+  }, [view]);
 
   // @NOTE: this overrides the default browser find shortcut
   useKeyboardShortcut(['Meta', 'f'], toggleVIew, {

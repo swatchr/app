@@ -11,7 +11,6 @@ import {
   IconButton,
   Tooltip,
   useOutsideClick,
-  useToast,
   VStack,
 } from '@chakra-ui/react';
 import { useEffect, useMemo, useRef, useState } from 'react';
@@ -26,7 +25,7 @@ import {
   useContentState,
 } from '@/contexts';
 import { useClipboard } from '@/hooks';
-import { capitalize } from '@/utils';
+import { capitalize, publish } from '@/utils';
 import { MotionBox } from 'chakra.ui';
 import ColorLab from 'lib/color';
 import {
@@ -180,7 +179,6 @@ export function ColorScales({
         gap={1.5}
         justifyContent="center"
       >
-        {/* <chakra.p fontSize="sm">Mode:</chakra.p> */}
         {Object.keys(colorScaleIcons).map((currentMode) => {
           const CurrentIcon =
             colorScaleIcons[currentMode as keyof typeof colorScaleIcons];
@@ -219,8 +217,6 @@ const ScaledColorItems = ({
   scales: string[];
   colorHandlers: ColorDispatchValue;
 }) => {
-  const toast = useToast();
-
   return (
     <HStack justify="center" ml={4}>
       {scales?.length &&
@@ -250,7 +246,7 @@ const ScaledColorItems = ({
                     e.stopPropagation();
                     if (e.detail === 2) return;
                     navigator.clipboard.writeText(color);
-                    toast({
+                    publish('show-toast', {
                       title: 'Copied',
                       description: color,
                       status: 'success',
@@ -279,7 +275,6 @@ export function ColorCombos({
   onClose: () => void;
   colorHandlers: ColorDispatchValue;
 }) {
-  const toast = useToast();
   const [mode, setMode] = useState<ComboModes>('aa');
 
   let contrastColor =
@@ -360,7 +355,7 @@ export function ColorCombos({
                         e.stopPropagation();
                         if (e.detail === 2) return;
                         navigator.clipboard.writeText(c.colors[1]!),
-                          toast({
+                          publish('show-toast', {
                             title: 'Copied',
                             description: c.colors[1],
                             status: 'success',
@@ -386,7 +381,7 @@ export function ColorCombos({
                         e.stopPropagation();
                         if (e.detail === 2) return;
                         navigator.clipboard.writeText(c.colors[0]!);
-                        toast({
+                        publish('show-toast', {
                           title: 'Copied',
                           description: c.colors[0],
                           status: 'success',
@@ -464,8 +459,6 @@ export function MonochromeScale({
   onClose: () => void;
   colorHandlers: ColorDispatchValue;
 }) {
-  const toast = useToast();
-
   let contrastColor =
     instance.contrast === 'dark' ? 'blackAlpha' : 'whiteAlpha';
 
@@ -503,7 +496,7 @@ export function MonochromeScale({
           const { isCopied, copy } = useClipboard({
             text: _c,
             onCopy: () => {
-              toast({
+              publish('show-toast', {
                 title: 'Copied',
                 description: `${_c} copied to clipboard (Double-click to select)`,
                 status: 'success',

@@ -61,7 +61,7 @@ export const AvatarMenu: React.FC = () => {
   const isUser = status !== 'loading' && !!session?.user;
 
   return (
-    <Box pos="fixed" top={9} right={6} zIndex="dropdown">
+    <Box pos="fixed" top={14} right={6} zIndex="dropdown">
       <Menu
         placement="bottom-end"
         boundary="scrollParent"

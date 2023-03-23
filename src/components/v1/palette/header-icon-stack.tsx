@@ -46,7 +46,7 @@ export function HeaderIconStack({
       as={HStack}
       className="header-icons"
       position="fixed"
-      top={10}
+      top={16}
       right={24}
       zIndex={10}
       colorScheme={contrast}

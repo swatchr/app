@@ -20,7 +20,7 @@ export function LogoCredits() {
   return (
     <Box
       position="absolute"
-      top={10}
+      top={14}
       left={14}
       cursor={isDev ? 'pointer' : 'initial'}
     >
