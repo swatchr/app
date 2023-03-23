@@ -41,6 +41,7 @@ interface PaletteStateValue {
     name?: string;
     status?: 'public' | 'private' | string;
   };
+  isInfoDirty: boolean;
   activePaletteIndex: number;
   activeSwatchIndex: number;
 }
@@ -78,7 +79,7 @@ export const PaletteProvider: React.FC<PaletteProviderProps> = ({
 
   const mutation = api.palette.save.useMutation({
     onSuccess: (data) => {
-      toast({
+      publish('show-toast', {
         id: 'palette-saved',
         title: 'Palette Saved',
         description: `Your palette ${data?.serial ?? ''} has been saved.`,
@@ -88,7 +89,7 @@ export const PaletteProvider: React.FC<PaletteProviderProps> = ({
       localStorage.setItem('palette-name', info.name!);
     },
     onError: (error) => {
-      toast({
+      publish('show-toast', {
         id: 'palette-save-error',
         title: 'Error saving palette',
         description: 'There was an error saving your palette.',
@@ -103,17 +104,30 @@ export const PaletteProvider: React.FC<PaletteProviderProps> = ({
     palettes: [[]],
     palette: [],
     info: { id: '', name: '', status: 'public' },
+    isInfoDirty: false,
     activePaletteIndex: 0,
     activeSwatchIndex: -1,
   };
 
   const [
-    { palettes, palette, info, activePaletteIndex, activeSwatchIndex },
+    {
+      palettes,
+      palette,
+      info,
+      isInfoDirty,
+      activePaletteIndex,
+      activeSwatchIndex,
+    },
     setState,
   ] = useReducer(
     (prev: PaletteStateValue, next: Partial<PaletteStateValue>) => {
-      if (next.info) {
-        next.info = Object.assign({}, prev.info, next.info);
+      if (next.info && status !== 'authenticated') {
+        const hasChanged =
+          JSON.stringify(prev.info) !== JSON.stringify(next.info);
+        if (hasChanged) {
+          next.info = Object.assign({}, prev.info, next.info);
+          next.isInfoDirty = true;
+        }
       }
 
       // @NOTE: reconcile palettes with palette / vice-versa - on state updates
@@ -192,14 +206,15 @@ export const PaletteProvider: React.FC<PaletteProviderProps> = ({
   }, [colorParams, paletteName]);
 
   useEffect(() => {
-    if (status !== 'authenticated') return;
+    if (status !== 'authenticated' || !isInfoDirty) return;
     console.log('mutating');
     mutation.mutate({
       palette,
       data: info,
     });
+    setState({ isInfoDirty: false });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [info]);
+  }, [isInfoDirty, info]);
 
   const activateSwatch = useCallback(
     (index: number) => {
