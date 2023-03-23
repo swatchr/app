@@ -342,11 +342,19 @@ export const PaletteProvider: React.FC<PaletteProviderProps> = ({
         () => ({
           palettes,
           info,
+          isInfoDirty,
           activePaletteIndex,
           activeSwatchIndex,
           palette,
         }),
-        [palettes, info, activePaletteIndex, activeSwatchIndex, palette]
+        [
+          palettes,
+          info,
+          isInfoDirty,
+          activePaletteIndex,
+          activeSwatchIndex,
+          palette,
+        ]
       )}
     >
       <PaletteDispatchContext.Provider
