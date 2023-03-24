@@ -46,9 +46,9 @@ const Home: NextPage = () => {
       title="Swatchr"
       description="Color Palette Manager"
       image={{
-        url: `${getBaseUrl()}/api/og?colors=${colorParams ?? 'BADA55'}&title=${
-          paletteName ?? shortname()
-        }`,
+        url: `${getBaseUrl()}/api/og?colors=${
+          router.query?.colors ?? 'BADA55'
+        }&title=${router.query?.name ?? shortname()}`,
         width: 1200,
         height: 640,
         alt: `${paletteName} color palette`,
