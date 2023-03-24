@@ -8,6 +8,7 @@ import {
   TwitterIcon,
   TwitterShareButton,
 } from 'next-share';
+import { useRouter } from 'next/router';
 
 import type { FC } from 'react';
 
@@ -18,7 +19,6 @@ import {
   getClientBaseUrl,
   stringifyPalette,
 } from '@/utils';
-import { useRouter } from 'next/router';
 
 export const SocialShare: FC<{
   twitter?: boolean;
@@ -26,7 +26,7 @@ export const SocialShare: FC<{
   pinterest?: boolean;
 }> = ({ twitter = false, facebook = false, pinterest = false }) => {
   const { palette, info } = usePaletteState();
-  const router = useRouter();
+  // const router = useRouter();
 
   const mediaParams = {
     colors: stringifyPalette(palette ?? '#BADA55'),
@@ -34,11 +34,11 @@ export const SocialShare: FC<{
   };
   const shareData = {
     title: info?.name,
-    url: `${getBuildUrl()}?${encodeQueryParams(router.query)}`,
+    url: `${getBuildUrl()}?${encodeQueryParams(mediaParams)}`,
     quote:
       "I just created this awesome color palette with @SwatchrApp! It's so easy to use and it's free!",
     hashtag: 'SwatchrApp',
-    media: `${getClientBaseUrl()}/api/og?${encodeQueryParams(router.query)}`,
+    media: `${getClientBaseUrl()}/api/og?${encodeQueryParams(mediaParams)}`,
     blankTarget: true,
   };
   return (
