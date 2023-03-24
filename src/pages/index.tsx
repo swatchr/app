@@ -16,6 +16,7 @@ import {
 import { Box, Center } from '@chakra-ui/react';
 import { FullScreenLoader } from 'chakra.ui';
 import { shortname } from 'lib/unique-names-generator';
+import { encodeQueryParams } from '../utils/fns';
 
 const Home: NextPage = () => {
   const router = useRouter();
@@ -47,9 +48,20 @@ const Home: NextPage = () => {
     }
   }
 
-  const ogImageUrl = `${getBuildUrl()}/api/og?colors=${encodeURIComponent(
-    router.query?.colors as string
-  )}&title=${encodeURIComponent(router.query?.name as string)}`;
+  // const imageParams = {
+  //   colors: String(router.query?.colors),
+  //   title: String(router.query?.name),
+  // };
+
+  // const ogImageUrl = `${getBuildUrl()}/api/og?colors=${encodeURIComponent(
+  //   router.query?.colors as string
+  // )}&title=${encodeURIComponent(
+  //   router.query?.name ? String(router.query?.name) : ''
+  // )}`;
+  const ogImageUrl = `${getBuildUrl()}/api/og?${encodeQueryParams(
+    router.query
+  )}`;
+
   console.log('🚀 | file: index.tsx:50 | ogImageUrl:', ogImageUrl);
 
   return (

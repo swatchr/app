@@ -1,4 +1,5 @@
 import type { StringObj } from '@/types';
+import type { ParsedUrlQuery } from 'querystring';
 
 import {
   DASHES_REGEX,
@@ -20,6 +21,18 @@ export const getBuildUrl = () => {
   if (isDev) return `http://localhost:${process.env.PORT ?? 3000}`; // dev SSR should use localhost
   return 'https://swatchr.vercel.app'; // prod SSR should use prod url
 };
+
+export function encodeQueryParams(
+  params: Record<string, string> | ParsedUrlQuery
+): string {
+  const queryParams = new URLSearchParams();
+
+  for (const [key, value] of Object.entries(params)) {
+    queryParams.append(key, value as string);
+  }
+
+  return queryParams.toString();
+}
 
 /* -------------------------------------------------------------------------- */
 /*                                 ARRAY UTILS                                */
