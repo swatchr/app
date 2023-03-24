@@ -1,8 +1,9 @@
 import { ImageResponse } from '@vercel/og';
 
 import type { NextRequest } from 'next/server';
-import { LogoIcon } from '../../components/v1/icons/swatchr/logo-icon';
+// @SEE: https://medium.com/frontendweb/what-is-og-image-generation-and-how-to-use-with-nextjs-58b42800f48e
 
+// @SEE:  https://vercel.com/docs/concepts/functions/edge-functions/og-image-generation
 // enable experimental edage
 
 export const config = {
@@ -109,7 +110,6 @@ export default function handler(req: NextRequest) {
       {
         width: 1200,
         height: 640,
-        debug: true,
       }
     );
   } catch (e: any) {
