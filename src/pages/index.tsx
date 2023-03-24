@@ -29,7 +29,7 @@ const Home: NextPage = () => {
       description="Color Palette Manager"
       image={{
         url: `${getBaseUrl()}/api/og?colors=${
-          router?.query ? router.query?.colors : 'BADA55'
+          router.query?.colors ?? 'BADA55'
         }&title=${paletteName ?? ''}`,
         width: 1200,
         height: 640,
