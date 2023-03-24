@@ -112,7 +112,7 @@ export default function handler(req: NextRequest) {
           >
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
-              width="233"
+              width="300"
               height="100"
               src="https://cdn.jsdelivr.net/gh/swatchr/app@main/public/swatchr-full-transp.png"
               alt="Swatchr Logo"
