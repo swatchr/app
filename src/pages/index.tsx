@@ -28,7 +28,9 @@ const Home: NextPage = () => {
       title="Swatchr"
       description="Color Palette Manager"
       image={{
-        url: `${getBaseUrl()}/api/og?title=${paletteName}&BgColor=blue&color=black`,
+        url: `${getBaseUrl()}/api/og?colors=${colorParams}&title=${
+          paletteName ?? ''
+        }`,
         width: 1200,
         height: 640,
         alt: `${paletteName} color palette`,
