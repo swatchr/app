@@ -5,7 +5,7 @@ import type { NextPage } from 'next';
 
 import { BaseLayout, Palette } from '@/components';
 import { PaletteProvider } from '@/contexts';
-import { ALPHA_DASHES_REGEX, parsePalette } from '@/utils';
+import { ALPHA_DASHES_REGEX, parsePalette, slugify } from '@/utils';
 import { Box, Center } from '@chakra-ui/react';
 import { FullScreenLoader } from 'chakra.ui';
 import { shortname } from 'lib/unique-names-generator';
@@ -34,7 +34,7 @@ const Home: NextPage = () => {
     }
     // Validate the palette name
     if (name && typeof name === 'string') {
-      paletteName = name.substring(0, 20).replace(ALPHA_DASHES_REGEX, '');
+      paletteName = slugify(name.substring(0, 20));
       // paletteName = name.substring(0, 20).replace(/[^a-zA-Z0-9-]/g, '');
     } else if (name) {
       console.error(`Invalid palette name: ${name}`);
