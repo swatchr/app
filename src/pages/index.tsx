@@ -46,17 +46,24 @@ const Home: NextPage = () => {
     <BaseLayout
       title="Swatchr"
       description="Color Palette Manager"
-      image={{
-        url: `${'https://www.swatchr.app'}/api/og?colors=${encodeURIComponent(
-          (router.query?.colors as string) ?? 'BADA55'
-        )}&title=${encodeURIComponent(
-          (router.query?.name as string) ?? shortname()
-        )}`,
-        width: 1200,
-        height: 640,
-        alt: `${paletteName} color palette`,
-        type: 'image/png',
-      }}
+      {...Object.assign(
+        {},
+        colorParams
+          ? {
+              image: {
+                url: `${getBaseUrl()}/api/og?colors=${encodeURIComponent(
+                  (router.query?.colors as string) ?? 'BADA55'
+                )}&title=${encodeURIComponent(
+                  (router.query?.name as string) ?? shortname()
+                )}`,
+                width: 1200,
+                height: 640,
+                alt: `${paletteName} color palette`,
+                type: 'image/png',
+              },
+            }
+          : {}
+      )}
     >
       {isLoading ? (
         <FullScreenLoader color="green" />
