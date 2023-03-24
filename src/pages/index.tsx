@@ -42,6 +42,13 @@ const Home: NextPage = () => {
     }
   }
 
+  const ogImageUrl = `${getBaseUrl()}/api/og?colors=${encodeURIComponent(
+    (router.query?.colors as string) ?? 'BADA55'
+  )}&title=${encodeURIComponent(
+    (router.query?.name as string) ?? shortname()
+  )}`;
+  console.log('🚀 | file: index.tsx:50 | ogImageUrl:', ogImageUrl);
+
   return (
     <BaseLayout
       title="Swatchr"
@@ -51,11 +58,7 @@ const Home: NextPage = () => {
         colorParams
           ? {
               image: {
-                url: `${getBaseUrl()}/api/og?colors=${encodeURIComponent(
-                  (router.query?.colors as string) ?? 'BADA55'
-                )}&title=${encodeURIComponent(
-                  (router.query?.name as string) ?? shortname()
-                )}`,
+                url: ogImageUrl,
                 width: 1200,
                 height: 640,
                 alt: `${paletteName} color palette`,
