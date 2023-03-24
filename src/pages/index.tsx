@@ -4,6 +4,7 @@ import { useCallback, useEffect, useState } from 'react';
 import type { NextPage } from 'next';
 
 import { BaseLayout, Palette } from '@/components';
+import { SocialShare } from '@/components/v1/_scaffold/social';
 import { PaletteProvider } from '@/contexts';
 import { ALPHA_DASHES_REGEX, parsePalette, slugify } from '@/utils';
 import { Box, Center } from '@chakra-ui/react';
@@ -46,7 +47,7 @@ const Home: NextPage = () => {
       title="Swatchr"
       description="Color Palette Manager"
       image={{
-        url: `${getBaseUrl()}/api/og?colors=${encodeURIComponent(
+        url: `${'https://www.swatchr.app'}/api/og?colors=${encodeURIComponent(
           (router.query?.colors as string) ?? 'BADA55'
         )}&title=${encodeURIComponent(
           (router.query?.name as string) ?? shortname()
@@ -64,6 +65,7 @@ const Home: NextPage = () => {
           <Palette />
         </PaletteProvider>
       )}
+      <SocialShare twitter pinterest />
       <Center w="full" position="fixed" bottom={0} p={12}></Center>
     </BaseLayout>
   );
