@@ -94,6 +94,8 @@ export default function handler(req: NextRequest) {
               width: '100%',
               padding: '16px',
               justifyContent: 'space-between',
+              backgroundColor: 'black',
+              color: 'white',
             }}
           >
             {/* eslint-disable-next-line @next/next/no-img-element */}
