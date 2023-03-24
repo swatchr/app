@@ -12,7 +12,7 @@ import {
 import type { FC } from 'react';
 
 import { usePaletteState } from '@/contexts';
-import { getBaseUrl, stringifyPalette } from '@/utils';
+import { getBuildUrl, getClientBaseUrl, stringifyPalette } from '@/utils';
 
 export const SocialShare: FC<{
   twitter?: boolean;
@@ -22,13 +22,13 @@ export const SocialShare: FC<{
   const { palette, info } = usePaletteState();
   const shareData = {
     title: info?.name,
-    url: `https://www.swatchr.app?colors=${encodeURIComponent(
+    url: `${getBuildUrl()}?colors=${encodeURIComponent(
       stringifyPalette(palette ?? '#BADA55')
     )}&name=${encodeURIComponent(info?.name ?? '')}`,
     quote:
       "I just created this awesome color palette with @SwatchrApp! It's so easy to use and it's free!",
     hashtag: 'SwatchrApp',
-    media: `${getBaseUrl()}/api/og?colors=${encodeURIComponent(
+    media: `${getClientBaseUrl()}/api/og?colors=${encodeURIComponent(
       stringifyPalette(palette ?? '#BADA55')
     )}&title=${encodeURIComponent(encodeURIComponent(info?.name ?? ''))}`,
     blankTarget: true,

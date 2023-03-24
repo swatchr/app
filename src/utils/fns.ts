@@ -4,13 +4,21 @@ import {
   DASHES_REGEX,
   HEX_COLOR_REGEX,
   isClient,
+  isDev,
   UNDERSCORES_REGEX,
 } from './constants';
 
-export const getBaseUrl = () => {
-  if (typeof window !== 'undefined') return ''; // browser should use relative url
+export const getClientBaseUrl = () => {
+  if (!isClient) return ''; // browser should use relative url
   if (process.env.VERCEL_URL) return `https://${process.env.VERCEL_URL}`; // SSR should use vercel url
-  return `http://localhost:${process.env.PORT ?? 3000}`; // dev SSR should use localhost
+  if (isDev) return `http://localhost:${process.env.PORT ?? 3000}`; // dev SSR should use localhost
+  return 'https://swatchr.vercel.app'; // prod SSR should use prod url
+};
+
+export const getBuildUrl = () => {
+  if (process.env.VERCEL_URL) return `https://${process.env.VERCEL_URL}`; // SSR should use vercel url
+  if (isDev) return `http://localhost:${process.env.PORT ?? 3000}`; // dev SSR should use localhost
+  return 'https://swatchr.vercel.app'; // prod SSR should use prod url
 };
 
 /* -------------------------------------------------------------------------- */

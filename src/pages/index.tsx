@@ -6,11 +6,16 @@ import type { NextPage } from 'next';
 import { BaseLayout, Palette } from '@/components';
 import { SocialShare } from '@/components/v1/_scaffold/social';
 import { PaletteProvider } from '@/contexts';
-import { ALPHA_DASHES_REGEX, parsePalette, slugify } from '@/utils';
+import {
+  ALPHA_DASHES_REGEX,
+  getBuildUrl,
+  getClientBaseUrl,
+  parsePalette,
+  slugify,
+} from '@/utils';
 import { Box, Center } from '@chakra-ui/react';
 import { FullScreenLoader } from 'chakra.ui';
 import { shortname } from 'lib/unique-names-generator';
-import { getBaseUrl } from '../utils/fns';
 
 const Home: NextPage = () => {
   const router = useRouter();
@@ -42,11 +47,9 @@ const Home: NextPage = () => {
     }
   }
 
-  const ogImageUrl = `${getBaseUrl()}/api/og?colors=${encodeURIComponent(
-    (router.query?.colors as string) ?? 'BADA55'
-  )}&title=${encodeURIComponent(
-    (router.query?.name as string) ?? shortname()
-  )}`;
+  const ogImageUrl = `${getBuildUrl()}/api/og?colors=${encodeURIComponent(
+    router.query?.colors as string
+  )}&title=${encodeURIComponent(router.query?.name as string)}`;
   console.log('🚀 | file: index.tsx:50 | ogImageUrl:', ogImageUrl);
 
   return (
