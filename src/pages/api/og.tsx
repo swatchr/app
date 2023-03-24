@@ -85,7 +85,19 @@ export default function handler(req: NextRequest) {
                     flexDirection: 'column',
                     flexWrap: 'nowrap',
                   }}
-                />
+                >
+                  <p
+                    style={{
+                      color: 'white',
+                      backgroundColor: 'black',
+                      padding: '3px 4px',
+                      fontSize: '6rem',
+                      fontWeight: 600,
+                    }}
+                  >
+                    {color}
+                  </p>
+                </div>
               ))}
           </div>
           <div
@@ -100,7 +112,7 @@ export default function handler(req: NextRequest) {
           >
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
-              width="100"
+              width="233"
               height="100"
               src="https://cdn.jsdelivr.net/gh/swatchr/app@main/public/swatchr-full-transp.png"
               alt="Swatchr Logo"
