@@ -1,17 +1,18 @@
 export function stringifyPalette(palette: string[]): string {
-  const string = palette.map((c) => c.replace('#', '')).join('-');
+  if (!Array.isArray(palette)) return '';
+  const string = palette?.map((c) => c.replace('#', '')).join('-');
   return string;
 }
 
 export function parsePalette(palette: string): string[] {
   if (typeof palette !== 'string') return [];
-  const arr = palette.split('-').map((c) => '#' + c);
+  const arr = palette?.split('-').map((c) => '#' + c);
   return arr;
 }
 
 export function parsePalettes(stringPalettes: string[]) {
   // @NOTE: provide the parsed json as argument
-  return stringPalettes.map((pal) => parsePalette(pal));
+  return stringPalettes?.map((pal) => parsePalette(pal));
 }
 
 const colorProperties = [
