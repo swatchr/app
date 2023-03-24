@@ -6,14 +6,8 @@ import type { NextPage } from 'next';
 import { BaseLayout, Palette } from '@/components';
 import { SocialShare } from '@/components/v1/_scaffold/social';
 import { PaletteProvider } from '@/contexts';
-import {
-  ALPHA_DASHES_REGEX,
-  getBuildUrl,
-  getClientBaseUrl,
-  parsePalette,
-  slugify,
-} from '@/utils';
-import { Box, Center } from '@chakra-ui/react';
+import { getBuildUrl, parsePalette, slugify } from '@/utils';
+import { Center } from '@chakra-ui/react';
 import { FullScreenLoader } from 'chakra.ui';
 import { shortname } from 'lib/unique-names-generator';
 import { encodeQueryParams } from '../utils/fns';
@@ -48,21 +42,9 @@ const Home: NextPage = () => {
     }
   }
 
-  // const imageParams = {
-  //   colors: String(router.query?.colors),
-  //   title: String(router.query?.name),
-  // };
-
-  // const ogImageUrl = `${getBuildUrl()}/api/og?colors=${encodeURIComponent(
-  //   router.query?.colors as string
-  // )}&title=${encodeURIComponent(
-  //   router.query?.name ? String(router.query?.name) : ''
-  // )}`;
   const ogImageUrl = `${getBuildUrl()}/api/og?${encodeQueryParams(
     router.query
   )}`;
-
-  console.log('🚀 | file: index.tsx:50 | ogImageUrl:', ogImageUrl);
 
   return (
     <BaseLayout
