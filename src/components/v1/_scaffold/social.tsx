@@ -29,7 +29,8 @@ export const SocialShare: FC<{
   // const router = useRouter();
 
   const mediaParams = {
-    colors: stringifyPalette(palette ?? '#BADA55'),
+    // colors: stringifyPalette(palette ?? '#BADA55'),
+    colors: stringifyPalette(palette),
     title: encodeURIComponent(info?.name ?? ''),
   };
   const shareData = {

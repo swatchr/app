@@ -86,9 +86,9 @@ export const getServerSideProps: GetServerSideProps<Props> = async ({
 
   return {
     props: {
-      colorParams,
-      paletteName,
-      ogImageUrl,
+      colorParams: colorParams ?? null,
+      paletteName: paletteName ?? null,
+      ogImageUrl: ogImageUrl ?? null,
     },
   };
 };
