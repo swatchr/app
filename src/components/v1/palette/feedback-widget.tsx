@@ -19,6 +19,7 @@ import type { ButtonProps } from '@chakra-ui/react';
 import { EMAIL_REGEX } from '@/utils';
 import { api } from '@/utils/api';
 import { Popover } from 'chakra.ui';
+import { analytics } from 'lib/analytics';
 import { FeedbackIcon } from '../icons';
 
 type FeedbackState = {
@@ -84,7 +85,14 @@ export function FeedbackWidget({ isDisabled }: { isDisabled: boolean }) {
   );
 
   const { isOpen, onClose } = useDisclosure();
-  const mutation = api.email.feedback.useMutation();
+  const mutation = api.email.feedback.useMutation({
+    onSuccess: () => {
+      analytics.track('feedback-submitted', {
+        email: state.email,
+        feedback: state.feedback,
+      });
+    },
+  });
 
   const handleSubmit = (e: React.SyntheticEvent) => {
     e.preventDefault();
