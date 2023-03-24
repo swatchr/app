@@ -5,7 +5,8 @@ import type { NextPage } from 'next';
 
 import { BaseLayout, Palette } from '@/components';
 import { PaletteProvider } from '@/contexts';
-import { parsePalette } from '@/utils';
+import { ALPHA_DASHES_REGEX, parsePalette } from '@/utils';
+import { Box, Center } from '@chakra-ui/react';
 import { FullScreenLoader } from 'chakra.ui';
 import { shortname } from 'lib/unique-names-generator';
 import { getBaseUrl } from '../utils/fns';
@@ -14,12 +15,29 @@ const Home: NextPage = () => {
   const router = useRouter();
   const { isLoading } = useIsLoading(true, 200);
 
-  let colorParams = undefined;
-  let paletteName = shortname();
+  let colorParams: string[] | undefined = undefined;
+  let paletteName: string = shortname();
+
+  // If query parameters are present, validate them
   if (router?.query) {
-    colorParams = parsePalette(router.query?.colors as string);
-    if (router?.query.name) {
-      paletteName = String(router.query?.name);
+    const { colors, name } = router.query;
+    // Validate the color parameter
+    if (colors && typeof colors === 'string') {
+      const parsedColors = parsePalette(colors);
+      if (Array.isArray(parsedColors)) {
+        colorParams = parsedColors;
+      } else {
+        console.error(`Invalid color parameter: ${colors}`);
+      }
+    } else if (colors) {
+      console.error(`Invalid color parameter: ${colors}`);
+    }
+    // Validate the palette name
+    if (name && typeof name === 'string') {
+      paletteName = name.substring(0, 20).replace(ALPHA_DASHES_REGEX, '');
+      // paletteName = name.substring(0, 20).replace(/[^a-zA-Z0-9-]/g, '');
+    } else if (name) {
+      console.error(`Invalid palette name: ${name}`);
     }
   }
 
@@ -28,9 +46,9 @@ const Home: NextPage = () => {
       title="Swatchr"
       description="Color Palette Manager"
       image={{
-        url: `${getBaseUrl()}/api/og?colors=${
-          router.query?.colors ?? 'BADA55'
-        }&title=${router.query?.name ?? shortname()}`,
+        url: `${getBaseUrl()}/api/og?colors=${colorParams ?? 'BADA55'}&title=${
+          paletteName ?? shortname()
+        }`,
         width: 1200,
         height: 640,
         alt: `${paletteName} color palette`,
@@ -44,6 +62,7 @@ const Home: NextPage = () => {
           <Palette />
         </PaletteProvider>
       )}
+      <Center w="full" position="fixed" bottom={0} p={12}></Center>
     </BaseLayout>
   );
 };
