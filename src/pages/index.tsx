@@ -8,6 +8,7 @@ import { PaletteProvider } from '@/contexts';
 import { parsePalette } from '@/utils';
 import { FullScreenLoader } from 'chakra.ui';
 import { shortname } from 'lib/unique-names-generator';
+import { getBaseUrl } from '../utils/fns';
 
 const Home: NextPage = () => {
   const router = useRouter();
@@ -23,7 +24,17 @@ const Home: NextPage = () => {
   }
 
   return (
-    <BaseLayout title="Swatchr" description="Color Palette Manager">
+    <BaseLayout
+      title="Swatchr"
+      description="Color Palette Manager"
+      image={{
+        url: `${getBaseUrl()}/api/og?title=${paletteName}&BgColor=blue&color=black`,
+        width: 1200,
+        height: 640,
+        alt: `${paletteName} color palette`,
+        type: 'image/png',
+      }}
+    >
       {isLoading ? (
         <FullScreenLoader color="green" />
       ) : (

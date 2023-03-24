@@ -1,6 +1,6 @@
 import config from '__data/seo/config.json';
 
-type seoImage = {
+export type OGImage = {
   url: string;
   width: number;
   height: number;
@@ -11,7 +11,7 @@ type seoImage = {
 export function SEOConfig(
   title: string,
   description?: string,
-  image?: seoImage
+  image?: OGImage
 ) {
   let images = config?.images;
   if (images[0]?.url && image?.url && image?.url !== images[0]?.url) {

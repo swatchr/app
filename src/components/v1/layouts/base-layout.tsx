@@ -4,6 +4,7 @@ import { SkipNavContent } from '@chakra-ui/skip-nav';
 import { NextSeo } from 'next-seo';
 import { useState } from 'react';
 
+import type { OGImage } from '@/utils/seo';
 import type { FC } from 'react';
 
 import { SEOConfig } from '@/utils/seo';
@@ -12,19 +13,21 @@ import { MotionBox, transitionDown as variants } from 'chakra.ui';
 export type BaseLayoutProps = {
   title: string;
   description?: string;
+  image?: OGImage;
   children: React.ReactNode;
 };
 
 export const BaseLayout: FC<BaseLayoutProps> = ({
   title = 'Site Title',
   description = '',
+  image,
   children,
 }) => {
   const [showDisclaimer, setShowDisclaimer] = useState(true);
 
   return (
     <>
-      <NextSeo {...SEOConfig(title, description)} />
+      <NextSeo {...SEOConfig(title, description, image)} />
       <chakra.main bg="bg">
         <Center
           w="full"
