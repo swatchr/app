@@ -30,7 +30,7 @@ const Home: NextPage = () => {
       image={{
         url: `${getBaseUrl()}/api/og?colors=${
           router.query?.colors ?? 'BADA55'
-        }&title=${paletteName ?? ''}`,
+        }&title=${router.query?.name ?? shortname()}`,
         width: 1200,
         height: 640,
         alt: `${paletteName} color palette`,

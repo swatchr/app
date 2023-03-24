@@ -15,7 +15,7 @@ export function SEOConfig(
 ) {
   let images = config?.images;
   if (images[0]?.url && image?.url && image?.url !== images[0]?.url) {
-    images = [image].concat(images);
+    images = images.concat([image]); // @TODO: invert this after validating twitter card
   }
 
   return {
