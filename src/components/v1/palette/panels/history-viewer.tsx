@@ -4,6 +4,8 @@ import { useState } from 'react';
 
 import type { useColorDispatch } from '@/contexts';
 
+import { useClipboard } from '@/hooks';
+import { publish } from '@/utils';
 import { useThemeColors } from 'chakra.ui';
 import ColorLab from 'lib/color';
 
@@ -53,28 +55,65 @@ export function HistoryViewer({
         borderRight="1px"
         borderColor="currentColor"
       >
-        {colorHandlers.history.history.map((color, i) => {
-          const borderColor = new ColorLab(color).getBestContrastColor(text);
+        {history.history.map((color, i) => {
           return (
-            <Center
+            <HistorySwatch
               key={color + i}
-              ml={1}
-              bg={color}
-              rounded="xl"
-              boxSize="1.25em"
-              border={
-                colorHandlers.history.historyIndex === i ? '1px solid' : 'none'
-              }
-              borderColor={borderColor}
-              cursor="pointer"
-              onDoubleClick={(e: React.MouseEvent<HTMLDivElement>) => {
-                e.stopPropagation();
-                colorHandlers.history.handleChange(color);
-              }}
+              index={i}
+              color={color}
+              history={history}
+              text={text}
             />
           );
         })}
       </Flex>
     </VStack>
+  );
+}
+
+function HistorySwatch({
+  index,
+  color,
+  history,
+  text,
+}: {
+  index: number;
+  color: string;
+  history: ReturnType<typeof useColorDispatch>['history'];
+  text: string[];
+}) {
+  const borderColor = new ColorLab(color).getBestContrastColor(text);
+  const { isCopied, copy } = useClipboard({
+    text: color,
+    onCopy: () => {
+      publish('show-toast', {
+        id: `copied-${color}`,
+        title: 'Copied to clipboard',
+        description: color,
+        status: 'success',
+        duration: 1000,
+        isClosable: true,
+      });
+    },
+  });
+  return (
+    <Center
+      ml={1}
+      bg={color}
+      rounded="xl"
+      boxSize="1.25em"
+      border={
+        history.historyIndex === index
+          ? `${isCopied ? '2px' : '1px'} solid`
+          : 'none'
+      }
+      borderColor={borderColor}
+      cursor="pointer"
+      onClick={copy}
+      onDoubleClick={(e: React.MouseEvent<HTMLDivElement>) => {
+        e.stopPropagation();
+        history.handleChange(color);
+      }}
+    />
   );
 }
