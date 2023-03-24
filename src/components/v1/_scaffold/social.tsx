@@ -34,7 +34,7 @@ export const SocialShare: FC<{
   };
   const shareData = {
     title: info?.name,
-    url: `${getBuildUrl()}?${encodeQueryParams(router.query)}}`,
+    url: `${getBuildUrl()}?${encodeQueryParams(router.query)}`,
     quote:
       "I just created this awesome color palette with @SwatchrApp! It's so easy to use and it's free!",
     hashtag: 'SwatchrApp',

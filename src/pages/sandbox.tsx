@@ -1,20 +1,12 @@
-import { useRouter } from 'next/router';
 import { useCallback, useEffect, useState } from 'react';
 
 import type { GetServerSideProps, NextPage } from 'next';
-import type { ParsedUrlQuery } from 'querystring';
 
 import { BaseLayout, Palette } from '@/components';
 import { SocialShare } from '@/components/v1/_scaffold/social';
 import { PaletteProvider } from '@/contexts';
-import {
-  ALPHA_DASHES_REGEX,
-  getBuildUrl,
-  getClientBaseUrl,
-  parsePalette,
-  slugify,
-} from '@/utils';
-import { Box, Center } from '@chakra-ui/react';
+import { getBuildUrl, parsePalette, slugify } from '@/utils';
+import { Center } from '@chakra-ui/react';
 import { FullScreenLoader } from 'chakra.ui';
 import { shortname } from 'lib/unique-names-generator';
 import { encodeQueryParams } from '../utils/fns';
@@ -26,10 +18,7 @@ interface Props {
 }
 
 const Sandbox: NextPage<Props> = ({ ogImageUrl, paletteName, colorParams }) => {
-  const router = useRouter();
   const { isLoading } = useIsLoading(true, 200);
-
-  console.log('🚀 | file: index.tsx:38 | colorParams:', colorParams);
 
   return (
     <BaseLayout
@@ -95,8 +84,6 @@ export const getServerSideProps: GetServerSideProps<Props> = async ({
   }
 
   const ogImageUrl = `${getBuildUrl()}/api/og?${encodeQueryParams(query)}`;
-
-  console.log('🚀 | file: index.tsx:50 | ogImageUrl:', ogImageUrl);
 
   return {
     props: {
