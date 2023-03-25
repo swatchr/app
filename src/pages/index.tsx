@@ -12,9 +12,9 @@ import { shortname } from 'lib/unique-names-generator';
 import { encodeQueryParams } from '../utils/fns';
 
 interface Props {
-  ogImageUrl: string;
-  paletteName: string;
-  colorParams?: string[];
+  ogImageUrl: string | null;
+  paletteName: string | null;
+  colorParams?: string[] | null;
 }
 
 const Home: NextPage<Props> = ({ ogImageUrl, paletteName, colorParams }) => {
@@ -29,7 +29,7 @@ const Home: NextPage<Props> = ({ ogImageUrl, paletteName, colorParams }) => {
         colorParams
           ? {
               image: {
-                url: ogImageUrl,
+                url: ogImageUrl ?? '',
                 width: 1200,
                 height: 640,
                 alt: `${paletteName} color palette`,
@@ -42,7 +42,7 @@ const Home: NextPage<Props> = ({ ogImageUrl, paletteName, colorParams }) => {
       {isLoading ? (
         <FullScreenLoader color="green" />
       ) : (
-        <PaletteProvider paletteName={paletteName} colorParams={colorParams}>
+        <PaletteProvider paletteName={paletteName!} colorParams={colorParams!}>
           <Palette />
         </PaletteProvider>
       )}
