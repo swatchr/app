@@ -66,8 +66,8 @@ model User {
     sessions      Session[]
     Role          Role      @relation(fields: [role], references: [level], onDelete: SetDefault)
     role          Int       @default(0)
-    Profile       Profile   @relation(fields: [profileId], references: [id], onDelete: Cascade)
-    profileId     String    @unique @default(cuid())
+    Profile       Profile?  @relation(fields: [profileId], references: [id], onDelete: Cascade)
+    profileId     String?   @unique @default(cuid())
 
     @@unique([email, name])
     @@unique([email, profileId])

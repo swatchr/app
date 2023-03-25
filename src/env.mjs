@@ -21,6 +21,9 @@ const server = z.object({
   ADMIN_EMAIL: z.string(),
   SMTP_USER: z.string(),
   SMTP_PASSWORD: z.string(),
+  SMTP_HOST: z.string(),
+  SMTP_PORT: z.string(),
+  EMAIL_FROM: z.string(),
   // Add `.min(1) on ID and SECRET if you want to make sure they're not empty
   GOOGLE_CLIENT_ID: z.string(),
   GOOGLE_CLIENT_SECRET: z.string(),
@@ -61,6 +64,9 @@ const processEnv = {
   ADMIN_EMAIL: process.env.ADMIN_EMAIL,
   SMTP_USER: process.env.SMTP_USER,
   SMTP_PASSWORD: process.env.SMTP_PASSWORD,
+  SMTP_HOST: process.env.SMTP_HOST,
+  SMTP_PORT: process.env.SMTP_PORT,
+  EMAIL_FROM: process.env.EMAIL_FROM,
   // NEXT_PUBLIC_CLIENTVAR: process.env.NEXT_PUBLIC_CLIENTVAR,
   NEXT_PUBLIC_MIXPANEL_TOKEN: process.env.NEXT_PUBLIC_MIXPANEL_TOKEN,
 };

@@ -10,6 +10,7 @@ import {
 } from 'next-auth';
 
 import { prisma } from '@/server/db';
+import { ONE_DAY_MS } from '@/utils';
 import { callbacks, events, providers } from 'lib/next-auth/options';
 import { z } from 'zod';
 
@@ -66,12 +67,18 @@ export const authOptions: NextAuthOptions = {
   adapter: PrismaAdapter(prisma),
   providers,
   events,
+  // @NOTE: session/jwt needed for email auth
+  session: {
+    strategy: 'jwt',
+    maxAge: ONE_DAY_MS,
+  },
 };
 
 /**
  * Wrapper for `getServerSession` so that you don't need to import the `authOptions` in every file.
  *import { GoogleProvider } from 'next-auth/providers/google';
 import { User } from '@prisma/client';
+import { ONE_DAY_MS } from '@/utils';
 
  * @see https://next-auth.js.org/configuration/nextjs
  */
