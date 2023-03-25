@@ -44,9 +44,9 @@ const Home: NextPage<Props> = ({ ogImageUrl, paletteName, colorParams }) => {
       ) : (
         <PaletteProvider paletteName={paletteName!} colorParams={colorParams!}>
           <Palette />
+          <SocialShare twitter pinterest />
         </PaletteProvider>
       )}
-      <SocialShare twitter pinterest />
       <Center w="full" position="fixed" bottom={0} p={12}></Center>
     </BaseLayout>
   );
