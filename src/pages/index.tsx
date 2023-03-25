@@ -12,8 +12,8 @@ import { shortname } from 'lib/unique-names-generator';
 import { encodeQueryParams } from '../utils/fns';
 
 interface Props {
-  ogImageUrl: string | null;
-  paletteName: string | null;
+  ogImageUrl: string;
+  paletteName: string;
   colorParams?: string[] | null;
 }
 
@@ -29,7 +29,7 @@ const Home: NextPage<Props> = ({ ogImageUrl, paletteName, colorParams }) => {
         colorParams
           ? {
               image: {
-                url: ogImageUrl ?? '',
+                url: ogImageUrl,
                 width: 1200,
                 height: 640,
                 alt: `${paletteName} color palette`,
@@ -82,13 +82,15 @@ export const getServerSideProps: GetServerSideProps<Props> = async ({
     }
   }
 
-  const ogImageUrl = `${getBuildUrl()}/api/og?${encodeQueryParams(query)}`;
+  const ogImageUrl = `${getBuildUrl()}/api/og?${encodeQueryParams(
+    query ?? { colors: '#BADA55' }
+  )}`;
 
   return {
     props: {
       colorParams: colorParams ?? null,
-      paletteName: paletteName ?? null,
-      ogImageUrl: ogImageUrl ?? null,
+      paletteName: paletteName,
+      ogImageUrl,
     },
   };
 };
