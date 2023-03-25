@@ -3,7 +3,7 @@ import { useCallback, useEffect, useState } from 'react';
 
 import type { NextPage } from 'next';
 
-import { BaseLayout, Palette } from '@/components';
+import { BaseLayout, PaletteEditor } from '@/components';
 import { SocialShare } from '@/components/v1/_scaffold/social';
 import { PaletteProvider } from '@/contexts';
 import { getBuildUrl, parsePalette, slugify } from '@/utils';
@@ -68,7 +68,7 @@ const Sandbox: NextPage = () => {
         <FullScreenLoader color="green" />
       ) : (
         <PaletteProvider paletteName={paletteName} colorParams={colorParams}>
-          <Palette />
+          <PaletteEditor />
         </PaletteProvider>
       )}
       <SocialShare twitter pinterest />
