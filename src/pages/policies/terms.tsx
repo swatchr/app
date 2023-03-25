@@ -1,13 +1,13 @@
 import type { NextPage } from 'next';
 
-import { BaseLayout } from '@/components';
+import { MinimalLayout } from '@/components';
 import { TermsAndConditions } from '@/components/v1/_scaffold/legal';
 
 const Privacy: NextPage = () => {
   return (
-    <BaseLayout title="Terms and Conditions">
+    <MinimalLayout title="Terms and Conditions">
       <TermsAndConditions />
-    </BaseLayout>
+    </MinimalLayout>
   );
 };
 

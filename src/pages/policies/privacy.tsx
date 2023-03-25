@@ -1,13 +1,13 @@
 import type { NextPage } from 'next';
 
-import { BaseLayout } from '@/components';
+import { MinimalLayout } from '@/components';
 import { PrivacyPolicy } from '@/components/v1/_scaffold/legal';
 
 const Privacy: NextPage = () => {
   return (
-    <BaseLayout title="Privacy Policy">
+    <MinimalLayout title="Privacy Policy">
       <PrivacyPolicy />
-    </BaseLayout>
+    </MinimalLayout>
   );
 };
 
