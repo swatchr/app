@@ -8,14 +8,14 @@ import type { FC } from 'react';
 import { SEOConfig } from '@/utils/seo';
 import { PreviewDisclaimer } from './preview-disclaimer';
 
-export type BaseLayoutProps = {
+export type MinimalLayoutProps = {
   title: string;
   description?: string;
   image?: OGImage;
   children: React.ReactNode;
 };
 
-export const MinimalLayout: FC<BaseLayoutProps> = ({
+export const MinimalLayout: FC<MinimalLayoutProps> = ({
   title = 'Site Title',
   description = '',
   image,
