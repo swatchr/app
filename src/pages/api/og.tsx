@@ -16,14 +16,12 @@ export default function handler(req: NextRequest) {
     const { searchParams } = new URL(req.url);
 
     // ?title=<title>
-    const hasTitle = searchParams.has('title');
+    const hasName = searchParams.has('name');
 
     const hasColors = searchParams.has('colors');
 
     // add default title
-    const title = hasTitle
-      ? searchParams.get('title')?.slice(0, 100)
-      : 'Untitled';
+    const name = hasName ? searchParams.get('name')?.slice(0, 100) : '';
 
     const Colors = hasColors
       ? searchParams
@@ -31,18 +29,6 @@ export default function handler(req: NextRequest) {
           ?.split('-')
           .map((c) => `#${c}` || [])
       : ['#000'];
-
-    // // ?title=<title>&BgColor="blue"
-    // const hasBgColor = searchParams.has('BgColor');
-
-    // // ?title=<title>&BgColor="blue"&color="black"
-    // const hasColor = searchParams.has('color');
-
-    // // add default BgColor
-    // const BgColor = hasBgColor ? searchParams.get('BgColor') : 'lightblue';
-
-    // // add default color
-    // const Color = hasColor ? searchParams.get('color') : 'black';
 
     return new ImageResponse(
       (
@@ -117,7 +103,7 @@ export default function handler(req: NextRequest) {
               src="https://cdn.jsdelivr.net/gh/swatchr/app@main/public/swatchr-full-transp.png"
               alt="Swatchr Logo"
             />
-            <h2>{title}</h2>
+            <h2>{name}</h2>
           </div>
         </div>
       ),
