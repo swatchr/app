@@ -27,7 +27,7 @@ export const analytics = Analytics({
           enabled: !!process.env.NEXT_PUBLIC_MIXPANEL_TOKEN,
         })
       : doNotTrack(),
-    loggerPlugin({ enabled: false && !isProd }),
+    loggerPlugin({ enabled: !isProd }),
   ],
 });
 
