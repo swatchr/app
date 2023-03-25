@@ -6,20 +6,22 @@ import { BaseLayout, Palette } from '@/components';
 import { SocialShare } from '@/components/v1/_scaffold/social';
 import { PaletteProvider } from '@/contexts';
 import { getBuildUrl, parsePalette, slugify } from '@/utils';
+import { api } from '@/utils/api';
 import { Center } from '@chakra-ui/react';
 import { FullScreenLoader } from 'chakra.ui';
 import { shortname } from 'lib/unique-names-generator';
 import { encodeQueryParams } from '../utils/fns';
 
 interface Props {
-  ogImageUrl: string;
+  params: string;
   paletteName: string;
   colorParams?: string[] | null;
 }
 
-const Home: NextPage<Props> = ({ ogImageUrl, paletteName, colorParams }) => {
+const Home: NextPage<Props> = ({ params, paletteName, colorParams }) => {
   const { isLoading } = useIsLoading(true, 200);
-
+  const { data: domain } = api.server.domain.useQuery();
+  const ogImageUrl = `${domain}/api/og?${params}`;
   return (
     <BaseLayout
       title="Swatchr"
@@ -54,15 +56,13 @@ const Home: NextPage<Props> = ({ ogImageUrl, paletteName, colorParams }) => {
 
 export default Home;
 
-export const getServerSideProps: GetServerSideProps<Props> = async ({
-  query,
-}) => {
+export const getServerSideProps: GetServerSideProps<Props> = async (ctx) => {
   let colorParams: string[] | undefined = undefined;
   let paletteName: string = shortname();
 
   // If query parameters are present, validate them
-  if (query) {
-    const { colors, name } = query;
+  if (ctx.query) {
+    const { colors, name } = ctx.query;
     // Validate the color parameter
     if (colors && typeof colors === 'string') {
       const parsedColors = parsePalette(colors);
@@ -82,15 +82,18 @@ export const getServerSideProps: GetServerSideProps<Props> = async ({
     }
   }
 
-  const ogImageUrl = `${getBuildUrl()}/api/og?${encodeQueryParams(
-    query ?? { colors: '#BADA55' }
-  )}`;
-
   return {
     props: {
       colorParams: colorParams ?? null,
       paletteName: paletteName,
-      ogImageUrl,
+      params: encodeQueryParams(
+        colorParams
+          ? {
+              colors: colorParams,
+              name: paletteName,
+            }
+          : { colors: '#BADA55' }
+      ),
     },
   };
 };

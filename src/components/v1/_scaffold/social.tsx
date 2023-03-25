@@ -12,12 +12,8 @@ import {
 import type { FC } from 'react';
 
 import { usePaletteState } from '@/contexts';
-import {
-  encodeQueryParams,
-  getBuildUrl,
-  getClientBaseUrl,
-  stringifyPalette,
-} from '@/utils';
+import { encodeQueryParams, getClientBaseUrl, stringifyPalette } from '@/utils';
+import { api } from '@/utils/api';
 
 export const SocialShare: FC<{
   twitter?: boolean;
@@ -25,14 +21,13 @@ export const SocialShare: FC<{
   pinterest?: boolean;
 }> = ({ twitter = false, facebook = false, pinterest = false }) => {
   const { palette, info } = usePaletteState();
-
+  const { data: domain } = api.server.domain.useQuery();
   const url = `${getClientBaseUrl()}?${encodeQueryParams({
-    // colors: stringifyPalette(palette ?? '#BADA55'),
     colors: stringifyPalette(palette),
     name: encodeURIComponent(info?.name ?? ''),
   })}`;
 
-  const media = `${getBuildUrl()}/api/og?${encodeQueryParams({
+  const media = `${domain}/api/og?${encodeQueryParams({
     // colors: stringifyPalette(palette ?? '#BADA55'),
     colors: stringifyPalette(palette),
     name: encodeURIComponent(info?.name ?? ''),
