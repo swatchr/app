@@ -98,79 +98,81 @@ export function PaletteUI({
 
   return (
     <>
-      <LayoutGroup>
-        {view === 'actions' ? (
-          <motion.div ref={ref} layout variants={stack}>
-            <HeaderIconStack palette={palette} view={view} />
-          </motion.div>
-        ) : (
-          <Tooltip label={view === 'default' ? 'Actions...' : 'Close'}>
-            <IconButton
-              as={motion.div}
-              layout
-              variants={item}
-              position="fixed"
-              top={16}
-              right={24}
-              zIndex={10}
-              aria-label="Export Palette"
-              icon={
-                view === 'default' ? (
-                  <HamburgerIcon boxSize={'1.7rem'} />
-                ) : (
-                  <SmallCloseIcon boxSize={'1.7rem'} />
-                )
-              }
-              onClick={() =>
-                view !== 'default'
-                  ? handlePublish('default')
-                  : handlePublish('actions')
-              }
-              colorScheme={contrast}
-              color={controlsText}
-              fill={controlsText}
-              cursor="pointer"
-            />
-          </Tooltip>
-        )}
-      </LayoutGroup>
+      <Box ref={ref} bg={'whiteAlpha.300'}>
+        <LayoutGroup>
+          {view === 'actions' ? (
+            <motion.div layout variants={stack} style={{ overflowX: 'hidden' }}>
+              <HeaderIconStack palette={palette} view={view} />
+            </motion.div>
+          ) : (
+            <Tooltip label={view === 'default' ? 'Actions...' : 'Close'}>
+              <IconButton
+                as={motion.div}
+                layout
+                variants={item}
+                position="fixed"
+                top={16}
+                right={24}
+                zIndex={10}
+                aria-label="Export Palette"
+                icon={
+                  view === 'default' ? (
+                    <HamburgerIcon boxSize={'1.7rem'} />
+                  ) : (
+                    <SmallCloseIcon boxSize={'1.7rem'} />
+                  )
+                }
+                onClick={() =>
+                  view !== 'default'
+                    ? handlePublish('default')
+                    : handlePublish('actions')
+                }
+                colorScheme={contrast}
+                color={controlsText}
+                fill={controlsText}
+                cursor="pointer"
+              />
+            </Tooltip>
+          )}
+        </LayoutGroup>
+        {view === 'edit' && palette.length ? (
+          <HStack
+            position="absolute"
+            top={14}
+            right={36}
+            zIndex={1}
+            justify="flex-end"
+          >
+            <PaletteNameInput text={controlsText} />
+            <Tooltip label="Reorder Swatches" placement="top">
+              <Flex
+                p={2}
+                bg={contrast + '.300'}
+                rounded="md"
+                as={Reorder.Group}
+                axis="x"
+                values={palette}
+                onReorder={updatePalette}
+              >
+                {palette.length &&
+                  palette.map((color) => (
+                    <Box
+                      as={Reorder.Item}
+                      key={color}
+                      w={8}
+                      h={8}
+                      bg={color}
+                      value={color}
+                    />
+                  ))}
+              </Flex>
+            </Tooltip>
+          </HStack>
+        ) : null}
+      </Box>
       <ExportPanel isOpen={view === 'export'} />
       {view === 'color-blindness' ? (
         <ColorBlindnessSimulator palette={palette} contrast={contrast} />
-      ) : null}
-      {view === 'edit' && palette.length ? (
-        <HStack
-          position="absolute"
-          top={14}
-          right={36}
-          zIndex={1}
-          justify="flex-end"
-        >
-          <PaletteNameInput text={controlsText} />
-          <Tooltip label="Reorder Swatches" placement="top">
-            <Flex
-              p={2}
-              bg={contrast + '.300'}
-              rounded="md"
-              as={Reorder.Group}
-              axis="x"
-              values={palette}
-              onReorder={updatePalette}
-            >
-              {palette.length &&
-                palette.map((color) => (
-                  <Box
-                    as={Reorder.Item}
-                    key={color}
-                    w={8}
-                    h={8}
-                    bg={color}
-                    value={color}
-                  />
-                ))}
-            </Flex>
-          </Tooltip>
-        </HStack>
       ) : null}
     </>
   );
