@@ -104,7 +104,7 @@ export const PaletteProvider: React.FC<PaletteProviderProps> = ({
     info: { id: '', name: '', status: 'public' },
     isInfoDirty: false,
     activePaletteIndex: 0,
-    activeSwatchIndex: -1,
+    activeSwatchIndex: 0,
   };
 
   const [
