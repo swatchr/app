@@ -57,11 +57,7 @@ export function SwatchWindow({ isActive }: { isActive: boolean }) {
     return () => onClose();
   }, [onClose, isOpen]);
 
-  // let contrastColor =
-  //   instance.contrast === 'dark' ? 'blackAlpha' : 'whiteAlpha';
-
   return isActive && isOpen ? (
-    // return true ? (
     <Center
       ref={ref}
       boxSize={72}

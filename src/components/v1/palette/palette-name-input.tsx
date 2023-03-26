@@ -8,6 +8,7 @@ import {
   InputGroup,
   Spinner,
   Tooltip,
+  VisuallyHidden,
 } from '@chakra-ui/react';
 import { useSession } from 'next-auth/react';
 import { useEffect, useReducer } from 'react';
@@ -134,13 +135,9 @@ export function PaletteNameInput({ text }: { text: string }) {
   return (
     <HStack
       as={'form'}
-      position="absolute"
-      top={32}
-      right={6}
       p={2}
       maxW={56}
       color={text}
-      zIndex={1}
       onSubmit={handleSubmit}
       alignItems="center"
       tabIndex={0}
@@ -173,19 +170,20 @@ export function PaletteNameInput({ text }: { text: string }) {
         </Tooltip>
       ) : (
         <InputGroup>
-          <FormControl id="name" key="name" mt={-8}>
-            <chakra.label
-              htmlFor="name"
-              visibility={focus ? 'initial' : 'hidden'}
-              fontSize="sm"
-              color={text}
-            >
-              palette name:
-            </chakra.label>
+          <FormControl id="name" key="name">
+            <VisuallyHidden>
+              <chakra.label
+                htmlFor="name"
+                visibility={focus ? 'initial' : 'hidden'}
+                fontSize="sm"
+                color={text}
+              >
+                palette name:
+              </chakra.label>
+            </VisuallyHidden>
 
             <Input
               size="sm"
-              pr={2}
               color={text}
               textAlign="right"
               rounded="md"

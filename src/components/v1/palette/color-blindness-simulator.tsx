@@ -1,3 +1,4 @@
+import { publish } from '@/utils';
 import { Box, Button, Flex, HStack, VStack } from '@chakra-ui/react';
 import ColorLab from 'lib/color';
 import { useState } from 'react';
@@ -38,7 +39,6 @@ export function ColorBlindnessSimulator({
             role="button"
             key={filter}
             w="full"
-            // colorScheme={contrast}
             size="sm"
             cursor="pointer"
             border={filter === colorBlindnessMode ? '2px solid' : ''}
@@ -51,6 +51,16 @@ export function ColorBlindnessSimulator({
             {filter}
           </Button>
         ))}
+        <Button
+          role="button"
+          w="full"
+          size="sm"
+          cursor="pointer"
+          colorScheme="orange"
+          onClick={() => publish('view-controls', { detail: 'default' })}
+        >
+          Close
+        </Button>
       </VStack>
       <Flex w="full" h="100vh" position="absolute" inset={0} zIndex={2}>
         {palette?.length

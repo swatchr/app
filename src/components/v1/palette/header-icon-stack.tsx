@@ -1,4 +1,4 @@
-import { MoonIcon, SunIcon } from '@chakra-ui/icons';
+import { EditIcon, MoonIcon, SunIcon } from '@chakra-ui/icons';
 import {
   ButtonGroup,
   HStack,
@@ -9,23 +9,22 @@ import {
 
 import { SaveIcon } from '@/components';
 import { usePaletteDispatch } from '@/contexts';
+import { publish } from '@/utils';
 import ColorLab from 'lib/color';
 import { ExportIcon, SunglassesIcon, UndoIcon } from '../icons';
 import { FeedbackWidget } from './feedback-widget';
 
 export function HeaderIconStack({
   palette,
-  openModal,
-  showCB,
-  showColorBlindness,
+  view,
 }: {
   palette: string[];
-  openModal: () => void;
-  showCB: boolean;
-  showColorBlindness: () => void;
+  view: string;
 }) {
   const { savePalette, restorePalette } = usePaletteDispatch();
   const { colorMode, toggleColorMode } = useColorMode();
+
+  const isDisabled = view === 'color-blindness' || view === 'edit';
 
   const contrast =
     new ColorLab(palette[palette.length - 1]!).contrast == 'dark'
@@ -39,6 +38,10 @@ export function HeaderIconStack({
 
   const handleSave = () => {
     savePalette();
+  };
+
+  const handlePublish = (view: string) => (e: React.MouseEvent) => {
+    publish('view-controls', { detail: view });
   };
 
   return (
@@ -69,21 +72,20 @@ export function HeaderIconStack({
           onClick={toggleColorMode}
         />
       </Tooltip>
-      <FeedbackWidget isDisabled={showCB} />
+      <FeedbackWidget isDisabled={isDisabled} />
       <Tooltip label="Simulate Color Blindness">
         <IconButton
           aria-label="Export Palette"
           icon={<SunglassesIcon boxSize={'1.7rem'} />}
-          onClick={showColorBlindness}
-          border={showCB ? '2px solid' : 'none'}
+          onClick={handlePublish('color-blindness')}
         />
       </Tooltip>
       <Tooltip label="Export">
         <IconButton
           aria-label="Export Palette"
           icon={<ExportIcon boxSize={'1.35rem'} />}
-          onClick={openModal}
-          isDisabled={showCB}
+          onClick={handlePublish('export')}
+          isDisabled={isDisabled}
         />
       </Tooltip>
       <Tooltip label="Restore Palette">
@@ -98,7 +100,15 @@ export function HeaderIconStack({
           aria-label="Save Palette"
           icon={<SaveIcon boxSize={'1.35rem'} />}
           onClick={handleSave}
-          isDisabled={showCB}
+          isDisabled={isDisabled}
+        />
+      </Tooltip>
+      <Tooltip label="Edit Palette">
+        <IconButton
+          aria-label="Edit Palette"
+          icon={<EditIcon boxSize={'1.35rem'} />}
+          onClick={handlePublish('edit')}
+          isDisabled={isDisabled}
         />
       </Tooltip>
     </ButtonGroup>

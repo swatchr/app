@@ -54,10 +54,10 @@ const exportItems = {
 
 export function ExportPanel({
   isOpen,
-  onClose,
+  onClose = () => publish('view-controls', { detail: 'default' }),
 }: {
   isOpen: boolean;
-  onClose: () => void;
+  onClose?: () => void;
 }) {
   const { palette } = usePaletteState();
   const { colorMode } = useColorMode();
