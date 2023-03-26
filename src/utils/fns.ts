@@ -2,6 +2,7 @@ import type { StringObj } from '@/types';
 import type { ParsedUrlQuery } from 'querystring';
 
 import {
+  ANON_ID_KEY,
   DASHES_REGEX,
   HEX_COLOR_REGEX,
   isClient,
@@ -469,7 +470,7 @@ export function getUsernameFromEmail(
  */
 export function getAnonId() {
   if (!isClient) return undefined;
-  return localStorage.getItem('__anon_id');
+  return localStorage.getItem('__anon_id' ?? ANON_ID_KEY);
 }
 
 /**

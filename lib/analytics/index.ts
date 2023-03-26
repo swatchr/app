@@ -1,4 +1,4 @@
-import { isClient, isDev, isProd } from '@/utils';
+import { APP_CONSENT, isClient, isDev, isProd } from '@/utils';
 import mixpanelPlugin from '@analytics/mixpanel';
 import Analytics, { type AnalyticsInstance } from 'analytics';
 import doNotTrack from 'analytics-plugin-do-not-track';
@@ -10,9 +10,9 @@ import { loggerPlugin } from './analytics-logger';
 export function getConsent(): boolean {
   if (!isClient) return false;
   // @TTODO: extract key name to const and use in other places
-  const consent = localStorage.getItem('app-consent');
+  const consent = localStorage.getItem(APP_CONSENT);
   if (consent !== null) return JSON.parse(consent);
-  localStorage.setItem('app-consent', 'false');
+  localStorage.setItem(APP_CONSENT, 'false');
   return false;
 }
 

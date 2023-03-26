@@ -12,6 +12,8 @@ import {
   disableQuery,
   insertAtIndex,
   isClient,
+  PALETTE_KEY,
+  PALETTE_NAME_KEY,
   parsePalette,
   publish,
   removeFromArrayAtIndex,
@@ -84,7 +86,7 @@ export const PaletteProvider: React.FC<PaletteProviderProps> = ({
         status: 'success',
       });
       if (!isClient) return;
-      localStorage.setItem('palette-name', info.name!);
+      localStorage.setItem(PALETTE_NAME_KEY, info.name!);
     },
     onError: (error) => {
       publish('show-toast', {
@@ -181,8 +183,8 @@ export const PaletteProvider: React.FC<PaletteProviderProps> = ({
       });
       return;
     } else if (isClient) {
-      const serializedPalette = localStorage.getItem('palette');
-      const _paletteName = localStorage.getItem('palette-name');
+      const serializedPalette = localStorage.getItem(PALETTE_KEY);
+      const _paletteName = localStorage.getItem(PALETTE_NAME_KEY);
       const palette = parsePalette(serializedPalette!);
       if (palette.length) {
         setState({
@@ -238,13 +240,13 @@ export const PaletteProvider: React.FC<PaletteProviderProps> = ({
     const serializedPalettes = JSON.stringify(
       palettes.map((pal) => stringifyPalette(pal))
     );
-    localStorage.setItem('palettes', serializedPalettes);
+    localStorage.setItem(PALETTE_KEY, serializedPalettes);
   }, [palettes]);
 
   const savePalette = useCallback(() => {
     const serializedPalette = stringifyPalette(palette);
-    localStorage.setItem('palette', serializedPalette);
-    localStorage.setItem('palette-name', info?.name!);
+    localStorage.setItem(PALETTE_KEY, serializedPalette);
+    localStorage.setItem(PALETTE_NAME_KEY, info?.name!);
 
     if (session?.user?.profileId) {
       mutation.mutate({
@@ -266,7 +268,7 @@ export const PaletteProvider: React.FC<PaletteProviderProps> = ({
 
   const restorePalette = useCallback(() => {
     if (!isClient) return;
-    const serializedPalette = localStorage.getItem('palette');
+    const serializedPalette = localStorage.getItem(PALETTE_KEY);
     const palette = parsePalette(serializedPalette!);
     if (palette.length) {
       setState({ palette });

@@ -5,7 +5,7 @@ import { chakra } from '@chakra-ui/react';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 
-import { isBrowser } from '@/utils';
+import { APP_CONSENT, isBrowser } from '@/utils';
 import { analytics, getConsent } from 'lib/analytics';
 import { Banner } from './banner';
 
@@ -27,13 +27,13 @@ export const CookieConsent = () => {
 
   useEffect(() => {
     if (!consent) return;
-    localStorage.setItem('app-consent', 'true');
+    localStorage.setItem(APP_CONSENT, 'true');
   }, [consent]);
 
   const handleConsent = () => {
     if (isBrowser) document.body.style.overflow = 'visible';
     setConsent(true);
-    analytics.track('consent', {
+    analytics.track(APP_CONSENT, {
       category: 'consent-approval',
       label: 'consent',
       value: 1,
