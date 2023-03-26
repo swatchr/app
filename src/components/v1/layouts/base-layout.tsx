@@ -1,14 +1,13 @@
-import { CloseIcon } from '@chakra-ui/icons';
-import { Box, Center, chakra, IconButton, Slide } from '@chakra-ui/react';
+import { Box, chakra } from '@chakra-ui/react';
 import { SkipNavContent } from '@chakra-ui/skip-nav';
 import { NextSeo } from 'next-seo';
-import { useState } from 'react';
 
 import type { OGImage } from '@/utils/seo';
 import type { FC } from 'react';
 
 import { SEOConfig } from '@/utils/seo';
 import { MotionBox, transitionDown as variants } from 'chakra.ui';
+import { MadeFooter } from './made-footer';
 import { PreviewDisclaimer } from './preview-disclaimer';
 
 export type BaseLayoutProps = {
@@ -33,12 +32,13 @@ export const BaseLayout: FC<BaseLayoutProps> = ({
         <Box
           position="relative"
           w="full"
-          color={'text'}
+          color="text"
           height="$100vh" // chakra box height trick:
           // @SEE: https://twitter.com/pagebakers/status/1638973614296031232/photo/1
           overflow="hidden"
         >
           {children}
+          <MadeFooter />
         </Box>
       </chakra.main>
     </>
