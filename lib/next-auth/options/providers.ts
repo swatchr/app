@@ -1,17 +1,15 @@
 /* eslint-disable no-unused-vars */
 import CredentialsProvider from 'next-auth/providers/credentials';
+import EmailProvider from 'next-auth/providers/email';
 import GoogleProvider from 'next-auth/providers/google';
 
-import { prisma } from '@/server/db';
 import { type NextAuthOptions } from 'next-auth';
 
-// import EmailProvider from 'next-auth/providers/email';
-// import { ONE_DAY } from '@/utils';
 import { env } from '@/env.mjs';
 import { ONE_DAY_MS, TEST_ENV } from '@/utils';
-import { User } from '@prisma/client';
-import EmailProvider from 'next-auth/providers/email';
-import { comparePasswords } from '../services';
+// import { prisma } from '@/server/db';
+// import { User } from '@prisma/client';
+// import { comparePasswords } from '../services';
 
 const google = GoogleProvider({
   clientId: env.GOOGLE_CLIENT_ID,
