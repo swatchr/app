@@ -9,6 +9,8 @@ import {
 
 import { useKeyboardShortcut } from '@/hooks';
 import {
+  capitalize,
+  DASHES_REGEX,
   disableQuery,
   insertAtIndex,
   isClient,
@@ -70,6 +72,108 @@ export const PaletteDispatchContext = createContext<PaletteDispatchValue>(
   {} as PaletteDispatchValue
 );
 
+const notify = (key: string, data: any, debug: boolean = false) => {
+  let notification = {};
+  if (key === 'palette-saved') {
+    notification = {
+      id: key,
+      title: capitalize(key.replace(DASHES_REGEX, ' ')),
+      description: `Your palette ${data?.serial ?? ''} has been saved.`,
+      status: 'success',
+    };
+  }
+
+  if (key === 'palette-updated') {
+    notification = {
+      id: key,
+      title: capitalize(key.replace(DASHES_REGEX, ' ')),
+      description: `Your palette ${data?.serial ?? ''} has been updated.`,
+      status: 'success',
+    };
+  }
+
+  if (key === 'palette-not-updated') {
+    notification = {
+      id: key,
+      title: capitalize(key.replace(DASHES_REGEX, ' ')),
+      description: `Your palette ${data?.serial ?? ''} could not be updated.`,
+      status: 'info',
+    };
+  }
+
+  if (key === 'palette-name-updated') {
+    notification = {
+      id: key,
+      title: capitalize(key.replace(DASHES_REGEX, ' ')),
+      description: `Your palette name has been updated to: ${data}.`,
+      status: 'success',
+    };
+  }
+
+  if (key === 'palette-status-updated') {
+    notification = {
+      id: key,
+      title: capitalize(key.replace(DASHES_REGEX, ' ')),
+      description: `Your palette status has been updated to: ${data}.`,
+      status: 'success',
+    };
+  }
+
+  if (key === 'palette-save-error') {
+    notification = {
+      id: key,
+      title: capitalize(key.replace(DASHES_REGEX, ' ')),
+      description: 'There was an error saving your palette.',
+      status: 'error',
+    };
+  }
+
+  if (key === 'palette-restored') {
+    notification = {
+      id: key,
+      title: capitalize(key.replace(DASHES_REGEX, ' ')),
+      description: 'You palette was restored.',
+      status: 'success',
+    };
+  }
+
+  if (key === 'palette-not-restored') {
+    notification = {
+      id: key,
+      title: capitalize(key.replace(DASHES_REGEX, ' ')),
+      description: 'No changes detected.',
+      status: 'info',
+    };
+  }
+
+  if (key === 'palette-restore-error') {
+    notification = {
+      id: key,
+      title: capitalize(key.replace(DASHES_REGEX, ' ')),
+      description: 'There was an error restoring your palette.',
+      status: 'error',
+    };
+  }
+
+  if (key === 'custom-url-palette-loaded') {
+    notification = {
+      id: 'custom-url-palette-loaded',
+      title: 'Loaded custom palette',
+      description: stringifyPalette(data ?? []),
+    };
+  }
+  if (key === 'local-storage-loaded') {
+    notification = {
+      id: 'local-storage-loaded',
+      title: 'Loaded previously saved palette.',
+      description: stringifyPalette(data ?? []),
+    };
+  }
+
+  publish('show-toast', notification);
+  if (debug) console.log(key, notification);
+};
+
 export const PaletteProvider: React.FC<PaletteProviderProps> = ({
   paletteName,
   colorParams,
@@ -79,22 +183,12 @@ export const PaletteProvider: React.FC<PaletteProviderProps> = ({
 
   const mutation = api.palette.save.useMutation({
     onSuccess: (data) => {
-      publish('show-toast', {
-        id: 'palette-saved',
-        title: 'Palette Saved',
-        description: `Your palette ${data?.serial ?? ''} has been saved.`,
-        status: 'success',
-      });
+      notify('palette-saved', data);
       if (!isClient) return;
       localStorage.setItem(PALETTE_NAME_KEY, info.name!);
     },
     onError: (error) => {
-      publish('show-toast', {
-        id: 'palette-save-error',
-        title: 'Error saving palette',
-        description: 'There was an error saving your palette.',
-        status: 'error',
-      });
+      notify('palette-save-error', error);
     },
   });
 
@@ -176,11 +270,7 @@ export const PaletteProvider: React.FC<PaletteProviderProps> = ({
     // @NOTE: load from URL / Delayed Load from Local Storage / Default Palette
     if (colorParams?.length) {
       setState({ palettes: [colorParams], info: { name: paletteName } });
-      publish('show-toast', {
-        id: 'custom-url-palette-loaded',
-        title: 'Loaded custom palette',
-        description: stringifyPalette(colorParams ?? []),
-      });
+      notify('custom-url-palette-loaded', colorParams);
       return;
     } else if (isClient) {
       const serializedPalette = localStorage.getItem(PALETTE_KEY);
@@ -191,11 +281,8 @@ export const PaletteProvider: React.FC<PaletteProviderProps> = ({
           palettes: [palette],
           info: { name: _paletteName ?? shortname() },
         });
-        publish('show-toast', {
-          id: 'local-storage-loaded',
-          title: 'Loaded previously saved palette.',
-          description: stringifyPalette(palette ?? []),
-        });
+
+        notify('local-storage-loaded', palette);
         return;
       }
     }
@@ -203,6 +290,7 @@ export const PaletteProvider: React.FC<PaletteProviderProps> = ({
       palettes: [['#BADA55']],
       info: { name: paletteName ?? shortname() },
     });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [colorParams, paletteName]);
 
   useEffect(() => {
@@ -261,19 +349,32 @@ export const PaletteProvider: React.FC<PaletteProviderProps> = ({
   const updatePalette = useCallback(
     // used by framer-motion drag and drop to update the entire palette on reorder
     (newPalette: Palette) => {
+      if (!newPalette.length) return;
+      if (stringifyPalette(newPalette) === stringifyPalette(palette)) {
+        notify('palette-not-updated', {});
+        return;
+      }
       setState({ palette: newPalette });
+      notify('palette-updated', newPalette);
     },
-    [setState]
+    [setState, palette]
   );
 
   const restorePalette = useCallback(() => {
     if (!isClient) return;
     const serializedPalette = localStorage.getItem(PALETTE_KEY);
-    const palette = parsePalette(serializedPalette!);
-    if (palette.length) {
-      setState({ palette });
+    if (serializedPalette === stringifyPalette(palette)) {
+      notify('palette-not-restored', {});
+      return;
     }
-  }, [setState]);
+    const parsedPalette = parsePalette(serializedPalette!);
+    if (parsedPalette.length) {
+      setState({ palette: parsedPalette });
+      notify('palette-restored', parsedPalette);
+      return;
+    }
+    notify('palette-restore-error', parsedPalette);
+  }, [setState, palette]);
 
   const addSwatch = useCallback(
     (swatchIndex: number) => {
@@ -322,12 +423,17 @@ export const PaletteProvider: React.FC<PaletteProviderProps> = ({
 
   const updatePaletteName = useCallback((name: string) => {
     setState({ info: { name } });
+    notify('palette-name-updated', name);
   }, []);
 
   const updatePaletteStatus = useCallback(() => {
     setState({
       info: { status: info.status === 'public' ? 'private' : 'public' },
     });
+    notify(
+      'palette-status-updated',
+      info.status === 'public' ? 'private' : 'public'
+    );
   }, [info.status]);
 
   useKeyboardShortcut(['Shift', 'Control', '+'], addNewSwatch, {
