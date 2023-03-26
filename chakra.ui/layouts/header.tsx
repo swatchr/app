@@ -2,11 +2,8 @@ import { Box } from '@chakra-ui/react';
 import Link from 'next/link';
 
 import { MobileMenu, NavMenu } from '@/components';
-import { BRAND_DIR, CDN_URL } from '@/utils';
 import { Bar, ChakraNextImage } from '../components';
 import { ScrollSlide } from '../framer';
-
-import type { FC } from 'react';
 
 export const Header: React.FC = () => {
   return (
@@ -19,8 +16,8 @@ export const Header: React.FC = () => {
                 width="100"
                 height="172"
                 objectFit="contain"
-                src={`${CDN_URL}${BRAND_DIR}/rupi-title-w-icon.png`}
-                alt="Rupi Beauty Studio"
+                src={'/swatchr-md.png'}
+                alt="swatchr;"
                 priority
               />
             </Link>
