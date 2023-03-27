@@ -406,7 +406,7 @@ export const PaletteProvider: React.FC<PaletteProviderProps> = ({
   const removeSwatch = useCallback(
     (swatchIndex: number) => {
       // don't remove the first swatch if there's only one
-      if (palette.length < 1 && swatchIndex <= 0) return;
+      if (palette.length <= 1) return;
       const newPalette = removeFromArrayAtIndex(palette, swatchIndex);
       setState({ palette: newPalette });
     },
