@@ -16,8 +16,8 @@ import { useEffect, useReducer } from 'react';
 import { LockedIcon, UnlockedIcon } from '@/components';
 import { usePaletteDispatch, usePaletteState } from '@/contexts';
 import { useKeyPress } from '@/hooks';
-import { useInput } from '@/hooks/use-input';
 import { publish, slugify } from '@/utils';
+import { useInput } from 'chakra.ui/hooks/use-input';
 
 export type FormStatus = {
   isSubmitting: boolean;
