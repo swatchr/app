@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react';
 
-import { WrappedInput } from '@/hooks/use-input';
 import { validateAndConvertHexColor } from '@/utils';
 import { api } from '@/utils/api';
 import { HEX_COLOR_WITHOUT_HASH_REGEX_STRING } from '@/utils/constants';
+import { WrappedInput } from 'chakra.ui';
 
 export function SidebarTests() {
   return (
