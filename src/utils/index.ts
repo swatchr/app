@@ -11,3 +11,4 @@ export * from './react';
 export * from './react-query';
 export * from './seo';
 export * from './swatchr';
+export * from './timer';
