@@ -1,5 +1,6 @@
 import {
   chakra,
+  FormControl,
   Input,
   InputGroup,
   VisuallyHidden,
@@ -67,7 +68,7 @@ export function useInput<T>(
   return input;
 }
 
-export function InputUser({
+export function WrappedInput({
   name,
   config = {},
   showLabel = false,
@@ -108,5 +109,24 @@ export function InputUser({
         {...config}
       />
     </VStack>
+  );
+}
+
+export function InputWrapper({
+  id,
+  label,
+  children,
+}: {
+  id: string;
+  label: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <FormControl id={id} key={id} my={6}>
+      <chakra.label fontSize="sm" color="gray">
+        {label}
+      </chakra.label>
+      {children}
+    </FormControl>
   );
 }

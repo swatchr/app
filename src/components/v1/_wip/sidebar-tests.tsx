@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 
-import { InputUser } from '@/hooks/use-input';
+import { WrappedInput } from '@/hooks/use-input';
 import { validateAndConvertHexColor } from '@/utils';
 import { api } from '@/utils/api';
 import { HEX_COLOR_WITHOUT_HASH_REGEX_STRING } from '@/utils/constants';
@@ -23,7 +23,7 @@ function TestPaletteCreate() {
 
   return (
     <>
-      <InputUser
+      <WrappedInput
         showLabel
         name="create-palette"
         config={{
@@ -52,7 +52,7 @@ function TestColorCreate() {
 
   return (
     <>
-      <InputUser
+      <WrappedInput
         showLabel
         name="create-color"
         config={{
@@ -88,7 +88,7 @@ function TestColorGet() {
 
   return (
     <>
-      <InputUser
+      <WrappedInput
         showLabel
         name="get-color"
         config={{
@@ -117,7 +117,7 @@ function TestColorGetAll() {
 
   return (
     <>
-      <InputUser
+      <WrappedInput
         showLabel
         name="get-all-colors"
         config={{
@@ -148,7 +148,7 @@ function TestColorUpdate() {
 
   return (
     <>
-      <InputUser
+      <WrappedInput
         showLabel
         name="update-color"
         config={{
@@ -182,7 +182,7 @@ function TestColorDelete() {
 
   return (
     <>
-      <InputUser
+      <WrappedInput
         showLabel
         name="delete-color"
         config={{
