@@ -2,6 +2,14 @@
 # yarn lockfile v1
 
 
+"@analytics/activity-utils@^0.1.13":
+  version "0.1.13"
+  resolved "https://registry.yarnpkg.com/@analytics/activity-utils/-/activity-utils-0.1.13.tgz#c26e73edc39e1b2d8e300e4f6c7caeffb2e57808"
+  integrity sha512-B5PA67K31YUGqfCnUlkgzpvlgZViXWuDz4EhxDZjhQgeUdE5zkisA3n9DMgmpJKPIpZqXgUXgX8DfQ6KRoINZQ==
+  dependencies:
+    "@analytics/listener-utils" "^0.3.0"
+    analytics-plugin-tab-events "^0.2.1"
+
 "@analytics/cookie-utils@^0.2.10":
   version "0.2.10"
   resolved "https://registry.yarnpkg.com/@analytics/cookie-utils/-/cookie-utils-0.2.10.tgz#94d1ad0766c58c4a294e5ca54f59b0a69bd574b4"
@@ -22,6 +30,13 @@
   version "0.1.5"
   resolved "https://registry.yarnpkg.com/@analytics/global-storage-utils/-/global-storage-utils-0.1.5.tgz#54cc14f8d678610b5fca1e98215fe29fff662f31"
   integrity sha512-DzOCd0qK7PGnz/dgBYNzLmaFBkxcEHM6/CpWMY7hel1IBUldMsyet4sdRgI2Nk+Wc6B/YvqVqos68p5ntB59zA==
+  dependencies:
+    "@analytics/type-utils" "^0.6.0"
+
+"@analytics/listener-utils@^0.3.0":
+  version "0.3.0"
+  resolved "https://registry.yarnpkg.com/@analytics/listener-utils/-/listener-utils-0.3.0.tgz#d436ac5ae6d7943474f07f2bb00c96592295ae3b"
+  integrity sha512-zCtpc6f0Ty0fpnw6wOayO5cRZeTJWsB8+Mt1VRaKyaJZdVZ8y9QdU5iYVHw2aTWUTa9cUuSJlUCNZsyzxd2+Mg==
   dependencies:
     "@analytics/type-utils" "^0.6.0"
 
@@ -1942,6 +1957,11 @@ analytics-plugin-do-not-track@^0.1.5:
   version "0.1.5"
   resolved "https://registry.yarnpkg.com/analytics-plugin-do-not-track/-/analytics-plugin-do-not-track-0.1.5.tgz#e5a3ffb14b900538d322402c71bad065bf9932cd"
   integrity sha512-Bnadur6Y8UB2GrZD11SXAmIVraPpsVINcU8cgbq6ynJIE00xrcJ/RhqFdqqIM7Heyuze93FhcEKLl5WGV9N9mA==
+
+analytics-plugin-tab-events@^0.2.1:
+  version "0.2.1"
+  resolved "https://registry.yarnpkg.com/analytics-plugin-tab-events/-/analytics-plugin-tab-events-0.2.1.tgz#41361c320ba2d2703879ae811b42d04f0418c239"
+  integrity sha512-jGZNw3HncKYs4lBO7cUcwKWnwO08KpoxAT7CYESxtsTfl1KRVqTiDv1Wne/cDvq5+rOpmxY4z6lNbV6T4E/WJQ==
 
 analytics-utils@^1.0.10:
   version "1.0.10"
