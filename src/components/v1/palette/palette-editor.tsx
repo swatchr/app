@@ -50,7 +50,7 @@ export function PaletteUI({
   palette: string[];
   setView: (view: string) => void;
 }) {
-  const { updatePalette } = usePaletteDispatch();
+  const { updatePaletteOrder } = usePaletteDispatch();
 
   const handleClose = () => {
     publish('view-controls', { detail: 'default' });
@@ -149,7 +149,7 @@ export function PaletteUI({
                 as={Reorder.Group}
                 axis="x"
                 values={palette}
-                onReorder={updatePalette}
+                onReorder={updatePaletteOrder}
               >
                 {palette.length &&
                   palette.map((color) => (
