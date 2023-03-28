@@ -5,10 +5,10 @@ import {
   SlideFade,
   useDisclosure,
 } from '@chakra-ui/react';
-import { motion, useAnimation } from 'framer-motion';
+import { AnimatePresence, motion, useAnimation } from 'framer-motion';
 import { useCallback, useEffect, useState } from 'react';
 
-import { useColorDispatch, useColorState } from '@/contexts';
+import { useColorDispatch, useColorState, usePaletteState } from '@/contexts';
 import { useMounted } from '@/hooks/use-mounted';
 import { useThemeColors } from 'chakra.ui';
 import { ColorPickerWrapper, EditableHexInput, SwatchMenu } from '.';
@@ -22,6 +22,7 @@ export function Swatch({ index }: { index: number }) {
   const [reset, setReset] = useState(false);
   const colorState = useColorState();
   const colorHandlers = useColorDispatch();
+  const { activeSwatchIndex } = usePaletteState();
 
   const { text: themeTexts } = useThemeColors();
   const text = colorState.instance.getBestContrastColor(themeTexts);
@@ -55,6 +56,7 @@ export function Swatch({ index }: { index: number }) {
 
   return (
     <Flex
+      // flex={activeSwatchIndex === index ? 1 : 0}
       direction="column"
       className="swatch-wrapper"
       position="relative"
@@ -71,9 +73,11 @@ export function Swatch({ index }: { index: number }) {
         swatchMenuOnOpen();
       }}
       onMouseLeave={() => {
-        colorHandlers.paletteHandlers.activateSwatch(-1);
+        // colorHandlers.paletteHandlers.activateSwatch(-1);
         swatchMenuOnClose();
       }}
+      willChange={'flex'}
+      transition="flex 500ms cubic-bezier(0.645, 0.045, 0.355, 1.000)"
       color={text} // all of the icons and text inherit this text color
     >
       <SlideFade in={mounted} offsetX={-96} reverse unmountOnExit>

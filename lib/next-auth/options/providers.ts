@@ -8,8 +8,9 @@ import { type NextAuthOptions } from 'next-auth';
 // import EmailProvider from 'next-auth/providers/email';
 // import { ONE_DAY } from '@/utils';
 import { env } from '@/env.mjs';
-import { TEST_ENV } from '@/utils';
+import { ONE_DAY_MS, TEST_ENV } from '@/utils';
 import { User } from '@prisma/client';
+import EmailProvider from 'next-auth/providers/email';
 import { comparePasswords } from '../services';
 
 const google = GoogleProvider({
@@ -29,18 +30,18 @@ const google = GoogleProvider({
 // /**
 //  * @NOTE: Requires nodemailer + JWT strategy + callback to work
 //  */
-// const email = EmailProvider({
-//   server: {
-//     host: process.env.SMTP_SERVER_HOST,
-//     port: process.env.SMTP_SERVER_PORT,
-//     auth: {
-//       user: process.env.SMTP_SERVER_EMAIL,
-//       pass: process.env.SMTP_SERVER_PASSWORD
-//     }
-//   },
-//   from: process.env.EMAIL_FROM,
-//   maxAge: ONE_DAY, // How long email links are valid for (default 24h)
-// })
+const email = EmailProvider({
+  server: {
+    host: process.env.SMTP_HOST,
+    port: Number(process.env.SMTP_PORT),
+    auth: {
+      user: process.env.SMTP_USER,
+      pass: process.env.SMTP_PASSWORD,
+    },
+  },
+  from: process.env.EMAIL_FROM,
+  maxAge: ONE_DAY_MS, // How long email links are valid for (default 24h)
+});
 
 /**
  * @NOTE: Requires JWT strategy + callback to work
@@ -84,5 +85,5 @@ const google = GoogleProvider({
 //   },
 // });
 
-export const providers: NextAuthOptions['providers'] = [google];
+export const providers: NextAuthOptions['providers'] = [email];
 // TEST_ENV ? providers.push(credentials) : providers.push(google);

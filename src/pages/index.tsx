@@ -2,10 +2,10 @@ import { useCallback, useEffect, useState } from 'react';
 
 import type { GetServerSideProps, NextPage } from 'next';
 
-import { BaseLayout, Palette } from '@/components';
+import { BaseLayout, PaletteEditor } from '@/components';
 import { SocialShare } from '@/components/v1/_scaffold/social';
 import { PaletteProvider } from '@/contexts';
-import { getBuildUrl, parsePalette, slugify } from '@/utils';
+import { parsePalette, slugify } from '@/utils';
 import { api } from '@/utils/api';
 import { Center } from '@chakra-ui/react';
 import { FullScreenLoader } from 'chakra.ui';
@@ -45,7 +45,7 @@ const Home: NextPage<Props> = ({ params, paletteName, colorParams }) => {
         <FullScreenLoader color="green" />
       ) : (
         <PaletteProvider paletteName={paletteName!} colorParams={colorParams!}>
-          <Palette />
+          <PaletteEditor />
           <SocialShare twitter pinterest />
         </PaletteProvider>
       )}

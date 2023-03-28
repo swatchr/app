@@ -1,3 +1,4 @@
+import { EMAIL_REGEX } from '@/utils';
 import type { User } from '@prisma/client';
 import type { CallbacksOptions } from 'next-auth';
 
@@ -15,8 +16,8 @@ export const session: CallbacksOptions['session'] = ({
   user,
   token,
 }) => {
-  if (session.user) {
-    session.user.id = user.id;
+  if (session?.user) {
+    session.user.id = user?.id;
     session.user.profileId = user?.profileId;
     session.user.emailVerified = user?.emailVerified;
     session.user.role = user?.role || 0; // make user anonymous if they don't have a role
@@ -24,6 +25,7 @@ export const session: CallbacksOptions['session'] = ({
       session.accessToken = token?.accessToken;
     }
   }
+  console.log(session);
   return session;
 };
 
@@ -35,9 +37,10 @@ export const signIn: CallbacksOptions['signIn'] = ({
   credentials,
 }) => {
   // @NOTE: must specify a validation check for each provider
-  if (account?.provider === 'google' && profile?.email) {
-    return profile?.email.endsWith('@gmail.com');
-  }
+  // if (account?.provider === 'google' && profile?.email) {
+  //   return profile?.email.endsWith('@gmail.com');
+  // }
+
   return true;
 };
 
