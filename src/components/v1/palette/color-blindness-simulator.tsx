@@ -1,14 +1,15 @@
-import { publish } from '@/utils';
-import { Box, Button, Flex, HStack, VStack } from '@chakra-ui/react';
+import { Box, Button, Flex, VStack } from '@chakra-ui/react';
 import ColorLab from 'lib/color';
 import { useState } from 'react';
 
 export function ColorBlindnessSimulator({
   contrast,
   palette,
+  onClose,
 }: {
   contrast: string;
   palette: string[];
+  onClose: () => void;
 }) {
   const colorBlindnessFilters: Record<string, string> = {
     protanomaly: 'protanomaly',
@@ -57,7 +58,7 @@ export function ColorBlindnessSimulator({
           size="sm"
           cursor="pointer"
           colorScheme="orange"
-          onClick={() => publish('view-controls', { detail: 'default' })}
+          onClick={onClose}
         >
           Close
         </Button>

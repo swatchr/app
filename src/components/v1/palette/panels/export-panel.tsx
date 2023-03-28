@@ -129,8 +129,12 @@ export function ExportPanel({
                 >
                   <Button
                     leftIcon={isCopied ? <CheckIcon /> : <CopyIcon />}
-                    onClick={copy}
                     colorScheme={scheme}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      copy(e);
+                    }}
                   >
                     {isCopied ? 'Copied' : 'Copy'}
                   </Button>

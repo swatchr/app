@@ -9,10 +9,10 @@ import {
   useOutsideClick,
 } from '@chakra-ui/react';
 import { LayoutGroup, motion, Reorder } from 'framer-motion';
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useRef, useState } from 'react';
 
 import { usePaletteDispatch, usePaletteState } from '@/contexts';
-import { isDev, publish, subscribe, unsubscribe } from '@/utils';
+import { isDev, publish } from '@/utils';
 import ColorLab from 'lib/color';
 import { CommandPalette } from '../_wip/command-palette';
 import { LogoCredits } from '../_wip/logo-credits';
@@ -25,24 +25,15 @@ import { ExportPanel } from './panels/export-panel';
 export function PaletteEditor() {
   const { palette } = usePaletteState();
   const [view, setView] = useState('default');
-  useEffect(() => {
-    subscribe('view-controls', (payload) => {
-      if (view.toLowerCase() === payload.detail.detail.toLowerCase()) {
-        return setView('default');
-      }
-      setView(payload.detail.detail);
-    });
-
-    return () => {
-      unsubscribe('view-controls', () => setView((prev) => prev));
-    };
-  }, [view]);
+  const updateView = useCallback((view: string) => {
+    setView(view);
+  }, []);
 
   return (
     <>
       {/* @TODO: WIP: finish command Palette logic */}
       {isDev ? <CommandPalette /> : null}
-      <PaletteUI view={view} palette={palette} />
+      <PaletteUI view={view} palette={palette} setView={updateView} />
       <Palette palette={palette} />
       {/* @TODO: WIP: Finish LogoCredits */}
       <LogoCredits />
@@ -53,17 +44,19 @@ export function PaletteEditor() {
 export function PaletteUI({
   view,
   palette,
+  setView,
 }: {
   view: string;
   palette: string[];
+  setView: (view: string) => void;
 }) {
   const { updatePalette } = usePaletteDispatch();
 
   const handleClose = () => {
     publish('view-controls', { detail: 'default' });
   };
-  const handlePublish = (view: string) => {
-    publish('view-controls', { detail: view });
+  const updateView = (view: string) => {
+    setView(view);
   };
 
   const ref = useRef<HTMLDivElement | null>(null);
@@ -102,7 +95,11 @@ export function PaletteUI({
         <LayoutGroup>
           {view === 'actions' ? (
             <motion.div layout variants={stack} style={{ overflowX: 'hidden' }}>
-              <HeaderIconStack palette={palette} view={view} />
+              <HeaderIconStack
+                palette={palette}
+                view={view}
+                setView={setView}
+              />
             </motion.div>
           ) : (
             <Tooltip label={view === 'default' ? 'Actions...' : 'Close'}>
@@ -124,8 +121,8 @@ export function PaletteUI({
                 }
                 onClick={() =>
                   view !== 'default'
-                    ? handlePublish('default')
-                    : handlePublish('actions')
+                    ? updateView('default')
+                    : updateView('actions')
                 }
                 colorScheme={contrast}
                 color={controlsText}
@@ -170,9 +167,16 @@ export function PaletteUI({
           </HStack>
         ) : null}
       </Box>
-      <ExportPanel isOpen={view === 'export'} />
+      <ExportPanel
+        isOpen={view === 'export'}
+        onClose={() => updateView('default')}
+      />
       {view === 'color-blindness' ? (
-        <ColorBlindnessSimulator palette={palette} contrast={contrast} />
+        <ColorBlindnessSimulator
+          palette={palette}
+          contrast={contrast}
+          onClose={() => updateView('default')}
+        />
       ) : null}
     </>
   );
