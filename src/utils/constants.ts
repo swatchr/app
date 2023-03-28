@@ -36,6 +36,7 @@ export const DEFAULT_STALE_TIME: number = 5 * ONE_SECOND_MS; // 5secs
 export const ANON_ID_KEY = '__anon_id';
 export const NEXT_AUTH_SESSION_TOKEN_KEY = 'next-auth.session-token';
 export const APP_CONSENT = 'app-consent';
+export const ALPHA_FEEDBACK_KEY = 'alpha-feedback-shown';
 
 export const PALETTE_KEY = 'palette';
 export const PALETTE_NAME_KEY = 'palette-name';
