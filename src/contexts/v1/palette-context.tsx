@@ -60,6 +60,7 @@ export interface PaletteDispatchValue {
   updateSwatch: (swatchIndex: number, newColor: string) => void;
   removeSwatch: (swatchIndex: number) => void;
   updatePalette: (palette: Palette) => void;
+  updatePaletteOrder: (palette: Palette) => void;
   updatePaletteName: (name: string) => void;
   updatePaletteStatus: () => void;
 }
@@ -347,7 +348,6 @@ export const PaletteProvider: React.FC<PaletteProviderProps> = ({
   }, [palette, info.name, session?.user?.profileId, mutation]);
 
   const updatePalette = useCallback(
-    // used by framer-motion drag and drop to update the entire palette on reorder
     (newPalette: Palette) => {
       if (!newPalette.length) return;
       if (stringifyPalette(newPalette) === stringifyPalette(palette)) {
@@ -358,6 +358,15 @@ export const PaletteProvider: React.FC<PaletteProviderProps> = ({
       notify('palette-updated', newPalette);
     },
     [setState, palette]
+  );
+  const updatePaletteOrder = useCallback(
+    // used by framer-motion drag and drop to update the entire palette on reorder
+    // the only diff between this and updatePalette is that this does not trigger notifications
+    (newPalette: Palette) => {
+      if (!newPalette.length) return;
+      setState({ palette: newPalette });
+    },
+    [setState]
   );
 
   const restorePalette = useCallback(() => {
@@ -478,6 +487,7 @@ export const PaletteProvider: React.FC<PaletteProviderProps> = ({
             updateSwatch,
             removeSwatch,
             updatePalette,
+            updatePaletteOrder,
             updatePaletteName,
             updatePaletteStatus,
           }),
@@ -492,6 +502,7 @@ export const PaletteProvider: React.FC<PaletteProviderProps> = ({
             updateSwatch,
             removeSwatch,
             updatePalette,
+            updatePaletteOrder,
             updatePaletteName,
             updatePaletteStatus,
           ]

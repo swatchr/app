@@ -15,7 +15,7 @@ export function useClipboard({
         HTMLDivElement | HTMLButtonElement | HTMLTextAreaElement
       >
     ) => {
-      e.stopPropagation();
+      e?.stopPropagation();
       navigator.clipboard.writeText(text);
       setIsCopied(true);
       onCopy?.();

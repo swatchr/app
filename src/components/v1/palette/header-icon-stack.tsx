@@ -9,7 +9,6 @@ import {
 
 import { SaveIcon } from '@/components';
 import { usePaletteDispatch } from '@/contexts';
-import { publish } from '@/utils';
 import ColorLab from 'lib/color';
 import { ExportIcon, SunglassesIcon, UndoIcon } from '../icons';
 import { FeedbackWidget } from './feedback-widget';
@@ -17,9 +16,11 @@ import { FeedbackWidget } from './feedback-widget';
 export function HeaderIconStack({
   palette,
   view,
+  setView,
 }: {
   palette: string[];
   view: string;
+  setView: (view: string) => void;
 }) {
   const { savePalette, restorePalette } = usePaletteDispatch();
   const { colorMode, toggleColorMode } = useColorMode();
@@ -40,8 +41,8 @@ export function HeaderIconStack({
     savePalette();
   };
 
-  const handlePublish = (view: string) => (e: React.MouseEvent) => {
-    publish('view-controls', { detail: view });
+  const updateView = (view: string) => (e: React.MouseEvent) => {
+    setView(view);
   };
 
   return (
@@ -77,14 +78,14 @@ export function HeaderIconStack({
         <IconButton
           aria-label="Export Palette"
           icon={<SunglassesIcon boxSize={'1.7rem'} />}
-          onClick={handlePublish('color-blindness')}
+          onClick={updateView('color-blindness')}
         />
       </Tooltip>
       <Tooltip label="Export">
         <IconButton
           aria-label="Export Palette"
           icon={<ExportIcon boxSize={'1.35rem'} />}
-          onClick={handlePublish('export')}
+          onClick={updateView('export')}
           isDisabled={isDisabled}
         />
       </Tooltip>
@@ -107,7 +108,7 @@ export function HeaderIconStack({
         <IconButton
           aria-label="Edit Palette"
           icon={<EditIcon boxSize={'1.35rem'} />}
-          onClick={handlePublish('edit')}
+          onClick={updateView('edit')}
           isDisabled={isDisabled}
         />
       </Tooltip>
