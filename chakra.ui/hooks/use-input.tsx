@@ -118,12 +118,12 @@ export function InputWrapper({
   children,
 }: {
   id: string;
-  label: string;
+  label: React.ReactNode | string;
   children: React.ReactNode;
 }) {
   return (
-    <FormControl id={id} key={id} my={6}>
-      <chakra.label fontSize="sm" color="gray">
+    <FormControl id={id} key={id} my={3}>
+      <chakra.label fontSize="md" color="gray">
         {label}
       </chakra.label>
       {children}
