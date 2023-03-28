@@ -14,6 +14,7 @@ import type { inferRouterInputs, inferRouterOutputs } from '@trpc/server';
 import type { NextPageContext } from 'next';
 
 import { trpcClientErrorHandler } from '@/server/api/utils';
+import { isDev } from '@/utils';
 import { DEFAULT_STALE_TIME, ONE_DAY_MS } from './constants';
 
 const getBaseUrl = () => {
@@ -88,13 +89,17 @@ const queryClientConfig = {
       staleTime: DEFAULT_STALE_TIME,
       onError: trpcClientErrorHandler,
       onSuccess: (data: unknown) => {
-        console.log('query client default success', data);
+        if (isDev) {
+          console.log('query client default success', data);
+        }
       },
     },
     mutations: {
       onError: trpcClientErrorHandler,
       onSuccess: (data: unknown) => {
-        console.log('mutation client default success', data);
+        if (isDev) {
+          console.log('mutation client default success', data);
+        }
       },
     },
   },
