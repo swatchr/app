@@ -6,6 +6,7 @@ import {
   Flex,
   Link,
   Textarea,
+  useColorModeValue,
   useDisclosure,
   VStack,
 } from '@chakra-ui/react';
@@ -168,19 +169,19 @@ export function AlphaFeedbackForm({ onClose }: { onClose: () => void }) {
         <>
           <MultiStepWizard onSubmit={handleSubmit}>
             <VStack my={6}>
-              <chakra.p textAlign="left" w="full" color="gray.400">
+              <chakra.p textAlign="left" w="full">
                 How would you rank your overall experience with Swatchr?
               </chakra.p>
               <RatingsWidget updateRating={setRating} position={1} />
             </VStack>
             <VStack my={6}>
-              <chakra.p textAlign="left" w="full" color="gray.400">
+              <chakra.p textAlign="left" w="full">
                 How would you rank Swatchr&apos;s ease of use?
               </chakra.p>
               <RatingsWidget updateRating={setRating} position={2} />
             </VStack>
             <VStack my={6}>
-              <chakra.p textAlign="left" w="full" color="gray.400">
+              <chakra.p textAlign="left" w="full">
                 How likely are you to use Swatchr again?
               </chakra.p>
               <RatingsWidget updateRating={setRating} position={3} />
@@ -210,6 +211,8 @@ const RatingsWidget = ({
   updateRating: (position: number, index: number) => void;
 }) => {
   const [rating, setRating] = useState(0);
+  const starColor = useColorModeValue('blackAlpha.300', 'whiteAlpha.300');
+  const ratingsBG = useColorModeValue('blackAlpha.100', 'whiteAlpha.100');
 
   const handleStarClick = (index: number) => {
     setRating(index + 1);
@@ -221,7 +224,7 @@ const RatingsWidget = ({
       w="full"
       justify="center"
       gap={[6, null, 12]}
-      bg={'whiteAlpha.100'}
+      bg={ratingsBG}
       rounded="md"
     >
       {[...Array(5)].map((_, index) => (
@@ -229,7 +232,7 @@ const RatingsWidget = ({
           key={index}
           onClick={() => handleStarClick(index)}
           cursor="pointer"
-          color={index < rating ? '#ffc107' : 'whiteAlpha.300'}
+          color={index < rating ? '#ffc107' : starColor}
           fontSize={42}
         >
           &#9733;
