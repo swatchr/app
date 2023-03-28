@@ -1,13 +1,13 @@
 import {
   Button,
   ButtonGroup,
-  Code,
   HStack,
   Tab,
   TabList,
   TabPanel,
   TabPanels,
   Tabs,
+  Textarea,
   useColorMode,
 } from '@chakra-ui/react';
 
@@ -88,7 +88,6 @@ export function ExportPanel({
         <TabPanels fontFamily="mono">
           {Object.keys(exportItems).map((key) => {
             const item = exportItems[key as keyof typeof exportItems];
-            console.log('🚀 | file: export-panel.tsx:109 | item:', item);
             return (
               <CodeBlockPanels
                 key={key}
@@ -137,19 +136,20 @@ export function CodeBlockPanels({
   });
   return (
     <TabPanel key={key} position="relative">
-      <Code
-        w="full"
+      <Textarea
+        defaultValue={item.stringify(palette)}
         whiteSpace="pre"
+        rows={6}
         bg={contrast}
-        p={8}
+        p={4}
+        py={6}
         border="1px"
         borderColor={contrast}
         rounded="lg"
-        onClick={copy}
-        cursor="pointer"
-      >
-        {item?.stringify(palette).toString()}
-      </Code>
+        fontSize="sm"
+        // isReadOnly
+        // onClick={copy}
+      />
 
       <ButtonGroup
         as={HStack}
