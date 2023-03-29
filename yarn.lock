@@ -1363,10 +1363,20 @@
   resolved "https://registry.yarnpkg.com/@fontsource/bebas-neue/-/bebas-neue-4.5.9.tgz#66e73f9a1fc10575a679f7699a47b70fd3ee7e40"
   integrity sha512-xacwu7elbiZIKgmzE0U4U29oh/WjoAmYLg2Eq9vEvq3cJqfO/wRkQZpNS6o1WU1i804AzJF//91E16c9+VgQlA==
 
+"@fontsource/fredoka-one@^4.5.9":
+  version "4.5.9"
+  resolved "https://registry.yarnpkg.com/@fontsource/fredoka-one/-/fredoka-one-4.5.9.tgz#bfcd9f8ead540ac390d23378e11abc69441f2ee6"
+  integrity sha512-sI1feQZKdwb6P4kkGLAQ5o0zCYTXkEROhz8v6oXCej7sgrkcK8GfoO86mEzrzISIrDluZNnfmb2ICkh35Djw7Q==
+
 "@fontsource/recursive@^4.5.13":
   version "4.5.13"
   resolved "https://registry.yarnpkg.com/@fontsource/recursive/-/recursive-4.5.13.tgz#4d3a61638ac5604ca049fd285d35fbe99fcccf04"
   integrity sha512-d40oYxlkac4rrDo/4GkdvkUopyc7WzAlX0vAuUzKVqh7X1qZlSteckvQWdPnjEFMG599JiwKXJK7qXLvgvwdYg==
+
+"@fontsource/text-me-one@^4.5.8":
+  version "4.5.8"
+  resolved "https://registry.yarnpkg.com/@fontsource/text-me-one/-/text-me-one-4.5.8.tgz#3c109eebf82668757ed615221043593745349e0b"
+  integrity sha512-6C8h36Jk5Xnw6zxQzV/F+rt35T5Lqhc/4pBHFpW3eLJjG5pV3SXvWa6gjoXr2L/tt2gZ54yNO+/kb17sR4YBUA==
 
 "@humanwhocodes/config-array@^0.11.8":
   version "0.11.8"
