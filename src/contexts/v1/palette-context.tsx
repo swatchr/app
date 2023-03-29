@@ -26,6 +26,7 @@ import { api } from '@/utils/api';
 import ColorLab from 'lib/color';
 import { shortname } from 'lib/unique-names-generator';
 import { useSession } from 'next-auth/react';
+import { isDev } from '../../utils/constants';
 
 export type Swatch = string;
 export type Palette = Swatch[];
@@ -157,6 +158,7 @@ const notify = (key: string, data: any, debug: boolean = false) => {
   }
 
   if (key === 'custom-url-palette-loaded') {
+    if (isDev) return;
     notification = {
       id: 'custom-url-palette-loaded',
       title: 'Loaded custom palette',
@@ -164,6 +166,7 @@ const notify = (key: string, data: any, debug: boolean = false) => {
     };
   }
   if (key === 'local-storage-loaded') {
+    if (isDev) return;
     notification = {
       id: 'local-storage-loaded',
       title: 'Loaded previously saved palette.',
