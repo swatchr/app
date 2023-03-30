@@ -49,7 +49,7 @@ export const styles: ChakraTheme['styles'] = {
       fontSize: '100%', // == 16px
       fontFamily: 'body',
       height: '100%',
-      backgroundColor: '#888',
+      backgroundColor: props.colorMode === 'dark' ? '#151716' : '#e6e6e6',
     },
     body: {
       position: 'relative',
