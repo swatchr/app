@@ -11,6 +11,7 @@ export * from './dropper-icon';
 export * from './export-icon';
 export * from './feedback-icon';
 export * from './filters-icon';
+export * from './full-screen-icon';
 export * from './help-icon';
 export * from './hue-icon';
 export * from './info-icon';
