@@ -1,30 +1,46 @@
 import { CloseIcon } from '@chakra-ui/icons';
-import { Center, chakra, IconButton, Slide } from '@chakra-ui/react';
+import { Box, chakra, IconButton, Slide } from '@chakra-ui/react';
+import Link from 'next/link';
 import { useState } from 'react';
 
 export function PreviewDisclaimer() {
   const [showDisclaimer, setShowDisclaimer] = useState(true);
 
   return (
-    <Center
-      w="full"
-      bg="#BADA55"
-      color="black"
+    <Box
       position="absolute"
       top={0}
+      w="full"
       py={1}
-      zIndex={10}
+      bg="#BADA55"
+      color="black"
       as={Slide}
       in={showDisclaimer}
+      display="block"
       direction="top"
       unmountOnExit
-      // @ts-expect-error transition is not properly typed
-      transition={{ delay: 2000 }}
+      transition="all 0.5s ease-in-out 1.5s"
       shadow="sm"
+      textAlign="center"
+      verticalAlign="middle"
+      zIndex="overlay"
     >
       Public Alpha Preview | &nbsp;
-      <chakra.span fontWeight={600}>DISCLAIMER: </chakra.span>&nbsp; User data
-      is not persisted during preview period.
+      <chakra.span fontWeight={600} display={{ base: 'inline', md: 'none' }}>
+        DISCLAIMER:{' '}
+      </chakra.span>
+      <Link href="#">
+        <chakra.span
+          color="black"
+          display={{ base: 'none', md: 'inline' }}
+          textDecor="underline"
+        >
+          See Disclaimer
+        </chakra.span>
+      </Link>
+      <chakra.span display={{ base: 'inline', md: 'none' }}>
+        &nbsp; User data is not persisted during preview period.
+      </chakra.span>
       <IconButton
         position="absolute"
         right={6}
@@ -37,8 +53,7 @@ export function PreviewDisclaimer() {
         onClick={() => {
           setShowDisclaimer(false);
         }}
-        float="right"
       />
-    </Center>
+    </Box>
   );
 }

@@ -12,15 +12,12 @@ export function MadeFooter() {
       py={1}
       bg="black"
       color="white"
-      justify="center"
       as={Slide}
       in={showCredits}
       direction="bottom"
       unmountOnExit
-      // @ts-expect-error transition is not properly typed
-      transition={{ delay: 2000 }}
+      transition="all 0.5s ease-in-out 2s"
       shadow="sm"
-      zIndex={10}
       textAlign="center"
       verticalAlign="middle"
     >
@@ -41,15 +38,6 @@ export function MadeFooter() {
       <chakra.p display="inline">
         &nbsp;in&nbsp; <chakra.span>🇺🇸</chakra.span>
       </chakra.p>
-      {/* <chakra.p
-        display="inline"
-        as={Link}
-        href="https://twitter.com/@Soham_Asmi"
-        isExternal
-        // fontSize="sm"
-      >
-        &nbsp;by&nbsp;Gaurang
-      </chakra.p> */}
       <IconButton
         position="absolute"
         right={6}
@@ -62,7 +50,6 @@ export function MadeFooter() {
         onClick={() => {
           setShowCredits(false);
         }}
-        float="right"
       />
     </Box>
   );
