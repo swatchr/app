@@ -4,6 +4,7 @@ import {
   localStorageManager,
 } from '@chakra-ui/react';
 import '@fontsource/bebas-neue/400.css';
+import '@fontsource/fredoka-one/';
 import '@fontsource/recursive/300.css';
 import '@fontsource/recursive/400.css';
 import '@fontsource/recursive/500.css';
@@ -11,6 +12,7 @@ import '@fontsource/recursive/600.css';
 import '@fontsource/recursive/700.css';
 import '@fontsource/recursive/800.css';
 import '@fontsource/recursive/900.css';
+import '@fontsource/text-me-one/';
 
 import type { GetServerSidePropsContext } from 'next';
 
@@ -34,7 +36,7 @@ export const ChakraWrapper: React.FC<ChakraProps> = ({ cookies, children }) => {
     <ChakraProvider
       resetCSS
       theme={theme}
-      // colorModeManager={colorModeManager} //
+      colorModeManager={colorModeManager} //
     >
       <AvatarMenu />
       {children}
