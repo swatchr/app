@@ -38,6 +38,13 @@ export function encodeQueryParams(
 /* -------------------------------------------------------------------------- */
 /*                                 ARRAY UTILS                                */
 /* -------------------------------------------------------------------------- */
+
+export const pluck = <T, K extends keyof T>(objs: T[], key: K): T[K][] =>
+  objs.map((obj) => obj[key]);
+
+export const sortBy = <T>(arr: T[], key: keyof T) =>
+  arr.sort((a: T, b: T) => (a[key] > b[key] ? 1 : a[key] < b[key] ? -1 : 0));
+
 /**
  *
  *
@@ -428,6 +435,9 @@ export function validateAndConvertHexColor(hex: string): string | null {
 /* -------------------------------------------------------------------------- */
 /*                               RANDOM HELPERS                               */
 /* -------------------------------------------------------------------------- */
+
+export const calculatePercent = (value: number, total: number): number =>
+  Math.round((value / total) * 100);
 
 /**
  *
