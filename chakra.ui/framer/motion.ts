@@ -1,21 +1,23 @@
 import {
   AspectRatio,
   Box,
-  ButtonProps,
   Card,
   CardBody,
   chakra,
   Container,
   Flex,
   Heading,
+  shouldForwardProp,
   Square,
   Text,
+  type ButtonProps,
 } from '@chakra-ui/react';
 import {
   AnimateSharedLayout,
+  isValidMotionProp,
   LayoutGroup,
   motion,
-  MotionProps,
+  type MotionProps,
 } from 'framer-motion';
 
 import type {
@@ -38,7 +40,7 @@ export const MotionRatio = motion<AspectRatioProps>(AspectRatio);
 export const MotionCardBody = motion<CardBodyProps>(CardBody);
 export const MotionCard = motion<CardProps>(Card);
 export const MotionText = motion<TextProps>(Text);
-export const MotionHeading = motion<HeadingProps>(Heading);
+// export const MotionHeading = motion<HeadingProps>(Heading);
 
 export const ChAnimateSharedLayout = chakra(AnimateSharedLayout);
 export const ChLayoutGroup = chakra(LayoutGroup);
@@ -51,6 +53,21 @@ export const MotionBox = chakra(motion.div, {
   shouldForwardProp: (prop) =>
     prop !== 'transition' && prop !== 'transformTemplate',
 }) as React.FC<MotionBoxProps>;
+
+export const MotionBox2 = chakra(motion.div, {
+  shouldForwardProp: (prop) =>
+    isValidMotionProp(prop) || shouldForwardProp(prop),
+}) as React.FC<MotionBoxProps>;
+
+export const MotionP = chakra(motion.p, {
+  shouldForwardProp: (prop) =>
+    isValidMotionProp(prop) || shouldForwardProp(prop),
+}) as React.FC<MotionProps & TextProps>;
+
+export const MotionHeading = chakra(motion.h1, {
+  shouldForwardProp: (prop) =>
+    isValidMotionProp(prop) || shouldForwardProp(prop),
+}) as React.FC<MotionProps & HeadingProps>;
 
 export const MotionCenterButton = chakra(motion.div, {
   shouldForwardProp: (prop) =>
