@@ -27,7 +27,7 @@ const ChNextLink = chakra(Link);
 function routeLink(link: { label: string; href: string }) {
   return (
     <MenuItem key={link.href} w="full" fontSize="sm">
-      <ChNextLink w="full" href={link.href} color="gray.200">
+      <ChNextLink w="full" href={link.href} color="gray">
         {link.label}
       </ChNextLink>
     </MenuItem>
@@ -50,6 +50,8 @@ function MenuItemButton({
       justifyContent="flex-start"
       rounded="none"
       my={1}
+      fontSize="sm"
+      fontWeight="normal"
     >
       {label}
     </MenuItem>
@@ -61,7 +63,7 @@ export const AvatarMenu: React.FC = () => {
   const isUser = status !== 'loading' && !!session?.user;
 
   return (
-    <Box pos="fixed" top={14} right={6} zIndex="dropdown">
+    <Box pos="fixed" top={10} right={6} zIndex="dropdown">
       <Menu
         placement="bottom-end"
         boundary="scrollParent"
@@ -76,12 +78,14 @@ export const AvatarMenu: React.FC = () => {
             loading="lazy"
             shadow="md"
             opacity={0.6}
-            _hover={{
-              cursor: 'pointer',
-              border: 'lg',
-              opacity: 1,
-              shadow: 'sm',
-            }}
+            size="sm"
+            colorScheme="blue"
+            // _hover={{
+            //   cursor: 'pointer',
+            //   border: 'lg',
+            //   opacity: 1,
+            //   shadow: 'sm',
+            // }}
             transition="all 0.2s"
           />
         ) : (
