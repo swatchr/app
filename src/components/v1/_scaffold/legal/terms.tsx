@@ -6,8 +6,9 @@ import {
   Heading,
   HStack,
   Icon,
-  Link,
+  Link as ChLink,
 } from '@chakra-ui/react';
+import Link from 'next/link';
 
 import { LogoIcon } from '../../icons/swatchr/logo-icon';
 
@@ -78,9 +79,9 @@ export const TermsAndConditions = () => {
         If you don&apos;t agree with any part of these terms, please don&apos;t
         use our app. If you have any questions about these terms or anything
         else related to Swatchr, please don&apos;t hesitate to{' '}
-        <Link href="mailto:support@swatchr.app" textDecor="underline">
+        <ChLink href="mailto:support@swatchr.app" textDecor="underline">
           get in touch with us
-        </Link>
+        </ChLink>
         .
       </chakra.p>
       <Center mt={12}>

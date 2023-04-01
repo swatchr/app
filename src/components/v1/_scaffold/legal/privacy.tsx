@@ -6,10 +6,11 @@ import {
   Heading,
   HStack,
   Icon,
-  Link,
+  Link as ChLink,
 } from '@chakra-ui/react';
+import Link from 'next/link';
 
-import { LogoIcon } from '../../icons/swatchr/logo-icon';
+import { LogoIcon } from '../../icons';
 
 export const PrivacyPolicy = () => {
   return (
@@ -88,9 +89,9 @@ export const PrivacyPolicy = () => {
         don&apos;t agree with any part of this policy, please don&apos;t use our
         app. If you have any questions about this policy or anything else
         related to Swatchr, please don&apos;t hesitate to{' '}
-        <Link href="mailto:support@swatchr.app" textDecor="underline">
+        <ChLink href="mailto:support@swatchr.app" textDecor="underline">
           get in touch with us
-        </Link>
+        </ChLink>
         .
       </chakra.p>
       <Center mt={12}>
