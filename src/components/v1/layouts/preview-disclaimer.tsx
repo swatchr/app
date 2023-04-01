@@ -29,7 +29,7 @@ export function PreviewDisclaimer() {
       <chakra.span fontWeight={600} display={{ base: 'inline', md: 'none' }}>
         DISCLAIMER:{' '}
       </chakra.span>
-      <Link href="#">
+      <Link href="/policies/disclaimer">
         <chakra.span
           color="black"
           display={{ base: 'none', md: 'inline' }}

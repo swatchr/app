@@ -35,9 +35,9 @@ export function MadeFooter() {
         and&nbsp;
         <Icon as={GPTIcon} display="inline" boxSize="1.2rem" />
       </Link>
-      <chakra.p display="inline">
+      {/* <chakra.p display="inline">
         &nbsp;in&nbsp; <chakra.span>🇺🇸</chakra.span>
-      </chakra.p>
+      </chakra.p> */}
       <IconButton
         position="absolute"
         right={6}
