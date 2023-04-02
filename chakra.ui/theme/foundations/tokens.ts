@@ -6,7 +6,10 @@ export const tokens = {
       default: '#e6e6e6',
       _dark: '#151716', // 'gray.900',
     },
-    primary: '#BADA55',
+    primary: {
+      default: '#BADA55',
+      _dark: '#BADA55',
+    },
     secondary: {
       default: '#6da376',
       _dark: '#10680e',
@@ -44,8 +47,8 @@ export const tokens = {
       _dark: 'yellow.600',
     },
     placeholder: {
-      default: 'gray.400',
-      _dark: 'whiteAlpha.300',
+      default: 'blue',
+      _dark: '#FFF',
     },
     rootBorder: {
       default: 'gray.500',
@@ -55,9 +58,17 @@ export const tokens = {
       default: '#4e4e4e',
       _dark: 'gray.300',
     },
-    textInverse: {
+    inverse: {
       default: '#212121',
       _dark: 'gray.900',
+    },
+    panel: {
+      default: 'blackAlpha.100',
+      _dark: 'blackAlpha.500',
+    },
+    panelIcon: {
+      default: 'gray.800',
+      _dark: 'gray.500',
     },
   },
 };

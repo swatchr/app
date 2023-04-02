@@ -74,4 +74,6 @@ export const HEX_COLOR_REGEX_STRING = '^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$';
 export const HEX_COLOR_WITHOUT_HASH_REGEX_STRING =
   '^([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$';
 
+export const PARENS_REGEX = /\(|\)/g;
+
 export const debug = isDev && false;

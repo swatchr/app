@@ -9,6 +9,7 @@ import { parsePalette, slugify } from '@/utils';
 import { api } from '@/utils/api';
 import { Center } from '@chakra-ui/react';
 import { FullScreenLoader } from 'chakra.ui';
+import { LayoutGroup } from 'framer-motion';
 import { shortname } from 'lib/unique-names-generator';
 import { encodeQueryParams } from '../utils/fns';
 
@@ -45,11 +46,12 @@ const Home: NextPage<Props> = ({ params, paletteName, colorParams }) => {
         <FullScreenLoader color="green" />
       ) : (
         <PaletteProvider paletteName={paletteName!} colorParams={colorParams!}>
-          <PaletteEditor />
+          <LayoutGroup>
+            <PaletteEditor />
+          </LayoutGroup>
           <SocialShare twitter pinterest />
         </PaletteProvider>
       )}
-      <Center w="full" position="fixed" bottom={0} p={12}></Center>
     </BaseLayout>
   );
 };
