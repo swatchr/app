@@ -7,7 +7,13 @@ import { useEffect } from 'react';
 
 import type { OGImage } from '@/utils/seo';
 
-import { ALPHA_FEEDBACK_KEY, isClient, ONE_SECOND_MS } from '@/utils';
+import {
+  ALPHA_FEEDBACK_KEY,
+  isClient,
+  isDev,
+  ONE_MIN_MS,
+  ONE_SECOND_MS,
+} from '@/utils';
 import { SEOConfig } from '@/utils/seo';
 import { CHModal } from 'chakra.ui';
 import { analytics } from 'lib/analytics';
@@ -36,7 +42,7 @@ export const BaseLayout: React.FC<BaseLayoutProps> = ({
     if (!isClient) return;
 
     const opts = {
-      timeout: 45 * ONE_SECOND_MS,
+      timeout: isDev ? ONE_MIN_MS * 10 : ONE_SECOND_MS * 45,
     };
 
     onIdle((activeTime: any) => {
