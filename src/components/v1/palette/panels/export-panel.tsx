@@ -1,6 +1,8 @@
 import {
   Button,
   ButtonGroup,
+  Center,
+  chakra,
   HStack,
   Tab,
   TabList,
@@ -15,14 +17,21 @@ import { usePaletteState } from '@/contexts';
 import { useClipboard } from '@/hooks';
 import {
   cssStringifyPalette,
+  generateSVG,
+  generateSVGPalette,
+  generateSVGPaletteRow,
+  getContrastColor,
   objectStringifyPalette,
   publish,
   scssStringifyPalette,
+  SVG_ROW,
   sysUIStringifyPalette,
   tailwindStringifyPalette,
 } from '@/utils';
 import { CheckIcon, CopyIcon } from '@chakra-ui/icons';
 import { CHModal } from 'chakra.ui';
+import ColorLab from 'lib/color';
+import { useEffect, useState } from 'react';
 
 const exportItems = {
   css: {
@@ -62,7 +71,6 @@ export function ExportPanel({
   const { palette } = usePaletteState();
   const { colorMode } = useColorMode();
   const scheme = 'green';
-
   return (
     <CHModal
       id="export-palette"
@@ -120,7 +128,23 @@ export function CodeBlockPanels({
   scheme: string;
   onClose: () => void;
 }) {
+  const [statusColors, setStatusColors] = useState(true);
+  const [uiColors, setUiColors] = useState(true);
+
+  const { status, ...ui } = new ColorLab(palette[0]!).generateUIColors(palette);
+
   const contrast = colorMode === 'light' ? 'gray.200' : 'gray.800';
+  const svgMarkup = generateSVGPaletteRow(palette, true);
+
+  // useEffect(() => {
+  //   if (statusColors) {
+  //     Object.values(status).forEach((color) => palette.push(color));
+  //   }
+  //   if (uiColors) {
+  //     Object.values(ui).forEach((color) => palette.push(color));
+  //   }
+  // }, [palette, status, statusColors, ui, uiColors]);
+
   const { isCopied, copy } = useClipboard({
     text: item?.stringify(palette).toString(),
     onCopy: () => {
@@ -134,8 +158,52 @@ export function CodeBlockPanels({
       });
     },
   });
+
+  const { isCopied: isSVGCopied, copy: copySVG } = useClipboard({
+    text: svgMarkup,
+    onCopy: () => {
+      publish('show-toast', {
+        id: 'export-svg-copied',
+        title: 'Copied to clipboard',
+        description: item.description || 'Sorry. Please try again',
+        status: 'success',
+        duration: 1000,
+        isClosable: true,
+      });
+    },
+  });
   return (
     <TabPanel key={key} position="relative">
+      {isSVGCopied ? (
+        <Center w="full" minH={12}>
+          <chakra.p fontWeight="bold">COPIED!</chakra.p>
+        </Center>
+      ) : (
+        <HStack
+          width={'full'}
+          px={2}
+          gap={0}
+          cursor="pointer"
+          onClick={copySVG}
+          mb={4}
+        >
+          {palette.slice(0, 5).map((color, i) => (
+            <Center
+              w="full"
+              key={`${i}-${color}-export-svg`}
+              // mb={4}
+              maxH={12}
+              boxSize="md"
+              bg={color}
+              color={getContrastColor(color)}
+              borderRadius="md"
+            >
+              {color}
+            </Center>
+          ))}
+        </HStack>
+      )}
+
       <Textarea
         defaultValue={item.stringify(palette)}
         whiteSpace="pre"
@@ -151,29 +219,31 @@ export function CodeBlockPanels({
         // onClick={copy}
       />
 
-      <ButtonGroup
-        as={HStack}
-        w="full"
-        mt={8}
-        justifyContent="flex-end"
-        gap={3}
-        size="sm"
-      >
-        <Button
-          leftIcon={isCopied ? <CheckIcon /> : <CopyIcon />}
-          colorScheme={scheme}
-          onClick={(e) => {
-            e.preventDefault();
-            e.stopPropagation();
-            copy(e);
-          }}
+      <HStack justifyContent="space-between">
+        <ButtonGroup
+          as={HStack}
+          w="full"
+          mt={8}
+          justifyContent="flex-end"
+          gap={3}
+          size="sm"
         >
-          {isCopied ? 'Copied' : 'Copy'}
-        </Button>
-        <Button colorScheme="gray" onClick={onClose}>
-          Close
-        </Button>
-      </ButtonGroup>
+          <Button
+            leftIcon={isCopied ? <CheckIcon /> : <CopyIcon />}
+            colorScheme={scheme}
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              copy(e);
+            }}
+          >
+            {isCopied ? 'Copied' : 'Copy'}
+          </Button>
+          <Button colorScheme="gray" onClick={onClose}>
+            Close
+          </Button>
+        </ButtonGroup>
+      </HStack>
     </TabPanel>
   );
 }
