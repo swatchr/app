@@ -86,18 +86,18 @@ export function PaletteEditor() {
       {isDev ? <CommandPalette /> : null}
       <Toolbar palette={palette} scaled={scaled} setScaled={setScaled} />
 
-      <AnimatePresence>
-        <Box
-          w="full"
-          position="relative"
-          as={motion.div}
-          layout
-          layoutId="palette"
-          initial="full"
-          animate={scaled ? 'scaled' : 'full'}
-          variants={scaledLayoutVariants}
-          mt={scaled ? 24 : 0}
-        >
+      <Box
+        w="full"
+        position="relative"
+        as={motion.div}
+        layout
+        layoutId="palette"
+        initial="full"
+        animate={scaled ? 'scaled' : 'full'}
+        variants={scaledLayoutVariants}
+        mt={scaled ? 24 : 0}
+      >
+        <AnimatePresence>
           {scaled ? (
             <>
               <StaticPalette palette={palette} />
@@ -117,19 +117,19 @@ export function PaletteEditor() {
           ) : (
             <Palette palette={palette} show={!scaled} />
           )}
-        </Box>
-        <HStack
-          position="fixed"
-          top={10}
-          left={14}
-          cursor={isDev ? 'pointer' : 'initial'}
-          alignItems="center"
-          zIndex="overlay"
-        >
-          <LogoCredits scaled={scaled} />
-        </HStack>
-        {scaled ? <PaletteInfo /> : null}
-      </AnimatePresence>
+        </AnimatePresence>
+      </Box>
+      <HStack
+        position="fixed"
+        top={10}
+        left={14}
+        cursor={isDev ? 'pointer' : 'initial'}
+        alignItems="center"
+        zIndex="overlay"
+      >
+        <LogoCredits scaled={scaled} />
+      </HStack>
+      {scaled ? <PaletteInfo /> : null}
     </>
   );
 }
