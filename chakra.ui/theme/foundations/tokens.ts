@@ -70,6 +70,18 @@ export const tokens = {
       default: 'gray.800',
       _dark: 'gray.500',
     },
+    dashBg: {
+      default: 'gray.300',
+      _dark: 'gray.800',
+    },
+    dashBgFilled: {
+      default: 'gray.200',
+      _dark: 'gray.900',
+    },
+    dashLabel: {
+      default: 'gray.500',
+      _dark: 'gray.500',
+    },
   },
 };
 

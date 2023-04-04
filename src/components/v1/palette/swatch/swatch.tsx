@@ -5,7 +5,7 @@ import {
   SlideFade,
   useDisclosure,
 } from '@chakra-ui/react';
-import { AnimatePresence, motion, useAnimation } from 'framer-motion';
+import { motion, useAnimation } from 'framer-motion';
 import { useCallback, useEffect, useState } from 'react';
 
 import { useColorDispatch, useColorState, usePaletteState } from '@/contexts';
@@ -56,14 +56,12 @@ export function Swatch({ index }: { index: number }) {
 
   return (
     <Flex
-      // flex={activeSwatchIndex === index ? 1 : 0}
-      direction="column"
+      flex={activeSwatchIndex === index ? 1 : 0}
       className="swatch-wrapper"
+      direction="column"
       position="relative"
       w="full"
-      h="100vh"
-      my="auto"
-      mx="auto"
+      minH="100vh"
       justifyContent="center"
       alignItems="center"
       as={motion.div}
@@ -73,7 +71,6 @@ export function Swatch({ index }: { index: number }) {
         swatchMenuOnOpen();
       }}
       onMouseLeave={() => {
-        // colorHandlers.paletteHandlers.activateSwatch(-1);
         swatchMenuOnClose();
       }}
       willChange={'flex'}
@@ -82,7 +79,7 @@ export function Swatch({ index }: { index: number }) {
     >
       <SlideFade in={mounted} offsetX={-96} reverse unmountOnExit>
         <Center
-          className="swatch-wrapper"
+          className="swatch-menu-wrapper"
           boxSize={72}
           position="relative"
           zIndex={1}

@@ -13,7 +13,6 @@ import {
 import { useSession } from 'next-auth/react';
 import { useEffect, useReducer } from 'react';
 
-import { LockedIcon, UnlockedIcon } from '@/components';
 import { usePaletteDispatch, usePaletteState } from '@/contexts';
 import { useKeyPress } from '@/hooks';
 import { publish, slugify } from '@/utils';
@@ -111,23 +110,6 @@ export function PaletteNameInput({ text }: { text: string }) {
     resetInputState(); // reset();
   };
 
-  const handleUpdateStatus = (e: React.SyntheticEvent<HTMLButtonElement>) => {
-    e.preventDefault();
-
-    if (status !== 'authenticated') {
-      publish('show-toast', {
-        id: 'unauthorized-user',
-        title: 'Unauthorized',
-        description: 'Log in to perform this action',
-        status: 'info',
-        isClosable: true,
-      });
-      return;
-    }
-
-    updatePaletteStatus();
-  };
-
   useKeyPress({
     keys: ['Escape'],
     callback: handleBlur,
@@ -136,7 +118,6 @@ export function PaletteNameInput({ text }: { text: string }) {
     <HStack
       as={'form'}
       p={2}
-      maxW={56}
       color={text}
       onSubmit={handleSubmit}
       alignItems="center"
@@ -156,13 +137,12 @@ export function PaletteNameInput({ text }: { text: string }) {
         }
       />
       {!focus ? (
-        <Tooltip label="Click to Edit" size="xs" placement="top">
+        <Tooltip label="Click to Edit" size="xs" placement="bottom">
           <chakra.p
             p={2}
             role="button"
             cursor="text"
             onClick={handleFocusClick}
-            fontSize="sm"
             isTruncated={true}
           >
             {input.value}
@@ -183,12 +163,11 @@ export function PaletteNameInput({ text }: { text: string }) {
             </VisuallyHidden>
 
             <Input
-              size="sm"
+              size="md"
               color={text}
-              textAlign="right"
               rounded="md"
               _placeholder={{
-                color: text,
+                color: 'placeholder',
               }}
               _focusVisible={{
                 outline: 'green',
@@ -197,34 +176,24 @@ export function PaletteNameInput({ text }: { text: string }) {
                 color: 'white',
                 bg: 'green.500',
               }}
+              _focus={{
+                text: 'inverse',
+              }}
+              _active={{
+                text: 'inverse',
+              }}
               {...input}
               type="text"
               placeholder={name}
-              isDisabled={status !== 'authenticated' || isSubmitting}
+              // isDisabled={status !== 'authenticated' || isSubmitting}
               pattern={'^[a-zA-Zs-]+$'} // alpha, dashes, spaces
               autoComplete="off"
               onBlur={handleBlur}
+              variant="filled"
             />
           </FormControl>
         </InputGroup>
       )}
-      <Tooltip label="Public Beta Only" size="xs" placement="top">
-        <IconButton
-          aria-label="Palette Privacy Status"
-          icon={
-            paletteStatus === 'public' ? (
-              <UnlockedIcon boxSize="1.15rem" fill={text} />
-            ) : (
-              <LockedIcon boxSize="1.15rem" fill={text} />
-            )
-          }
-          size="sm"
-          variant="unstyled"
-          colorScheme="green"
-          isDisabled={true || status !== 'authenticated'}
-          onClick={handleUpdateStatus}
-        />
-      </Tooltip>
     </HStack>
   );
 }

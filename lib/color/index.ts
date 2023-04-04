@@ -41,6 +41,25 @@ interface ColorFilters {
   achromatopsia: string;
 }
 
+type ColorMap = {
+  primary?: string;
+  secondary?: string;
+  alternate?: string;
+  accent?: string;
+  contrast?: string;
+};
+
+type GeneratedColors = {
+  success: string;
+  error: string;
+  warning: string;
+  info: string;
+  black: string;
+  white: string;
+  darkGray: string;
+  lightGray: string;
+};
+
 const SCALE_STEPS = 10;
 
 class ColorLab {
@@ -338,6 +357,81 @@ class ColorLab {
   /* -------------------------------------------------------------------------- */
   /*                                     --                                     */
   /* -------------------------------------------------------------------------- */
+
+  /**
+   * Generates common UI colors that complement the given palette
+   *
+   * @param {string[]} palette
+   * @return {*}  {GeneratedColors}
+   * @memberof ColorLab
+   */
+  generateUIColors(palette: string[]): {
+    status: {
+      success: string;
+      error: string;
+      warning: string;
+      info: string;
+    };
+    black: string;
+    white: string;
+    darkGray: string;
+    lightGray: string;
+  } {
+    const colors = palette.map((color) => tinycolor(color));
+
+    // Calculate average color of the palette
+    const avgColor = colors.reduce(
+      (acc, color) => {
+        const rgb = color.toRgb();
+        return {
+          r: acc.r + rgb.r,
+          g: acc.g + rgb.g,
+          b: acc.b + rgb.b,
+        };
+      },
+      { r: 0, g: 0, b: 0 }
+    );
+
+    avgColor.r = Math.round(avgColor.r / colors.length);
+    avgColor.g = Math.round(avgColor.g / colors.length);
+    avgColor.b = Math.round(avgColor.b / colors.length);
+
+    // Convert the RGB values to a tinycolor object
+    const avgColorTinycolor = tinycolor({
+      r: avgColor.r,
+      g: avgColor.g,
+      b: avgColor.b,
+    });
+
+    // Determine shades of black, white, and gray based on the average color
+    const isLight = avgColorTinycolor.isLight();
+    const black = isLight
+      ? tinycolor('#111111').lighten(10).toString()
+      : tinycolor('#111111').darken(10).toString();
+    const white = isLight
+      ? tinycolor('#F0F0F0').darken(10).toString()
+      : tinycolor('#F0F0F0').lighten(10).toString();
+    const darkGray = isLight
+      ? tinycolor('#777777').darken(10).toString()
+      : tinycolor('#777777').lighten(10).toString();
+    const lightGray = isLight
+      ? tinycolor('#DDDDDD').darken(10).toString()
+      : tinycolor('#DDDDDD').lighten(10).toString();
+
+    // Calculate shades of each color
+    const success = tinycolor('#4CAF50').darken(10).toString();
+    const error = tinycolor('#F44336').darken(10).toString();
+    const warning = tinycolor('#FF9800').darken(10).toString();
+    const info = tinycolor('#2196F3').darken(10).toString();
+
+    return {
+      status: { success, error, warning, info },
+      black,
+      white,
+      darkGray,
+      lightGray,
+    };
+  }
 
   /* -------------------------------------------------------------------------- */
   /*                                Color Helpers                               */

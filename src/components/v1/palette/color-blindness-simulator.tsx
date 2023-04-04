@@ -3,11 +3,9 @@ import ColorLab from 'lib/color';
 import { useState } from 'react';
 
 export function ColorBlindnessSimulator({
-  contrast,
   palette,
   onClose,
 }: {
-  contrast: string;
   palette: string[];
   onClose: () => void;
 }) {
@@ -28,11 +26,11 @@ export function ColorBlindnessSimulator({
     <>
       <VStack
         position="absolute"
-        top={10}
+        top={36}
         left={12}
         zIndex={10}
         p={2}
-        bg={`${contrast}.600`}
+        bg={'panel'}
         rounded="md"
       >
         {Object.keys(colorBlindnessFilters).map((filter) => (
@@ -43,6 +41,7 @@ export function ColorBlindnessSimulator({
             size="sm"
             cursor="pointer"
             border={filter === colorBlindnessMode ? '2px solid' : ''}
+            colorScheme={filter === colorBlindnessMode ? 'green' : ''}
             onClick={() =>
               setColorBlindnessMode(
                 filter as keyof typeof colorBlindnessFilters
@@ -57,7 +56,7 @@ export function ColorBlindnessSimulator({
           w="full"
           size="sm"
           cursor="pointer"
-          colorScheme="orange"
+          colorScheme="gray"
           onClick={onClose}
         >
           Close

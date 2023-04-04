@@ -12,7 +12,7 @@ export function useClipboard({
   const copy = useCallback(
     (
       e: React.MouseEvent<
-        HTMLDivElement | HTMLButtonElement | HTMLTextAreaElement
+        HTMLDivElement | HTMLButtonElement | HTMLTextAreaElement | SVGSVGElement
       >
     ) => {
       e?.stopPropagation();
