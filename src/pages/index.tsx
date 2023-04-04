@@ -1,17 +1,15 @@
+import { Center, useBreakpointValue } from '@chakra-ui/react';
+import { LayoutGroup } from 'framer-motion';
 import { useCallback, useEffect, useState } from 'react';
 
 import type { GetServerSideProps, NextPage } from 'next';
 
-import { BaseLayout, PaletteEditor } from '@/components';
-import { SocialShare } from '@/components/v1/_scaffold/social';
+import { BaseLayout, PaletteEditor, SocialShare } from '@/components';
 import { PaletteProvider } from '@/contexts';
-import { parsePalette, slugify } from '@/utils';
+import { encodeQueryParams, parsePalette, slugify } from '@/utils';
 import { api } from '@/utils/api';
-import { Center } from '@chakra-ui/react';
 import { FullScreenLoader } from 'chakra.ui';
-import { LayoutGroup } from 'framer-motion';
 import { shortname } from 'lib/unique-names-generator';
-import { encodeQueryParams } from '../utils/fns';
 
 interface Props {
   params: string;
@@ -19,7 +17,13 @@ interface Props {
   colorParams?: string[] | null;
 }
 
-const Home: NextPage<Props> = ({ params, paletteName, colorParams }) => {
+const Home: NextPage<Props> = (props) => {
+  return <DesktopView {...props} />;
+};
+
+export default Home;
+
+export function DesktopView({ params, paletteName, colorParams }: Props) {
   const { isLoading } = useIsLoading(true, 200);
   const { data: domain } = api.server.domain.useQuery();
   const ogImageUrl = `${domain}/api/og?${params}`;
@@ -54,9 +58,7 @@ const Home: NextPage<Props> = ({ params, paletteName, colorParams }) => {
       )}
     </BaseLayout>
   );
-};
-
-export default Home;
+}
 
 export const getServerSideProps: GetServerSideProps<Props> = async (ctx) => {
   let colorParams: string[] | undefined = undefined;

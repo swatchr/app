@@ -58,7 +58,7 @@ export function HistoryViewer({
         {history.history.map((color, i) => {
           return (
             <HistorySwatch
-              key={color + i}
+              key={color + i + '-history'}
               index={i}
               color={color}
               history={history}

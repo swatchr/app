@@ -17,8 +17,8 @@ export function Palette({
 }) {
   return (
     <Flex
-      as={motion.div}
-      layoutId="swatches"
+      // as={motion.div}
+      // layoutId="swatches"
       className="swatches"
       shadow="lg"
       rounded="md"
@@ -28,7 +28,7 @@ export function Palette({
       {palette && palette.length
         ? palette.map((swatch, index) => (
             <ColorProvider
-              key={`${swatch}-${index}-swatch`}
+              key={`${swatch}-swatch`}
               color={swatch}
               index={index}
             >
@@ -59,12 +59,12 @@ export function StaticPalette({ palette }: { palette: string[] }) {
       onReorder={debouncedPaletteUpdate}
     >
       {palette && palette.length
-        ? palette.map((swatch, index) => {
+        ? palette.map((swatch) => {
             const contrast = new ColorLab(swatch);
             const text = contrast.getBestContrastColor(['white', 'black']);
             return (
               <Flex
-                key={swatch}
+                key={`${swatch}-swatch-scaled`}
                 className="scaled-swatch-wrapper"
                 position="relative"
                 w="full"

@@ -59,7 +59,7 @@ export default function handler(req: NextRequest) {
             {Colors?.length &&
               Colors?.map((color, i) => (
                 <div
-                  key={i}
+                  key={`${color}-og`}
                   style={{
                     backgroundColor: color as string,
                     height: '100%',

@@ -70,7 +70,7 @@ export function PaletteMapper({
           palettes?.map((palette) => {
             return (
               <Box
-                key={palette.id}
+                key={`${palette.id}-profile-palette`}
                 position="relative"
                 p={2}
                 border="1px"
@@ -92,7 +92,7 @@ export function PaletteMapper({
                       const _color = new ColorLab(color);
                       return (
                         <Center
-                          key={color}
+                          key={`${color}-profile-palette-swatch`}
                           bg={color}
                           color={
                             _color.contrast === 'light' ? 'white' : 'black'

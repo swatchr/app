@@ -189,9 +189,8 @@ export function CodeBlockPanels({
         >
           {palette.slice(0, 5).map((color, i) => (
             <Center
-              w="full"
               key={`${i}-${color}-export-svg`}
-              // mb={4}
+              w="full"
               maxH={12}
               boxSize="md"
               bg={color}
@@ -215,8 +214,9 @@ export function CodeBlockPanels({
         borderColor={contrast}
         rounded="lg"
         fontSize="sm"
-        // isReadOnly
-        // onClick={copy}
+        isReadOnly
+        onClick={copy}
+        cursor="pointer"
       />
 
       <HStack justifyContent="space-between">

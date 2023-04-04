@@ -219,7 +219,7 @@ const ScaledColorItems = ({
         scales?.map((color, i) => {
           return (
             <MotionBox
-              key={color.toString()}
+              key={`${color.toString()}-scaled-color-item`}
               role="button"
               cursor="pointer"
               initial={{ y: 0, scale: 1 }}
@@ -416,7 +416,7 @@ export function ColorCombos({
           const isSelected = mode === currentMode;
           return (
             <Tooltip
-              key={`${currentMode}-${i}`}
+              key={`${currentMode}-${i}-comboIcon`}
               label={currentMode}
               fontSize="xs"
             >

@@ -105,7 +105,10 @@ export function PaletteEditor() {
                 <HStack w="full" gap={4} my={4}>
                   {palette.map((color, index) => {
                     return (
-                      <ColorDetails key={`${color}-${index}`} color={color} />
+                      <ColorDetails
+                        key={`${color}-${index}-details`}
+                        color={color}
+                      />
                     );
                   })}
                 </HStack>
@@ -336,7 +339,7 @@ export function PaletteInfo() {
             {Object.keys(statusColors).map((color, i) => {
               return (
                 <HStack
-                  key={`${color}-${i}-supplementary-palette}`}
+                  key={`${color}-${i}-status-palette}`}
                   alignItems="center"
                   justifyContent="flex-start"
                   // w={48}
@@ -364,7 +367,7 @@ export function PaletteInfo() {
             {Object.keys(uiColors).map((color, i) => {
               return (
                 <HStack
-                  key={`${color}-${i}-supplementary-palette}`}
+                  key={`${color}-${i}-contrast-palette}`}
                   alignItems="center"
                   justifyContent="flex-start"
                 >
