@@ -63,7 +63,7 @@ export const AvatarMenu: React.FC = () => {
   const isUser = status !== 'loading' && !!session?.user;
 
   return (
-    <Box pos="fixed" top={10} right={6} zIndex="dropdown">
+    <Box pos="fixed" top={10} right={6} zIndex="dropdown" cursor="pointer">
       <Menu
         placement="bottom-end"
         boundary="scrollParent"
@@ -79,13 +79,6 @@ export const AvatarMenu: React.FC = () => {
             shadow="md"
             opacity={0.6}
             size="sm"
-            colorScheme="blue"
-            // _hover={{
-            //   cursor: 'pointer',
-            //   border: 'lg',
-            //   opacity: 1,
-            //   shadow: 'sm',
-            // }}
             transition="all 0.2s"
           />
         ) : (
