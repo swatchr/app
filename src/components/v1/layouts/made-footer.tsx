@@ -32,7 +32,7 @@ export function MadeFooter() {
         &nbsp;
       </chakra.p>
       <Link href="https://openai.com/blog/chatgpt" isExternal>
-        and&nbsp;
+        and&nbsp;&nbsp;
         <Icon as={GPTIcon} display="inline" boxSize="1.2rem" />
       </Link>
       {/* <chakra.p display="inline">
