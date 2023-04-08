@@ -3,6 +3,7 @@ import {
   Box,
   Center,
   chakra,
+  Flex,
   FormControl,
   FormLabel,
   HStack,
@@ -10,6 +11,7 @@ import {
   Switch,
   Tooltip,
   useColorMode,
+  useDisclosure,
   useOutsideClick,
   VisuallyHidden,
   VStack,
@@ -17,11 +19,8 @@ import {
 import { AnimatePresence, motion } from 'framer-motion';
 import { useCallback, useRef, useState } from 'react';
 
-import type { ColorApiClientInfo } from '@/server';
-
-import { usePaletteDispatch, usePaletteState } from '@/contexts';
-import { useDebounce } from '@/hooks';
-import { createColorInfo } from '@/server';
+import { ColorProvider, usePaletteDispatch, usePaletteState } from '@/contexts';
+import { useMounted } from '@/hooks';
 import {
   generateSVGPaletteRow,
   getContrastColor,
@@ -48,6 +47,38 @@ import { ColorBlindnessSimulator } from './color-blindness-simulator';
 import { Palette, StaticPalette } from './palette';
 import { PaletteNameInput } from './palette-name-input';
 import { ExportPanel } from './panels/export-panel';
+import { MobileSwatch } from './swatch';
+
+export function MobilePaletteEditor() {
+  const { palette } = usePaletteState();
+  const disclosure = useDisclosure();
+
+  return (
+    <Flex
+      position="relative"
+      h="100vh"
+      w="full"
+      direction="column"
+      justifyContent="center"
+    >
+      {palette.map((swatch, index) => (
+        <ColorProvider
+          key={`${swatch}-mobile-swatch`}
+          color={swatch}
+          index={index}
+        >
+          <MobileSwatch
+            swatch={swatch}
+            palette={palette}
+            index={index}
+            isOpen={disclosure.isOpen}
+            onToggle={disclosure.onToggle}
+          />
+        </ColorProvider>
+      ))}
+    </Flex>
+  );
+}
 
 export function PaletteEditor() {
   const { palette } = usePaletteState();
@@ -79,7 +110,7 @@ export function PaletteEditor() {
   //   new ColorLab(palette[palette.length - 1]!).contrast == 'dark'
   //     ? 'gray.600'
   //     : 'gray.300';
-
+  useMounted('palette-editor');
   return (
     <>
       {/* @TODO: WIP: finish command Palette logic */}
@@ -97,9 +128,9 @@ export function PaletteEditor() {
         variants={scaledLayoutVariants}
         mt={scaled ? 24 : 0}
       >
-        <AnimatePresence>
-          {scaled ? (
-            <>
+        {scaled ? (
+          <>
+            <AnimatePresence>
               <StaticPalette palette={palette} />
               {scaled ? (
                 <HStack w="full" gap={4} my={4}>
@@ -113,11 +144,11 @@ export function PaletteEditor() {
                   })}
                 </HStack>
               ) : null}
-            </>
-          ) : (
-            <Palette palette={palette} show={!scaled} />
-          )}
-        </AnimatePresence>
+            </AnimatePresence>
+          </>
+        ) : (
+          <Palette palette={palette} show={!scaled} />
+        )}
       </Box>
       <HStack
         position="fixed"

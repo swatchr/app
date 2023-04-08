@@ -1,11 +1,18 @@
-import { Center, useBreakpointValue } from '@chakra-ui/react';
+import { useBreakpointValue } from '@chakra-ui/react';
 import { LayoutGroup } from 'framer-motion';
-import { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 
 import type { GetServerSideProps, NextPage } from 'next';
 
-import { BaseLayout, PaletteEditor, SocialShare } from '@/components';
+import {
+  BaseLayout,
+  MobileLayout,
+  MobilePaletteEditor,
+  PaletteEditor,
+  SocialShare,
+} from '@/components';
 import { PaletteProvider } from '@/contexts';
+import { useMounted } from '@/hooks';
 import { encodeQueryParams, parsePalette, slugify } from '@/utils';
 import { api } from '@/utils/api';
 import { FullScreenLoader } from 'chakra.ui';
@@ -17,20 +24,67 @@ interface Props {
   colorParams?: string[] | null;
 }
 
+const defaultMeta = {
+  title: 'Swatchr',
+  description: 'Color Palette Manager',
+};
+
+function useOGImageURL(colorParams: string | string[] | undefined) {
+  const { data: domain } = api.server.domain.useQuery();
+  return `${domain}/api/og?${encodeQueryParams({
+    colors: colorParams,
+  })}`;
+}
+
+export function MobileView({ params, paletteName, colorParams }: Props) {
+  const { isLoading } = useIsLoading(true, 200);
+  const ogImageUrl = useOGImageURL(colorParams!);
+  useMounted('mobile-view');
+  return (
+    <MobileLayout
+      {...defaultMeta}
+      {...Object.assign(
+        {},
+        colorParams
+          ? {
+              image: {
+                url: ogImageUrl,
+                width: 1200,
+                height: 640,
+                alt: `${paletteName} color palette`,
+                type: 'image/png',
+              },
+            }
+          : {}
+      )}
+    >
+      {isLoading ? (
+        <FullScreenLoader color="green" />
+      ) : (
+        <PaletteProvider paletteName={paletteName!} colorParams={colorParams!}>
+          <MobilePaletteEditor />
+        </PaletteProvider>
+      )}
+    </MobileLayout>
+  );
+}
+
 const Home: NextPage<Props> = (props) => {
-  return <DesktopView {...props} />;
+  const component = useBreakpointValue({
+    base: <MobileView {...props} />,
+    md: <DesktopView {...props} />,
+  });
+  return <>{component}</>;
 };
 
 export default Home;
 
 export function DesktopView({ params, paletteName, colorParams }: Props) {
   const { isLoading } = useIsLoading(true, 200);
-  const { data: domain } = api.server.domain.useQuery();
-  const ogImageUrl = `${domain}/api/og?${params}`;
+  const ogImageUrl = useOGImageURL(colorParams!);
   return (
     <BaseLayout
-      title="Swatchr"
-      description="Color Palette Manager"
+      {...defaultMeta}
       {...Object.assign(
         {},
         colorParams

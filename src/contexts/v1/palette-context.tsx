@@ -7,7 +7,7 @@ import {
   useReducer,
 } from 'react';
 
-import { useKeyboardShortcut } from '@/hooks';
+import { useDebounce, useKeyboardShortcut } from '@/hooks';
 import {
   capitalize,
   DASHES_REGEX,
@@ -175,7 +175,6 @@ const notify = (key: string, data: any, debug: boolean = false) => {
   }
 
   publish('show-toast', notification);
-  if (debug) console.log(key, notification);
 };
 
 export const PaletteProvider: React.FC<PaletteProviderProps> = ({
@@ -264,9 +263,7 @@ export const PaletteProvider: React.FC<PaletteProviderProps> = ({
           info: { id: data?.id!, name: data?.name!, status: data?.status! },
         });
       },
-      onError: (error) => {
-        console.log('palette.get', error.message, error.data?.code);
-      },
+      onError: (error) => {},
     }
   );
 
@@ -299,7 +296,6 @@ export const PaletteProvider: React.FC<PaletteProviderProps> = ({
 
   useEffect(() => {
     if (status !== 'authenticated' || !isInfoDirty) return;
-    console.log('mutating');
     mutation.mutate({
       palette,
       data: info,
@@ -362,6 +358,7 @@ export const PaletteProvider: React.FC<PaletteProviderProps> = ({
     },
     [setState, palette]
   );
+
   const updatePaletteOrder = useCallback(
     // used by framer-motion drag and drop to update the entire palette on reorder
     // the only diff between this and updatePalette is that this does not trigger notifications
@@ -395,7 +392,7 @@ export const PaletteProvider: React.FC<PaletteProviderProps> = ({
         palette: insertAtIndex(palette, swatchIndex, newColor),
       });
       colorMutation.mutate({
-        hex: newColor.startsWith('#') ? newColor.replace('#', '') : newColor,
+        hex: newColor?.startsWith('#') ? newColor.replace('#', '') : newColor,
       });
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps -- do not add colorMutation to deps
@@ -408,7 +405,7 @@ export const PaletteProvider: React.FC<PaletteProviderProps> = ({
         palette: updateArrayAtIndex(palette, swatchIndex, () => newColor),
       });
       colorMutation.mutate({
-        hex: newColor.startsWith('#') ? newColor.replace('#', '') : newColor,
+        hex: newColor?.startsWith('#') ? newColor.replace('#', '') : newColor,
       });
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps -- do not add colorMutation to deps
@@ -426,7 +423,6 @@ export const PaletteProvider: React.FC<PaletteProviderProps> = ({
   );
 
   const addNewSwatch = useCallback(() => {
-    console.log('adding swatch');
     addSwatch(activeSwatchIndex + 1);
   }, [activeSwatchIndex, addSwatch]);
   const removeCurrentSwatch = useCallback(() => {

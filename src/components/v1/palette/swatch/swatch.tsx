@@ -1,28 +1,31 @@
-import {
-  Center,
-  chakra,
-  Flex,
-  SlideFade,
-  useDisclosure,
-} from '@chakra-ui/react';
+import { Box, Center, Flex, useDisclosure } from '@chakra-ui/react';
 import { motion, useAnimation } from 'framer-motion';
-import { useCallback, useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 
-import { useColorDispatch, useColorState, usePaletteState } from '@/contexts';
+import {
+  ContentProvider,
+  useColorDispatch,
+  useColorState,
+  usePaletteState,
+} from '@/contexts';
+import { useKeyboardShortcut } from '@/hooks';
 import { useMounted } from '@/hooks/use-mounted';
+import { getContrastColor } from '@/utils';
 import { useThemeColors } from 'chakra.ui';
-import { ColorPickerWrapper, EditableHexInput, SwatchMenu } from '.';
+import {
+  ColorPickerWrapper,
+  ColorPopover,
+  EditableHexInput,
+  SwatchMenu,
+} from '.';
 import { HistoryViewer, InfoPanel, SwatchWindow } from '../panels';
 
 const BG_TRANSITION = { duration: 0.5, ease: 'easeInOut' };
 
-type SwatchView = 'swatch' | 'picker';
 export function Swatch({ index }: { index: number }) {
-  const [view, setView] = useState<SwatchView>('swatch');
   const [reset, setReset] = useState(false);
   const colorState = useColorState();
   const colorHandlers = useColorDispatch();
-  const { activeSwatchIndex } = usePaletteState();
 
   const { text: themeTexts } = useThemeColors();
   const text = colorState.instance.getBestContrastColor(themeTexts);
@@ -41,94 +44,179 @@ export function Swatch({ index }: { index: number }) {
     });
   }, [colorState.color, controls]);
 
-  const switchView = useCallback(() => {
-    setView((prev) => (prev === 'swatch' ? 'picker' : 'swatch'));
-  }, []);
-  const switchToPickerView = useCallback(() => {
-    setView('picker');
-    setReset(true);
-    const timeout = setTimeout(() => {
-      setReset(false);
-    }, 100);
-    return () => clearTimeout(timeout);
-  }, []);
+  useMounted('swatch');
 
   return (
-    <Flex
-      flex={activeSwatchIndex === index ? 1 : 0}
-      className="swatch-wrapper"
-      direction="column"
-      position="relative"
-      w="full"
-      minH="100vh"
+    <>
+      <Flex
+        className="swatch-wrapper"
+        direction="column"
+        position="relative"
+        w="full"
+        minH="100vh"
+        justifyContent="center"
+        alignItems="center"
+        as={motion.div}
+        animate={controls}
+        onMouseEnter={() => {
+          colorHandlers.paletteHandlers.activateSwatch(index);
+          swatchMenuOnOpen();
+        }}
+        onMouseLeave={() => {
+          swatchMenuOnClose();
+        }}
+        color={text} // all of the icons and text inherit this text color
+      >
+        <Center
+          className="swatch-menu-wrapper"
+          boxSize={72}
+          position="relative"
+          zIndex={1}
+        >
+          <SwatchDetails
+            color={colorState.color}
+            swatchMenuIsOpen={swatchMenuIsOpen}
+          />
+          {swatchMenuIsOpen ? (
+            <SwatchMenu
+              colorState={colorState}
+              colorHandlers={colorHandlers}
+              reset={reset}
+            />
+          ) : null}
+          <ContentProvider>
+            <SwatchWindow isActive={swatchMenuIsOpen} />
+          </ContentProvider>
+        </Center>
+        <InfoPanel {...colorState} showIcon={swatchMenuIsOpen} />
+        {colorState.isActive ? (
+          <>
+            <HistoryViewer colorHandlers={colorHandlers} />
+          </>
+        ) : null}
+      </Flex>
+    </>
+  );
+}
+
+function SwatchDetails({
+  color,
+  swatchMenuIsOpen,
+}: {
+  color: string;
+  swatchMenuIsOpen: boolean;
+}) {
+  const colorState = useColorState();
+  const colorHandlers = useColorDispatch();
+  const picker = useDisclosure();
+
+  useMounted('swatch-detail');
+  return (
+    <Center
+      as={motion.div}
+      role="button"
+      className="picker-swatch"
+      tabIndex={0}
+      h={52}
+      m={9}
+      flex={1}
+      display="flex"
       justifyContent="center"
       alignItems="center"
-      as={motion.div}
-      animate={controls}
-      onMouseEnter={() => {
-        colorHandlers.paletteHandlers.activateSwatch(index);
-        swatchMenuOnOpen();
-      }}
-      onMouseLeave={() => {
-        swatchMenuOnClose();
-      }}
-      willChange={'flex'}
-      transition="flex 500ms cubic-bezier(0.645, 0.045, 0.355, 1.000)"
-      color={text} // all of the icons and text inherit this text color
+      rounded="xl"
+      zIndex={2}
+      initial={{ boxShadow: '0px 0px 20px rgba(0,0,0, 0)' }}
+      whileHover={{ boxShadow: '0px 0px 20px rgba(0,0,0, 0.1)' }}
+      whileTap={{ boxShadow: '0px 0px 20px rgba(0,0,0, 0.1)' }}
+      transition="0.55 easeInOut 0.3"
+      onClick={picker.onOpen}
     >
+      {picker.isOpen ? (
+        <ColorPickerWrapper color={color} colorHandlers={colorHandlers} />
+      ) : null}
+
+      <EditableHexInput
+        show={swatchMenuIsOpen && !picker.isOpen}
+        colorState={colorState}
+        handleChange={colorHandlers.history.handleChange}
+      />
+    </Center>
+  );
+}
+
+export function MobileSwatch({
+  swatch,
+  palette,
+  index,
+  onToggle,
+  isOpen,
+}: {
+  swatch: string;
+  palette: string[];
+  index: number;
+  onToggle: () => void;
+  isOpen: boolean;
+}) {
+  const clickRef = useRef<HTMLDivElement>(null);
+  const { activeSwatchIndex } = usePaletteState();
+  const colorState = useColorState();
+  const colorHandlers = useColorDispatch();
+
+  useMounted(`mobile-${colorState.color}-swatch`);
+
+  const controls = useAnimation();
+  useEffect(() => {
+    controls.start({
+      backgroundColor: swatch,
+      transition: BG_TRANSITION,
+    });
+  }, [swatch, controls]);
+
+  const isActive = activeSwatchIndex === index;
+
+  useKeyboardShortcut([' '], () => {
+    if (isActive) return;
+    colorHandlers.tinycolor.generateRandomColor();
+  });
+
+  return (
+    <Box flex={1} bg={swatch}>
       <Center
-        className="swatch-menu-wrapper"
-        boxSize={72}
-        position="relative"
-        zIndex={1}
+        my="auto"
+        h="full"
+        maxH={`calc(100vh / ${palette.length})`}
+        minH={'100px'}
+        color={getContrastColor(swatch)}
+        as={motion.div}
+        animate={controls}
+        onMouseEnter={() => {
+          colorHandlers.paletteHandlers.activateSwatch(index);
+        }}
+        onMouseLeave={() => {
+          // swatchMenuOnClose();
+        }}
       >
-        {swatchMenuIsOpen ? (
-          <SwatchMenu
+        <Center w={96} maxH={12} h="full" ref={clickRef}>
+          {isActive ? (
+            <ColorPopover
+              open={isOpen}
+              trigger={
+                <Box w="80%" h="full" py={6} zIndex={0} onClick={onToggle} />
+              }
+            >
+              <ColorPickerWrapper
+                color={colorState.color}
+                colorHandlers={colorHandlers}
+              />
+            </ColorPopover>
+          ) : null}
+          <EditableHexInput
+            show={!isOpen}
             colorState={colorState}
-            colorHandlers={colorHandlers}
-            reset={reset}
+            handleChange={colorHandlers.history.handleChange}
           />
-        ) : null}
-        <SwatchWindow isActive={swatchMenuIsOpen} />
-        <Center
-          as={motion.div}
-          className="picker-swatch"
-          position="relative"
-          role="button"
-          initial={{ boxShadow: '0px 0px 20px rgba(0,0,0, 0)' }}
-          animate={controls}
-          whileHover={{ boxShadow: '0px 0px 20px rgba(0,0,0, 0.1)' }}
-          whileTap={{ boxShadow: '0px 0px 20px rgba(0,0,0, 0.1)' }}
-          transition="0.55 easeInOut 0.3"
-          boxSize={52}
-          tabIndex={0}
-          zIndex={0}
-          rounded="xl"
-          onClick={switchToPickerView}
-        >
-          {view === 'picker' ? (
-            <ColorPickerWrapper
-              color={colorState.color}
-              colorHandlers={colorHandlers}
-              view={view}
-              onClick={switchView}
-            />
-          ) : null}
-          {view == 'swatch' ? (
-            <EditableHexInput
-              show={swatchMenuIsOpen}
-              colorState={colorState}
-              handleChange={colorHandlers.history.handleChange}
-            />
-          ) : null}
         </Center>
       </Center>
-      <InfoPanel {...colorState} showIcon={swatchMenuIsOpen} />
-      {colorState.isActive ? (
-        <>
-          <HistoryViewer colorHandlers={colorHandlers} />
-        </>
-      ) : null}
-    </Flex>
+    </Box>
   );
 }

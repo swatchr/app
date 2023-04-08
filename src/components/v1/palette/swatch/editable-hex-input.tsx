@@ -45,7 +45,7 @@ export function EditableHexInput({
       fontFamily="heading"
       fontSize="3xl"
       onClick={(e) => e.stopPropagation()}
-      zIndex={2} // must appear above color picker
+      zIndex={0} // must appear above color picker
       maxW="80%"
     >
       <Editable

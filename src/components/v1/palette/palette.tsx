@@ -2,42 +2,34 @@ import { DragHandleIcon } from '@chakra-ui/icons';
 import { Box, Center, Flex, Icon, VStack } from '@chakra-ui/react';
 
 import { Swatch } from '@/components';
-import { ColorProvider, ContentProvider, usePaletteDispatch } from '@/contexts';
-import { useDebounce } from '@/hooks';
-import { MotionBox } from 'chakra.ui';
-import { motion, Reorder } from 'framer-motion';
+import { ColorProvider, usePaletteDispatch } from '@/contexts';
+import { useDebounce, useMounted } from '@/hooks';
+import { Reorder } from 'framer-motion';
 import ColorLab from 'lib/color';
 
 export function Palette({
   show,
   palette,
 }: {
-  show: boolean;
+  show: boolean; // show is true if the editor view is scaled
   palette: string[];
 }) {
+  useMounted('palette');
   return (
     <Flex
-      // as={motion.div}
-      // layoutId="swatches"
       className="swatches"
       shadow="lg"
       rounded="md"
       h="100%"
       zIndex={show ? 0 : -1}
     >
-      {palette && palette.length
+      {palette?.length
         ? palette.map((swatch, index) => (
-            <ColorProvider
-              key={`${swatch}-swatch`}
-              color={swatch}
-              index={index}
-            >
-              <ContentProvider>
-                <VStack w="full" flex={1}>
-                  <Swatch index={index} />
-                </VStack>
-              </ContentProvider>
-            </ColorProvider>
+            <VStack key={`${swatch}-swatch`} w="full" flex={1}>
+              <ColorProvider color={swatch} index={index}>
+                <Swatch index={index} />
+              </ColorProvider>
+            </VStack>
           ))
         : null}
     </Flex>

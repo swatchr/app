@@ -10,7 +10,8 @@ import type { Palette, Swatch } from '@/contexts';
 import type ColorLab from 'lib/color';
 
 import { usePaletteDispatch, usePaletteState } from '@/contexts';
-import { useKeyboardShortcut } from '@/hooks';
+import { useKeyboardShortcut, useMounted } from '@/hooks';
+import { isDev, isProd } from '@/utils';
 import { useSwatchUndo, useTinyColor } from './hooks';
 
 interface ColorProviderProps {
@@ -86,6 +87,7 @@ export const ColorProvider: React.FC<ColorProviderProps> = ({
     isActive
   );
 
+  useMounted('color-ctx');
   /* -------------------------------------------------------------------------- */
   /*                                  TINYCOLOR                                 */
   /* -------------------------------------------------------------------------- */
@@ -110,6 +112,7 @@ export const ColorProvider: React.FC<ColorProviderProps> = ({
   /* -------------------------------------------------------------------------- */
 
   useEffect(() => {
+    if (isDev || isProd) return; // @TODO: remove to debug
     const text = instance.contrast === 'light' ? '#000' : '#fff';
     console.groupCollapsed('Current Color', color);
     console.log('color  ', 'complement', 'text');
